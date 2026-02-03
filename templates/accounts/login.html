@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<style>
+  .auth-page {
+    min-height: 80vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .auth-card {
+    width: 100%;
+    max-width: 360px;
+    background: white;
+    padding: 32px;
+    border-radius: 12px;
+    box-shadow: 0 12px 40px rgba(0,0,0,0.08);
+    text-align: center;
+  }
+
+  .auth-card h2 {
+    margin-bottom: 20px;
+    color: #001f3f;
+  }
+
+  .auth-card input {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 14px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    font-size: 14px;
+  }
+
+  .auth-card button {
+    width: 100%;
+    padding: 12px;
+    border-radius: 8px;
+    border: none;
+    background: #001f3f;
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  .auth-card button:hover {
+    opacity: 0.9;
+  }
+
+  .auth-card a {
+    display: block;
+    margin-top: 16px;
+    font-size: 14px;
+    color: #001f3f;
+    text-decoration: none;
+  }
+
+  .error {
+    color: #c0392b;
+    font-size: 14px;
+    margin-bottom: 12px;
+  }
+
+  .back-home {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    text-decoration: none;
+    font-weight: 600;
+    color: #001f3f;
+  }
+</style>
+
+<a href="/" class="back-home">← Home</a>
+
+<div class="auth-page">
+  <div class="auth-card">
+    <h2>Login</h2>
+
+    {% if error %}
+      <div class="error">{{ error }}</div>
+    {% endif %}
+
+    <form method="post">
+      {% csrf_token %}
+      <input type="tel" name="phone" placeholder="Phone Number" required>
+      <button type="submit">Login</button>
+    </form>
+
+    <a href="/register/">Create account</a>
+  </div>
+</div>
+
+{% endblock %}

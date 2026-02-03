@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h2>
+  {% if mode == "create" %}Add Chapter{% else %}Edit Chapter{% endif %}
+  — {{ story.title }}
+</h2>
+
+<form method="post">
+  {% csrf_token %}
+  {{ form.as_p }}
+  <button type="submit">
+    {% if mode == "create" %}Create{% else %}Save{% endif %}
+  </button>
+</form>
+
+{% endblock %}

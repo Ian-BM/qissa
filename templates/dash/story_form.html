@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h2>
+  {% if mode == "create" %}Create Story{% else %}Edit Story{% endif %}
+</h2>
+
+<form method="post" enctype="multipart/form-data">
+  {% csrf_token %}
+  {{ form.as_p }}
+
+  <button type="submit">
+    {% if mode == "create" %}Create{% else %}Save Changes{% endif %}
+  </button>
+</form>
+
+{% endblock %}

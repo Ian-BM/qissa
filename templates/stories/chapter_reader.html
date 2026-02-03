@@ -1,0 +1,137 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<style>
+  /* Page container */
+  .reader-page {
+    max-width: 1100px;
+    margin: 30px auto;
+    padding: 0 20px;
+  }
+
+  /* Top bar */
+  .reader-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+
+  .back-btn {
+    text-decoration: none;
+    font-weight: 600;
+    color: #1f1f1f;
+  }
+
+  .story-title {
+    flex: 1;
+    text-align: center;
+    font-size: 22px;
+    font-weight: 700;
+    color: #1f1f1f;
+  }
+
+  /* Chapter navigation */
+  .chapter-nav {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+    margin: 25px 0 35px;
+  }
+
+  .chapter-nav a {
+    padding: 6px 14px;
+    font-size: 13px;
+    border-radius: 6px;
+    text-decoration: none;
+    background: #f1f3f6;
+    color: #1f1f1f;
+    font-weight: 500;
+  }
+
+  .chapter-nav a.active {
+    background: #f6a01a;
+    color: white;
+  }
+
+  /* Reader box */
+  .reader-box {
+    background: white;
+    padding: 36px;
+    max-width: 900px;
+    margin: 0 auto 50px;
+    line-height: 1.9;
+    font-size: 16px;
+    border-radius: 10px;
+    box-shadow: 0 10px 35px rgba(0,0,0,0.08);
+  }
+
+  /* More stories */
+  .more-stories {
+    margin-top: 60px;
+  }
+
+  .more-stories h3 {
+    text-align: center;
+    margin-bottom: 25px;
+    color: #1f1f1f;
+  }
+
+  .story-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 20px;
+  }
+
+  @media (max-width: 700px) {
+    .reader-box {
+      padding: 24px;
+    }
+  }
+</style>
+
+<div class="reader-page">
+
+  <!-- Header -->
+  <div class="reader-header">
+    <a href="/" class="back-btn">← Back to Home</a>
+    <div class="story-title">
+      {{ chapter.story.title }}
+    </div>
+  </div>
+
+  <!-- Chapter navigation -->
+  <div class="chapter-nav">
+    {% if prev_chapter %}
+      <a href="{% url 'chapter_reader' prev_chapter.id %}">← Previous</a>
+    {% endif %}
+
+    <a class="active">
+      Chapter {{ chapter.order }}
+    </a>
+
+    {% if next_chapter %}
+      <a href="{% url 'chapter_reader' next_chapter.id %}">Next →</a>
+    {% endif %}
+  </div>
+
+  <!-- Reader -->
+  <div class="reader-box">
+    {{ chapter.content|linebreaks }}
+  </div>
+
+  <!-- More stories -->
+  <div class="more-stories">
+    <h3>More stories</h3>
+
+    <div class="story-row">
+      {% for story in related|slice:":5" %}
+        {% include "pages/story_card.html" %}
+      {% endfor %}
+    </div>
+  </div>
+
+</div>
+
+{% endblock content %}
