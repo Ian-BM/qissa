@@ -1,0 +1,122 @@
+<nav class="navbar">
+  <style>
+    .navbar {
+      width: 100%;
+      background: #fff;
+      border-bottom: 1px solid #eaeaea;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .navbar-inner {
+      max-width: 1100px;
+      margin: auto;
+      padding: 10px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 700;
+      font-size: 18px;
+      color: #111;
+    }
+
+    .brand-dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: #f6a01a;
+      box-shadow: 0 0 0 3px rgba(246, 160, 26, 0.15);
+    }
+
+    .logo {
+      font-size: 20px;
+      font-weight: 800;
+      font-style: italic;
+      text-decoration: none;
+      color: #111;
+      letter-spacing: 0.6px;
+    }
+
+    .logo em {
+      color: #f6a01a;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      font-size: 13px;
+    }
+
+    .nav-links a,
+    .logout-btn {
+      text-decoration: none;
+      color: #111;
+      font-weight: 600;
+      padding: 6px 10px;
+      border-radius: 8px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      transition: background 0.2s ease;
+    }
+
+    .nav-links a:hover,
+    .logout-btn:hover {
+      background: rgba(246, 160, 26, 0.12);
+    }
+
+    @media (max-width: 700px) {
+      .logo {
+        font-size: 18px;
+      }
+      .nav-links {
+        gap: 10px;
+        font-size: 12px;
+      }
+    }
+  </style>
+
+  <div class="navbar-inner">
+
+    <!-- Left -->
+    <div class="brand">
+      <span class="brand-dot"></span>
+      <span>Qissa</span>
+    </div>
+
+    <!-- Center -->
+    <a href="/" class="logo"><em>Qissa</em></a>
+
+    <!-- Right -->
+    <div class="nav-links">
+
+      {% if user.is_authenticated %}
+
+        {% if user.is_staff %}
+          <a href="{% url 'dashboard_home' %}">Dashboard</a>
+        {% endif %}
+
+        <form method="post" action="{% url 'logout' %}">
+          {% csrf_token %}
+          <button type="submit" class="logout-btn">Logout</button>
+        </form>
+
+      {% else %}
+        <a href="{% url 'login' %}">Login</a>
+        <a href="{% url 'register' %}">Register</a>
+      {% endif %}
+
+    </div>
+
+  </div>
+</nav>
+

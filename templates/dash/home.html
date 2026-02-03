@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h2>Dashboard</h2>
+<a href="{% url 'story_create' %}">+ New Story</a>
+
+<hr>
+
+{% for story in stories %}
+  <div style="border:1px solid #ddd;padding:12px;margin-bottom:10px">
+    <strong>{{ story.title }}</strong>
+    {% if story.is_published %}
+      <span style="color:green">● Published</span>
+    {% else %}
+      <span style="color:red">● Draft</span>
+    {% endif %}
+
+    <div style="margin-top:8px">
+      <a href="{% url 'story_edit' story.id %}">Edit</a> |
+      <a href="{% url 'story_toggle_publish' story.id %}">
+        {% if story.is_published %}Unpublish{% else %}Publish{% endif %}
+      </a>
+    </div>
+
+    <div style="margin-top:8px">
+        <a href="{% url 'story_edit' story.id %}">Edit Story</a> |
+        <a href="{% url 'chapter_list' story.id %}">Chapters</a> |
+        <a href="{% url 'story_toggle_publish' story.id %}">
+            {% if story.is_published %}Unpublish{% else %}Publish{% endif %}
+        </a>
+    </div>
+
+  </div>
+{% empty %}
+  <p>No stories yet.</p>
+{% endfor %}
+
+{% endblock %}

@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h2>Chapters — {{ story.title }}</h2>
+
+<a href="{% url 'chapter_create' story.id %}">+ Add Chapter</a>
+<hr>
+
+{% for chapter in chapters %}
+  <div style="border:1px solid #ddd;padding:10px;margin-bottom:8px">
+    <strong>Chapter {{ chapter.order }}:</strong> {{ chapter.title }}
+    <div style="margin-top:6px">
+      <a href="{% url 'chapter_edit' chapter.id %}">Edit</a>
+    </div>
+  </div>
+{% empty %}
+  <p>No chapters yet.</p>
+{% endfor %}
+
+{% endblock %}
