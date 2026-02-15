@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="card" style="max-width:500px;margin:auto;">
+
+  <h2>Fungua Chapter</h2>
+
+  {% if messages %}
+    {% for message in messages %}
+      <p style="color:green;">{{ message }}</p>
+    {% endfor %}
+  {% endif %}
+
+  <form method="post">
+    {% csrf_token %}
+
+    <label>Namba ya Simu</label>
+    <input type="text" name="phone" required>
+
+    <label>Chagua Chapter</label>
+    <select name="chapter" required>
+      {% for chapter in chapters %}
+        <option value="{{ chapter.id }}">
+          {{ chapter.story.title }} — Chapter {{ chapter.order }}
+        </option>
+      {% endfor %}
+    </select>
+
+    <button type="submit" class="btn btn-dark" style="margin-top:15px;">
+      Toa Ruhusa
+    </button>
+
+  </form>
+
+</div>
+{% endblock %}

@@ -7,6 +7,9 @@ class Story(models.Model):
     slug = models.SlugField(unique=True, blank=True)
     description = models.TextField()
     cover = models.ImageField(upload_to="story_covers/", blank=True, null=True)
+
+    price = models.DecimalField(max_digits=8, decimal_places=2, default=0)  # NEW
+
     views = models.PositiveIntegerField(default=0)
     is_published = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -38,6 +41,7 @@ class Chapter(models.Model):
     title = models.CharField(max_length=255)
     content = models.TextField()
     order = models.PositiveIntegerField()
+    is_locked = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
@@ -46,3 +50,14 @@ class Chapter(models.Model):
 
     def __str__(self):
         return f"{self.story.title} — Chapter {self.order}: {self.title}"
+
+
+from django.conf import settings
+
+class ChapterAccess(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    chapter = models.ForeignKey(Chapter, on_delete=models.CASCADE)
+    granted_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ("user", "chapter")
