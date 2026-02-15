@@ -22,11 +22,31 @@ def story_detail(request, slug):
     })
 
 
+from django.shortcuts import get_object_or_404, redirect, render
+from django.contrib.auth.decorators import login_required
+from django.views.decorators.http import require_http_methods
+
+from .models import Chapter
+from .models import ChapterAccess
+
+
+@login_required
 @require_http_methods(["GET"])
 def chapter_reader(request, id):
     chapter = get_object_or_404(Chapter, id=id)
     story = chapter.story
 
+    # 🔒 LOCK CHECK
+    if chapter.is_locked:
+        has_access = ChapterAccess.objects.filter(
+            user=request.user,
+            chapter=chapter
+        ).exists()
+
+        if not has_access:
+            return redirect("payment_page", chapter_id=chapter.id)
+
+    # ⬅️➡️ PREV / NEXT NAVIGATION
     prev_chapter = Chapter.objects.filter(
         story=story,
         order__lt=chapter.order
@@ -42,3 +62,12 @@ def chapter_reader(request, id):
         "prev_chapter": prev_chapter,
         "next_chapter": next_chapter,
     })
+
+@login_required
+def payment_page(request, chapter_id):
+    chapter = get_object_or_404(Chapter, id=chapter_id)
+
+    return render(request, "stories/payment.html", {
+        "chapter": chapter,
+    })
+

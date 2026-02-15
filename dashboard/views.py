@@ -6,6 +6,9 @@ from core.utils import admin_required
 
 @admin_required
 def dashboard_home(request):
+    if not request.user.is_staff:
+        return redirect('/')
+    
     stories = Story.objects.all()
     return render(request, "dash/home.html", {
         "stories": stories
@@ -74,6 +77,10 @@ def chapter_list(request, story_id):
 
 @admin_required
 def chapter_create(request, story_id):
+
+    if not request.user.staff:
+        return redirect('/')
+
     story = get_object_or_404(Story, id=story_id)
 
     if request.method == "POST":
@@ -110,4 +117,46 @@ def chapter_edit(request, chapter_id):
         "story": chapter.story,
         "mode": "edit",
         "chapter": chapter
+    })
+
+
+from django.shortcuts import render, redirect
+from django.contrib.auth.decorators import user_passes_test
+from django.contrib import messages
+
+from accounts.models import User
+from stories.models import Chapter
+from stories.models import ChapterAccess
+
+
+def is_admin(user):
+    return user.is_staff
+
+
+@admin_required
+def unlock_chapter(request):
+    chapters = Chapter.objects.filter(is_locked=True)
+
+    if request.method == "POST":
+        phone = request.POST.get("phone")
+        chapter_id = request.POST.get("chapter")
+
+        try:
+            user = User.objects.get(phone=phone)
+        except User.DoesNotExist:
+            messages.error(request, "User not found.")
+            return redirect("unlock_chapter")
+
+        chapter = Chapter.objects.get(id=chapter_id)
+
+        ChapterAccess.objects.get_or_create(
+            user=user,
+            chapter=chapter
+        )
+
+        messages.success(request, "Access granted successfully.")
+        return redirect("unlock_chapter")
+
+    return render(request, "dash/unlock.html", {
+        "chapters": chapters
     })
