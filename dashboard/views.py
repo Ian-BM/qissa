@@ -2,6 +2,13 @@ from django.shortcuts import render, redirect, get_object_or_404
 from stories.models import Story
 from stories.forms import StoryForm
 from core.utils import admin_required
+from django.contrib import messages
+from django.shortcuts import get_object_or_404, redirect, render
+
+from accounts.models import User
+from core.utils import admin_required
+from stories.forms import ChapterForm, StoryForm
+from stories.models import Chapter, Story, StoryAccess
 
 
 @admin_required
@@ -9,10 +16,14 @@ def dashboard_home(request):
     if not request.user.is_staff:
         return redirect('/')
     
-    stories = Story.objects.all()
-    return render(request, "dash/home.html", {
-        "stories": stories
-    })
+    stories = Story.objects.all().order_by("-created_at")
+    return render(
+        request,
+        "dash/home.html",
+        {
+            "stories": stories,
+        },
+    )
 
 
 @admin_required
@@ -25,11 +36,7 @@ def story_create(request):
     else:
         form = StoryForm()
 
-    return render(request, "dash/story_form.html", {
-        "form": form,
-        "mode": "create"
-    })
-
+    return render(request, "dash/story_form.html", {"form": form, "mode": "create"})
 
 @admin_required
 def story_edit(request, story_id):
@@ -43,11 +50,15 @@ def story_edit(request, story_id):
     else:
         form = StoryForm(instance=story)
 
-    return render(request, "dash/story_form.html", {
-        "form": form,
-        "mode": "edit",
-        "story": story
-    })
+    return render(
+        request,
+        "dash/story_form.html",
+        {
+            "form": form,
+            "mode": "edit",
+            "story": story,
+        },
+    )
 
 
 @admin_required
@@ -58,10 +69,6 @@ def story_toggle_publish(request, story_id):
     return redirect("dashboard_home")
 
 
-from stories.models import Story, Chapter
-from stories.forms import ChapterForm
-from core.utils import admin_required
-from django.shortcuts import render, redirect, get_object_or_404
 
 
 @admin_required
@@ -69,17 +76,18 @@ def chapter_list(request, story_id):
     story = get_object_or_404(Story, id=story_id)
     chapters = story.chapters.all()
 
-    return render(request, "dash/chapter_list.html", {
-        "story": story,
-        "chapters": chapters
-    })
+    return render(
+        request,
+        "dash/chapter_list.html",
+        {
+            "story": story,
+            "chapters": chapters,
+        },
+    )
 
 
 @admin_required
 def chapter_create(request, story_id):
-
-    if not request.user.staff:
-        return redirect('/')
 
     story = get_object_or_404(Story, id=story_id)
 
@@ -93,11 +101,15 @@ def chapter_create(request, story_id):
     else:
         form = ChapterForm()
 
-    return render(request, "dash/chapter_form.html", {
-        "form": form,
-        "story": story,
-        "mode": "create"
-    })
+    return render(
+        request,
+        "dash/chapter_form.html",
+        {
+            "form": form,
+            "story": story,
+            "mode": "create",
+        },
+    )
 
 
 @admin_required
@@ -112,21 +124,19 @@ def chapter_edit(request, chapter_id):
     else:
         form = ChapterForm(instance=chapter)
 
-    return render(request, "dash/chapter_form.html", {
-        "form": form,
-        "story": chapter.story,
-        "mode": "edit",
-        "chapter": chapter
-    })
+    return render(
+        request,
+        "dash/chapter_form.html",
+        {
+            "form": form,
+            "story": chapter.story,
+            "mode": "edit",
+            "chapter": chapter,
+        },
+    )
 
 
-from django.shortcuts import render, redirect
-from django.contrib.auth.decorators import user_passes_test
-from django.contrib import messages
 
-from accounts.models import User
-from stories.models import Chapter
-from stories.models import ChapterAccess
 
 
 def is_admin(user):
@@ -135,28 +145,42 @@ def is_admin(user):
 
 @admin_required
 def unlock_chapter(request):
-    chapters = Chapter.objects.filter(is_locked=True)
+    story_id = request.GET.get("story")
+    selected_story = Story.objects.filter(id=story_id).first() if story_id else None
 
-    if request.method == "POST":
-        phone = request.POST.get("phone")
-        chapter_id = request.POST.get("chapter")
+    users = User.objects.all().order_by("name", "phone")
+    story_access_map = set()
 
-        try:
-            user = User.objects.get(phone=phone)
-        except User.DoesNotExist:
-            messages.error(request, "User not found.")
-            return redirect("unlock_chapter")
-
-        chapter = Chapter.objects.get(id=chapter_id)
-
-        ChapterAccess.objects.get_or_create(
-            user=user,
-            chapter=chapter
+    if selected_story:
+        story_access_map = set(
+            StoryAccess.objects.filter(story=selected_story).values_list("user_id", flat=True)
         )
 
-        messages.success(request, "Access granted successfully.")
+        return render(
+        request,
+        "dash/unlock.html",
+        {
+            "stories": Story.objects.all().order_by("title"),
+            "selected_story": selected_story,
+            "users": users,
+            "story_access_map": story_access_map,
+        },
+    )
+
+
+@admin_required
+def toggle_story_access(request, story_id, user_id):
+    if request.method != "POST":
         return redirect("unlock_chapter")
 
-    return render(request, "dash/unlock.html", {
-        "chapters": chapters
-    })
+    story = get_object_or_404(Story, id=story_id)
+    user = get_object_or_404(User, id=user_id)
+
+    access, created = StoryAccess.objects.get_or_create(user=user, story=story)
+    if created:
+        messages.success(request, f"Activated {user.phone} for {story.title}.")
+    else:
+        access.delete()
+        messages.info(request, f"Deactivated {user.phone} for {story.title}.")
+
+    return redirect(f"/dashboard/unlock/?story={story.id}")

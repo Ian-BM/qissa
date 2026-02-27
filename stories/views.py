@@ -1,8 +1,11 @@
-from django.shortcuts import render, get_object_or_404
-from django.views.decorators.http import require_http_methods
+from django.contrib.auth.decorators import login_required
 from django.db.models import F
+from django.shortcuts import get_object_or_404, redirect, render
+from django.views.decorators.http import require_http_methods
 
-from .models import Story, Chapter
+from .models import Chapter, Story, StoryAccess
+
+FREE_CHAPTER_LIMIT = 4
 
 
 @require_http_methods(["GET"])
@@ -15,20 +18,21 @@ def story_detail(request, slug):
 
     # Chapters of the story
     chapters = story.chapters.all()
+    has_story_access = (
+        request.user.is_authenticated
+        and StoryAccess.objects.filter(user=request.user, story=story).exists()
+    )
 
-    return render(request, "stories/story_detail.html", {
-        "story": story,
-        "chapters": chapters,
-    })
-
-
-from django.shortcuts import get_object_or_404, redirect, render
-from django.contrib.auth.decorators import login_required
-from django.views.decorators.http import require_http_methods
-
-from .models import Chapter
-from .models import ChapterAccess
-
+    return render(
+        request,
+        "stories/story_detail.html",
+        {
+            "story": story,
+            "chapters": chapters,
+            "free_chapter_limit": FREE_CHAPTER_LIMIT,
+            "has_story_access": has_story_access,
+        },
+    )
 
 @login_required
 @require_http_methods(["GET"])
@@ -37,14 +41,38 @@ def chapter_reader(request, id):
     story = chapter.story
 
     # 🔒 LOCK CHECK
-    if chapter.is_locked:
-        has_access = ChapterAccess.objects.filter(
+    requires_unlock = chapter.order > FREE_CHAPTER_LIMIT
+    if requires_unlock:
+        has_story_access = StoryAccess.objects.filter(
             user=request.user,
-            chapter=chapter
+            
+            story=story,
         ).exists()
 
-        if not has_access:
-            return redirect("payment_page", chapter_id=chapter.id)
+        if not has_story_access:
+            return redirect("payment_page", story_id=story.id)
+
+    prev_chapter = (
+        Chapter.objects.filter(story=story, order__lt=chapter.order)
+        .order_by("-order")
+        .first()
+    )
+    next_chapter = (
+        Chapter.objects.filter(story=story, order__gt=chapter.order)
+        .order_by("order")
+        .first()
+    )
+
+    return render(
+        request,
+        "stories/chapter_reader.html",
+        {
+            "chapter": chapter,
+            "prev_chapter": prev_chapter,
+            "next_chapter": next_chapter,
+        },
+    )
+
 
     # ⬅️➡️ PREV / NEXT NAVIGATION
     prev_chapter = Chapter.objects.filter(
@@ -64,10 +92,15 @@ def chapter_reader(request, id):
     })
 
 @login_required
-def payment_page(request, chapter_id):
-    chapter = get_object_or_404(Chapter, id=chapter_id)
+@require_http_methods(["GET"])
+def payment_page(request, story_id):
+    story = get_object_or_404(Story, id=story_id)
 
-    return render(request, "stories/payment.html", {
-        "chapter": chapter,
-    })
-
+    return render(
+        request,
+        "stories/payment.html",
+        {
+            "story": story,
+            "free_chapter_limit": FREE_CHAPTER_LIMIT,
+        },
+    )

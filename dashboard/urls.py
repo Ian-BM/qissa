@@ -12,6 +12,12 @@ urlpatterns = [
     path("stories/<int:story_id>/chapters/new/", views.chapter_create, name="chapter_create"),
     path("chapters/<int:chapter_id>/edit/", views.chapter_edit, name="chapter_edit"),
 
-    path("unlock/", unlock_chapter, name="unlock_chapter"),
+     
+    path("unlock/", views.unlock_chapter, name="unlock_chapter"),
+    path(
+        "unlock/<int:story_id>/toggle/<int:user_id>/",
+        views.toggle_story_access,
+        name="toggle_story_access",
+    ),
  
 ]
