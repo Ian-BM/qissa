@@ -1,36 +1,90 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="card" style="max-width:500px;margin:auto;">
+<style>
+  .access-header { margin-bottom: 20px; }
+  .access-header h2 { margin-bottom: 6px; }
+  .access-header p { color: #666; }
+  .story-select {
+    background: #fff;
+    border: 1px solid #e4e4e4;
+    border-radius: 10px;
+    padding: 16px;
+    margin-bottom: 16px;
+  }
+  .story-select select { padding: 10px; border-radius: 8px; border: 1px solid #d9d9d9; min-width: 220px; }
+  .access-table-wrap { overflow-x: auto; background: #fff; border: 1px solid #e4e4e4; border-radius: 10px; }
+  table { width: 100%; border-collapse: collapse; }
+  th, td { text-align: left; padding: 12px; border-bottom: 1px solid #f0f0f0; }
+  th { background: #fafafa; font-size: 13px; text-transform: uppercase; letter-spacing: .04em; color:#666; }
+  .status-pill { padding: 4px 10px; border-radius: 999px; font-size: 12px; font-weight: 700; }
+  .active { background: #e7f7ee; color: #157347; }
+  .inactive { background: #f8ecee; color: #b02a37; }
+  .btn-toggle { border: 1px solid #ddd; border-radius: 8px; background: #111; color: #fff; padding: 7px 12px; cursor: pointer; }
+</style>
 
-  <h2>Fungua Chapter</h2>
+<div class="access-header">
+  <h2>Story Access</h2>
+  <p>First 4 chapters are free. Activate a reader to unlock the full story.</p>
+</div>
 
-  {% if messages %}
-    {% for message in messages %}
-      <p style="color:green;">{{ message }}</p>
-    {% endfor %}
-  {% endif %}
+{% if messages %}
+  {% for message in messages %}
+    <p style="margin-bottom:8px; color:#157347;">{{ message }}</p>
+  {% endfor %}
+{% endif %}
 
-  <form method="post">
-    {% csrf_token %}
-
-    <label>Namba ya Simu</label>
-    <input type="text" name="phone" required>
-
-    <label>Chagua Chapter</label>
-    <select name="chapter" required>
-      {% for chapter in chapters %}
-        <option value="{{ chapter.id }}">
-          {{ chapter.story.title }} — Chapter {{ chapter.order }}
+<div class="story-select">
+  <form method="get">
+    <label for="story"><strong>Select Story:</strong></label>
+    <select name="story" id="story" onchange="this.form.submit()" required>
+      <option value="">-- Choose story --</option>
+      {% for story in stories %}
+        <option value="{{ story.id }}" {% if selected_story and selected_story.id == story.id %}selected{% endif %}>
+          {{ story.title }}
         </option>
       {% endfor %}
     </select>
-
-    <button type="submit" class="btn btn-dark" style="margin-top:15px;">
-      Toa Ruhusa
-    </button>
-
   </form>
-
 </div>
+
+{% if selected_story %}
+  <div class="access-table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Phone</th>
+          <th>Status</th>
+          <th>Activate</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for reader in users %}
+          <tr>
+            <td>{{ reader.name|default:"-" }}</td>
+            <td>{{ reader.phone }}</td>
+            <td>
+              {% if reader.id in story_access_map %}
+                <span class="status-pill active">Active</span>
+              {% else %}
+                <span class="status-pill inactive">Inactive</span>
+              {% endif %}
+            </td>
+            <td>
+              <form method="post" action="{% url 'toggle_story_access' selected_story.id reader.id %}">
+                {% csrf_token %}
+                <button class="btn-toggle" type="submit">
+                  {% if reader.id in story_access_map %}Deactivate{% else %}Activate{% endif %}
+                </button>
+              </form>
+            </td>
+          </tr>
+        {% empty %}
+          <tr><td colspan="4">No readers found.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% endif %}
 {% endblock %}
