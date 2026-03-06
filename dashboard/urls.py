@@ -1,6 +1,6 @@
 from django.urls import path
 from . import views
-from .views import unlock_chapter
+
 
 urlpatterns = [
     path("", views.dashboard_home, name="dashboard_home"),

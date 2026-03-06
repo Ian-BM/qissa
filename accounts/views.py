@@ -6,20 +6,20 @@ from django.views.decorators.http import require_http_methods
 from .models import User
 
 
-def normalize_phone(phone: str) -> str:
-    """
-    Normalize phone number input for consistency.
-    """
-    return phone.replace(" ", "").replace("-", "").strip()
+from .phone import PhoneValidationError, validate_african_phone
 
 
 @require_http_methods(["GET", "POST"])
 def register_view(request):
     if request.method == "POST":
-        phone = normalize_phone(request.POST.get("phone", ""))
         name = request.POST.get("name", "").strip()
 
-        if not phone or not name:
+        try:
+            phone = validate_african_phone(request.POST.get("phone", ""))
+        except PhoneValidationError as exc:
+            return render(request, "accounts/register.html", {"error": str(exc)})
+
+        if not name:
             return render(request, "accounts/register.html", {
                 "error": "All fields are required"
             })
@@ -43,12 +43,10 @@ def register_view(request):
 @require_http_methods(["GET", "POST"])
 def login_view(request):
     if request.method == "POST":
-        phone = normalize_phone(request.POST.get("phone", ""))
-
-        if not phone:
-            return render(request, "accounts/login.html", {
-                "error": "Phone number is required"
-            })
+        try:
+            phone = validate_african_phone(request.POST.get("phone", ""))
+        except PhoneValidationError as exc:
+            return render(request, "accounts/login.html", {"error": str(exc)})
 
         user = User.objects.filter(phone=phone).first()
 
