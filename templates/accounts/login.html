@@ -85,7 +85,8 @@
 
     <form method="post">
       {% csrf_token %}
-      <input type="tel" name="phone" placeholder="Phone Number" required>
+      <input type="tel" name="phone" placeholder="+255712345678" required pattern="^\+[1-9][0-9]{8,14}$">
+      <div style="color:#666;font-size:12px;margin-bottom:10px;text-align:left;">Use an African country code.</div>
       <button type="submit">Login</button>
     </form>
 

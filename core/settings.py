@@ -133,7 +133,7 @@ MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
 
 ADMIN_PHONES = [
-    "0754938633",
+    "+255754938633",
     
 ]
 

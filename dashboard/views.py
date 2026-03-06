@@ -11,6 +11,8 @@ from stories.forms import ChapterForm, StoryForm
 from stories.models import Chapter, Story, StoryAccess
 
 
+
+
 @admin_required
 def dashboard_home(request):
     if not request.user.is_staff:
@@ -136,12 +138,11 @@ def chapter_edit(request, chapter_id):
     )
 
 
-
-
-
 def is_admin(user):
     return user.is_staff
 
+
+from django.shortcuts import render
 
 @admin_required
 def unlock_chapter(request):
@@ -153,10 +154,11 @@ def unlock_chapter(request):
 
     if selected_story:
         story_access_map = set(
-            StoryAccess.objects.filter(story=selected_story).values_list("user_id", flat=True)
+            StoryAccess.objects.filter(story=selected_story)
+            .values_list("user_id", flat=True)
         )
 
-        return render(
+    return render(
         request,
         "dash/unlock.html",
         {
@@ -166,7 +168,6 @@ def unlock_chapter(request):
             "story_access_map": story_access_map,
         },
     )
-
 
 @admin_required
 def toggle_story_access(request, story_id, user_id):
