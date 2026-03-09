@@ -1,42 +1,110 @@
 {% extends "base.html" %}
 {% block content %}
+<style>
+  .dash-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin-bottom: 24px;
+  }
 
-<h2>Dashboard</h2>
-<a href="{% url 'story_create' %}">+ New Story</a><br></br>
-<a href="{% url 'unlock_chapter' %}" class="btn btn-light">
-  Unlock Chapter
-</a>
+  .dash-title h2 { font-size: 30px; margin-bottom: 6px; letter-spacing: -0.01em; }
+  .dash-title p { color: #6b7280; }
 
+  .quick-actions { display: flex; gap: 10px; flex-wrap: wrap; }
 
-<hr>
+  .dash-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+  }
 
-{% for story in stories %}
-  <div style="border:1px solid #ddd;padding:12px;margin-bottom:10px">
-    <strong>{{ story.title }}</strong>
-    {% if story.is_published %}
-      <span style="color:green">● Published</span>
-    {% else %}
-      <span style="color:red">● Draft</span>
-    {% endif %}
+  .story-card {
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 14px;
+    padding: 16px;
+    box-shadow: 0 6px 18px rgba(15, 23, 42, .04);
+  }
 
-    <div style="margin-top:8px">
-      <a href="{% url 'story_edit' story.id %}">Edit</a> |
-      <a href="{% url 'story_toggle_publish' story.id %}">
-        {% if story.is_published %}Unpublish{% else %}Publish{% endif %}
-      </a>
-    </div>
+  .story-card h3 { margin-bottom: 10px; font-size: 18px; }
 
-    <div style="margin-top:8px">
-        <a href="{% url 'story_edit' story.id %}">Edit Story</a> |
-        <a href="{% url 'chapter_list' story.id %}">Chapters</a> |
-        <a href="{% url 'story_toggle_publish' story.id %}">
-            {% if story.is_published %}Unpublish{% else %}Publish{% endif %}
-        </a>
-    </div>
+  .meta {
+    color: #6b7280;
+    font-size: 14px;
+    margin-bottom: 12px;
+    display: grid;
+    gap: 4px;
+  }
 
+  .status {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    font-weight: 700;
+    margin-bottom: 12px;
+    border-radius: 999px;
+    padding: 4px 10px;
+  }
+
+  .published { color: #166534; background: #eaf8ee; }
+  .draft { color: #991b1b; background: #fcecec; }
+
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 6px;
+  }
+
+  .actions a {
+    font-size: 13px;
+    padding: 8px 10px;
+    border-radius: 8px;
+    border: 1px solid #e5e7eb;
+    background: #fff;
+  }
+
+  .actions a:hover { background: #f8fafc; }
+</style>
+
+<div class="dash-header">
+  <div class="dash-title">
+    <h2>Dashboard</h2>
+    <p>Manage stories, chapters, publication status, and paid reader access.</p>
   </div>
-{% empty %}
-  <p>No stories yet.</p>
-{% endfor %}
+  <div class="quick-actions">
+    <a href="{% url 'story_create' %}" class="btn-primary">+ Create Story</a>
+    <a href="{% url 'unlock_chapter' %}" class="btn-secondary">Reader Access</a>
+  </div>
+</div>
 
+<div class="dash-grid">
+  {% for story in stories %}
+    <div class="story-card">
+      <h3>{{ story.title }}</h3>
+      <div class="meta">
+        <div>{{ story.chapters.count }} chapters</div>
+        <div>{{ story.access_grants.count }} activated readers</div>
+      </div>
+      <div class="status {% if story.is_published %}published{% else %}draft{% endif %}">
+        <span>●</span> {% if story.is_published %}Published{% else %}Draft{% endif %}
+      </div>
+
+      <div class="actions">
+        <a href="{% url 'story_edit' story.id %}">Edit Story</a>
+        <a href="{% url 'chapter_list' story.id %}">Manage Chapters</a>
+        <a href="{% url 'unlock_chapter' %}?story={{ story.id }}">Activate Readers</a>
+        <a href="{% url 'story_toggle_publish' story.id %}">
+          {% if story.is_published %}Unpublish{% else %}Publish{% endif %}
+        </a>
+      </div>
+    </div>
+  {% empty %}
+    <p>No stories yet.</p>
+  {% endfor %}
+</div>
 {% endblock %}

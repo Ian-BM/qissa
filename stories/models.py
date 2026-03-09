@@ -61,3 +61,15 @@ class ChapterAccess(models.Model):
 
     class Meta:
         unique_together = ("user", "chapter")
+
+
+class StoryAccess(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    story = models.ForeignKey(Story, on_delete=models.CASCADE, related_name="access_grants")
+    granted_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ("user", "story")
+
+    def __str__(self):
+        return f"{self.user} -> {self.story}"

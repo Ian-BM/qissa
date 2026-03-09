@@ -2,116 +2,91 @@
 {% load static %}
 
 {% block content %}
-
 <style>
-  .story-detail-wrapper {
-    max-width: 1000px;
-    margin: 40px auto;
-    padding: 0 20px;
-  }
+  .story-detail-wrapper { max-width: 1020px; margin: 20px auto; }
 
   .back-btn {
     display: inline-block;
-    margin-bottom: 20px;
-    text-decoration: none;
-    color: #1f1f1f;
+    margin-bottom: 18px;
+    color: #0f172a;
     font-weight: 600;
+    font-size: 14px;
   }
 
   .story-detail-card {
     display: flex;
-    gap: 30px;
+    gap: 28px;
     align-items: flex-start;
-    justify-content: center;
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 14px;
+    padding: 18px;
+    box-shadow: 0 8px 28px rgba(15, 23, 42, 0.06);
   }
 
   .story-cover img {
     width: 260px;
-    height: 400px;
+    height: 390px;
     object-fit: cover;
     border-radius: 12px;
-    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+    background: #f3f4f6;
   }
 
-  .story-info {
-    max-width: 560px;
-  }
+  .story-info { flex: 1; min-width: 0; }
+  .story-info h1 { margin: 0 0 10px; font-size: 32px; letter-spacing: -0.02em; }
 
-  .story-info h1 {
-    margin: 0 0 10px;
-    font-size: 28px;
-    color: #1f1f1f;
-  }
-
-  /* ===== PRICE STYLE ===== */
   .story-price {
     display: inline-block;
     margin-bottom: 14px;
-    padding: 6px 14px;
-    font-weight: 600;
+    padding: 6px 12px;
+    font-weight: 700;
+    font-size: 13px;
+    border: 1px solid #dbe1ea;
+    border-radius: 999px;
+    background: #f8fafc;
+  }
+
+  .story-info p { font-size: 15px; line-height: 1.7; color: #374151; margin-bottom: 14px; }
+
+  .note {
     font-size: 14px;
-    border: 1px solid #e5e5e5;
-    border-radius: 6px;
-    background: #fafafa;
+    color: #475569;
+    margin-bottom: 18px;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    padding: 10px 12px;
   }
 
-  .story-info p {
-    font-size: 15px;
-    line-height: 1.6;
-    color: #444;
-    margin-bottom: 25px;
-  }
+  .chapter-list h3 { margin-bottom: 10px; font-size: 18px; }
+  .chapter-list ul { list-style: none; padding: 0; }
+  .chapter-list li { margin-bottom: 9px; }
 
-  .chapter-list {
-    margin-top: 20px;
-  }
-
-  .chapter-list h3 {
-    margin-bottom: 12px;
-    color: #1f1f1f;
-  }
-
-  .chapter-list ul {
-    list-style: none;
-    padding: 0;
-  }
-
-  .chapter-list li {
-    margin-bottom: 8px;
-  }
-
-  .chapter-list a {
-    text-decoration: none;
-    color: #1f1f1f;
+  .chapter-link {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: #0f172a;
     font-weight: 600;
-    padding: 8px 10px;
-    border-radius: 8px;
-    background: #f1f3f6;
+    padding: 11px 12px;
+    border-radius: 10px;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
   }
 
-  .chapter-list a:hover {
-    background: #e5e5e5;
-  }
+  .chapter-link:hover { background: #f1f5f9; }
+  .lock-tag { font-size: 12px; color: #991b1b; font-weight: 700; }
 
-  @media (max-width: 768px) {
-    .story-detail-card {
-      flex-direction: column;
-      align-items: center;
-      text-align: center;
-    }
-
-    .story-info {
-      max-width: 100%;
-    }
+  @media (max-width: 820px) {
+    .story-detail-card { flex-direction: column; }
+    .story-cover img { width: 100%; max-width: 320px; height: auto; }
   }
 </style>
 
 <div class="story-detail-wrapper">
-
   <a href="{% url 'home' %}" class="back-btn">← Back to Home</a>
 
   <div class="story-detail-card">
-
     <div class="story-cover">
       {% if story.cover %}
         <img src="{{ story.cover.url }}" alt="{{ story.title }}">
@@ -123,26 +98,25 @@
     <div class="story-info">
       <h1>{{ story.title }}</h1>
 
-      <!-- PRICE -->
       {% if story.price > 0 %}
-        <div class="story-price">
-          Bei: TZS {{ story.price }}
-        </div>
+        <div class="story-price">Full Access · TZS {{ story.price }}</div>
       {% else %}
-        <div class="story-price">
-          Free
-        </div>
+        <div class="story-price">Free Story</div>
       {% endif %}
 
       <p>{{ story.description }}</p>
+      <div class="note">Chapters 1-{{ free_chapter_limit }} are free. Later chapters unlock after full story access is activated.</div>
 
       <div class="chapter-list">
         <h3>Chapters</h3>
         <ul>
-          {% for chapter in story.chapters.all %}
+          {% for chapter in chapters %}
             <li>
-              <a href="{% url 'chapter_reader' chapter.id %}">
-                Chapter {{ chapter.order }} — {{ chapter.title }}
+              <a class="chapter-link" href="{% url 'chapter_reader' chapter.id %}">
+                <span>Chapter {{ chapter.order }} — {{ chapter.title }}</span>
+                {% if chapter.order > free_chapter_limit and not has_story_access %}
+                  <span class="lock-tag">🔒 Paid</span>
+                {% endif %}
               </a>
             </li>
           {% empty %}
@@ -151,10 +125,6 @@
         </ul>
       </div>
     </div>
-
   </div>
-
 </div>
-
 {% endblock %}
-

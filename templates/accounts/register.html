@@ -1,5 +1,4 @@
-
-
+{% extends "base.html" %}
 {% block content %}
 
 <style>
@@ -63,17 +62,13 @@
     margin-bottom: 12px;
   }
 
-  .back-home {
-    position: absolute;
-    top: 20px;
-    left: 20px;
-    text-decoration: none;
-    font-weight: 600;
-    color: #001f3f;
+  .hint {
+    color: #666;
+    font-size: 12px;
+    margin-bottom: 10px;
+    text-align: left;
   }
 </style>
-
-<a href="/" class="back-home">← Home</a>
 
 <div class="auth-page">
   <div class="auth-card">
@@ -86,7 +81,8 @@
     <form method="post">
       {% csrf_token %}
       <input type="text" name="name" placeholder="Full Name" required>
-      <input type="tel" name="phone" placeholder="Phone Number" required>
+      <input type="tel" name="phone" placeholder="+255712345678" required pattern="^\+[1-9][0-9]{8,14}$">
+      <div class="hint">Use an African country code (e.g. +255, +254, +234, +27).</div>
       <button type="submit">Create Account</button>
     </form>
 

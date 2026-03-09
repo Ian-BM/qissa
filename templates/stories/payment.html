@@ -1,34 +1,63 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="card" style="max-width:600px;margin:auto;text-align:center;">
+<style>
+  .payment-card {
+    max-width: 640px;
+    margin: 8px auto;
+    text-align: center;
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 14px;
+    padding: 24px;
+    box-shadow: 0 10px 30px rgba(15, 23, 42, 0.06);
+  }
 
-  <h2>Lipia Kusoma</h2>
+  .payment-card h2 { margin-bottom: 12px; font-size: 30px; letter-spacing: -0.02em; }
+  .payment-card p { color: #374151; line-height: 1.7; }
+
+  .payment-number {
+    margin: 18px 0;
+    font-size: 20px;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 14px;
+  }
+
+  .payment-number strong { display: block; margin-bottom: 5px; font-size: 13px; color: #64748b; text-transform: uppercase; letter-spacing: .06em; }
+
+  .steps {
+    text-align: left;
+    max-width: 470px;
+    margin: 18px auto;
+    line-height: 1.9;
+    color: #334155;
+  }
+
+  .note { margin-top: 16px; color: #64748b; font-size: 14px; }
+</style>
+
+<div class="payment-card">
+  <h2>Unlock Full Story</h2>
 
   <p>
-    Ili kuendelea kusoma <strong>{{ chapter.title }}</strong>,
-    tafadhali fanya malipo kwa njia ya M-Pesa:
+    You can already read chapters 1 to {{ free_chapter_limit }} for free.
+    To continue reading <strong>{{ story.title }}</strong>, complete payment below.
   </p>
 
-  <div style="margin:20px 0;font-size:18px;">
-    <strong>Tuma kwenye namba:</strong><br>
-    <span style="font-size:22px;">0621932919</span>
+  <div class="payment-number">
+    <strong>Send M-Pesa Payment To</strong>
+    0621932919
   </div>
 
-  <p>
-    Baada ya kutuma malipo:
-  </p>
-
-  <ul style="text-align:left;max-width:400px;margin:20px auto;">
-    <li>Jina linakuja Ian Moshi</li>
-    <li>Piga picha ya risiti</li>
-    <li>Tuma screenshot ya risiti kwangu(kwa hiyo number hapo juu)</li>
-    <li>Utapatiwa ruhusa ya kusoma mara moja</li>
+  <ul class="steps">
+    <li>Name: Ian Moshi</li>
+    <li>Take a screenshot of your payment receipt</li>
+    <li>Send the screenshot to the number above</li>
+    <li>Your account will be activated and all chapters will open</li>
   </ul>
 
-  <p style="margin-top:20px;color:#666;">
-    Asante kwa kuunga mkono Qissa.
-  </p>
-
+  <p class="note">Thank you for supporting Qissa and independent storytelling.</p>
 </div>
 {% endblock %}
