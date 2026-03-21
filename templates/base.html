@@ -3,7 +3,11 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+ <head>
   <title>{% block title %}Qissa{% endblock %}</title>
+
+  <!-- Inline SVG favicon -->
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='18' fill='%23111'/%3E%3Cpath d='M20 30 Q50 20 80 30 L80 75 Q50 65 20 75 Z' fill='%2325D366' opacity='0.9'/%3E%3Cline x1='50' y1='25' x2='50' y2='75' stroke='%23111' stroke-width='2'/%3E%3Ctext x='50%25' y='55%25' text-anchor='middle' fill='white' font-size='32' font-family='Georgia, serif' dy='.3em'%3EQ%3C/text%3E%3C/svg%3E">
 
   {% load static %}
 
@@ -124,29 +128,44 @@
 
 <body>
 
-  <header>
-    <div class="nav-inner">
-      <a href="{% url 'home' %}" class="logo">Qissa</a>
+<header>
+  <div class="nav-inner">
+    
+    <!-- Logo -->
+    <a href="{% url 'home' %}" class="logo">
+      <!-- Inline SVG logo -->
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="40" height="40">
+        <rect width="100" height="100" rx="18" fill="#111"/>
+        <path d="M20 30 Q50 20 80 30 L80 75 Q50 65 20 75 Z" fill="#25D366" opacity="0.9"/>
+        <line x1="50" y1="25" x2="50" y2="75" stroke="#111" stroke-width="2"/>
+        <text x="50%" y="55%" text-anchor="middle" fill="white"
+              font-size="34" font-family="Georgia, serif" dy=".3em">
+          Q
+        </text>
+      </svg>
+      Qissa
+    </a>
 
-      <nav class="nav-links">
-        {% if user.is_staff %}
-          <a href="{% url 'dashboard_home' %}">Dashboard</a>
-        {% endif %}
+    <!-- Navigation Links -->
+    <nav class="nav-links">
+      {% if user.is_staff %}
+        <a href="{% url 'dashboard_home' %}">Dashboard</a>
+      {% endif %}
 
-        {% if user.is_authenticated %}
-          <form method="post" action="{% url 'logout' %}" style="display:inline;">
-            {% csrf_token %}
-            <button type="submit" style="background:none;border:none;color:#555;cursor:pointer;font:inherit;">
-              Logout
-            </button>
-          </form>
-        {% else %}
-          <a href="{% url 'login' %}">Login</a>
-          <a href="{% url 'register' %}">Register</a>
-        {% endif %}
-      </nav>
-    </div>
-  </header>
+      {% if user.is_authenticated %}
+        <form method="post" action="{% url 'logout' %}" style="display:inline;">
+          {% csrf_token %}
+          <button type="submit" style="background:none;border:none;color:#555;cursor:pointer;font:inherit;">
+            Logout
+          </button>
+        </form>
+      {% else %}
+        <a href="{% url 'login' %}">Login</a>
+        <a href="{% url 'register' %}">Register</a>
+      {% endif %}
+    </nav>
+  </div>
+</header>
 
   <main>
     {% block content %}{% endblock %}
@@ -155,6 +174,10 @@
   <footer>
     <div class="footer-inner">
       © {{ now.year }} Qissa. All rights reserved.
+      <a href="https://wa.me/255621932919" target="_blank" 
+          style="background:#25D366;color:white;padding:1px 5px;border-radius:5px;text-decoration:none;">
+            0621932919
+      </a>
       
     </div>
   </footer>

@@ -50,13 +50,13 @@
 
       <!-- PRICE -->
       {% if story.price > 0 %}
-        <div class="story-price">Full Access: TZS {{ story.price }}</div>
+        <div class="story-price">Ruhusa Kamili: TZS {{ story.price }}</div>
       {% else %}
-        <div class="story-price">Free</div>
+        <div class="story-price">Bure</div>
       {% endif %}
 
       <p>{{ story.description }}</p>
-      <div class="note">Chapters 1-{{ free_chapter_limit }} are free. Remaining chapters require story access.</div>
+      <div class="note">Chapters 1-{{ free_chapter_limit }} ni bure. Kwa chapter zilizobaki ni zakulipia.</div>
 
       <div class="chapter-list">
         <h3>Chapters</h3>
@@ -66,7 +66,7 @@
               <a class="chapter-link" href="{% url 'chapter_reader' chapter.id %}">
                 <span>Chapter {{ chapter.order }} — {{ chapter.title }}</span>
                 {% if chapter.order > free_chapter_limit and not has_story_access %}
-                  <span class="lock-tag">🔒 Paid</span>
+                  <span class="lock-tag">🔒</span>
                 {% endif %}
               </a>
             </li>

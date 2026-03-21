@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <rect width="100" height="100" rx="18" fill="#111"/>
+  <path d="M20 30 Q50 20 80 30 L80 75 Q50 65 20 75 Z" fill="#25D366" opacity="0.9"/>
+  <line x1="50" y1="25" x2="50" y2="75" stroke="#111" stroke-width="2"/>
+  <text x="50%" y="55%" text-anchor="middle" fill="white"
+        font-size="32" font-family="Georgia, serif" dy=".3em">
+    Q
+  </text>
+</svg>

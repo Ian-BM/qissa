@@ -57,12 +57,12 @@
 
   /* Reader box */
   .reader-box {
-    background: white;
+    background: rgb(232, 229, 229);
     padding: 36px;
     max-width: 900px;
     margin: 0 auto 50px;
     line-height: 1.9;
-    font-size: 16px;
+    font-size: 14px;
     border-radius: 10px;
     box-shadow: 0 10px 35px rgba(0,0,0,0.08);
   }
@@ -104,7 +104,7 @@
   <!-- Chapter navigation -->
   <div class="chapter-nav">
     {% if prev_chapter %}
-      <a href="{% url 'chapter_reader' prev_chapter.id %}">← Previous</a>
+      <a href="{% url 'chapter_reader' prev_chapter.id %}">← </a>
     {% endif %}
 
     <a class="active">
@@ -112,7 +112,7 @@
     </a>
 
     {% if next_chapter %}
-      <a href="{% url 'chapter_reader' next_chapter.id %}">Next →</a>
+      <a href="{% url 'chapter_reader' next_chapter.id %}"> →</a>
     {% endif %}
   </div>
 
