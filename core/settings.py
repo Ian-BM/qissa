@@ -24,9 +24,13 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-&b5y6(ewtnsnav^uv0#o$frrfxq@fds*c8y8u68hyy!$^n$w%7'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    "getqissa.com",
+    "www.getqissa.com",
+    "127.0.0.1",
+]
 
 AUTH_USER_MODEL = "accounts.User"
 
@@ -86,8 +90,12 @@ WSGI_APPLICATION = 'core.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'qissadb',          # your PostgreSQL database
+        'USER': 'postgres',         # the DB user
+        'PASSWORD': 'ian ',          # the new password
+        'HOST': 'localhost',        # or your DB host
+        'PORT': '5432',             # default PostgreSQL port
     }
 }
 
