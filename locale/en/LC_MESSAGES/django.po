@@ -1,0 +1,174 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2024-04-09 22:45+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: en\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: templates/pages/home.html:25
+msgid "Simulizi kwa kila msomaji"
+msgstr "Stories for every reader"
+
+#: templates/pages/home.html:26
+msgid "Discover the best serialized stories from East Africa."
+msgstr "Discover the best serialized stories from East Africa."
+
+#: templates/pages/home.html:27
+msgid "Explore fresh chapters, continue reading where you left off, and unlock premium stories from top Swahili authors. All in one polished reading experience."
+msgstr "Explore fresh chapters, continue reading where you left off, and unlock premium stories from top Swahili authors. All in one polished reading experience."
+
+#: templates/pages/home.html:29
+msgid "Browse stories"
+msgstr "Browse stories"
+
+#: templates/pages/home.html:30
+msgid "Join Qissa"
+msgstr "Join Qissa"
+
+#: templates/pages/home.html:35
+msgid "Stories available now"
+msgstr "Stories available now"
+
+#: templates/pages/home.html:38
+msgid "Active readers daily"
+msgstr "Active readers daily"
+
+#: templates/pages/home.html:41
+msgid "Fast access"
+msgstr "Fast access"
+
+#: templates/pages/home.html:42
+msgid "One-step login and chapter reading"
+msgstr "One-step login and chapter reading"
+
+#: templates/pages/home.html:50
+msgid "Search by title, author, or genre..."
+msgstr "Search by title, author, or genre..."
+
+#: templates/pages/home.html:51
+msgid "Search"
+msgstr "Search"
+
+#: templates/pages/home.html:58
+msgid "Continue reading:"
+msgstr "Continue reading:"
+
+#: templates/pages/home.html:67
+msgid "Featured stories"
+msgstr "Featured stories"
+
+#: templates/pages/home.html:68
+msgid "Latest and most loved releases"
+msgstr "Latest and most loved releases"
+
+#: templates/pages/home.html:75
+msgid "views"
+msgstr "views"
+
+#: templates/pages/home.html:79
+msgid "No stories available yet. Please check back soon."
+msgstr "No stories available yet. Please check back soon."
+
+#: templates/partials/navbar.html
+msgid "Dashboard"
+msgstr "Dashboard"
+
+#: templates/partials/navbar.html
+msgid "Logout"
+msgstr "Logout"
+
+#: templates/partials/navbar.html
+msgid "Login"
+msgstr "Login"
+
+#: templates/partials/navbar.html
+msgid "Register"
+msgstr "Register"
+
+#: templates/accounts/login.html
+msgid "Welcome back"
+msgstr "Welcome back"
+
+#: templates/accounts/login.html
+msgid "Email"
+msgstr "Email"
+
+#: templates/accounts/login.html
+msgid "Password"
+msgstr "Password"
+
+#: templates/accounts/login.html
+msgid "Sign in"
+msgstr "Sign in"
+
+#: templates/accounts/login.html
+msgid "Don't have an account?"
+msgstr "Don't have an account?"
+
+#: templates/accounts/register.html
+msgid "Create your account"
+msgstr "Create your account"
+
+#: templates/accounts/register.html
+msgid "Full Name"
+msgstr "Full Name"
+
+#: templates/accounts/register.html
+msgid "Create account"
+msgstr "Create account"
+
+#: templates/accounts/register.html
+msgid "Already have an account?"
+msgstr "Already have an account?"
+
+#: templates/stories/story_detail.html
+msgid "Chapter"
+msgstr "Chapter"
+
+#: templates/stories/story_detail.html
+msgid "Read"
+msgstr "Read"
+
+#: templates/stories/story_detail.html
+msgid "Unlock"
+msgstr "Unlock"
+
+#: templates/stories/story_detail.html
+msgid "Purchase"
+msgstr "Purchase"
+
+#: templates/accounts/login.html
+msgid "Home"
+msgstr "Home"
+
+#: templates/accounts/login.html
+msgid "Use an African country code (e.g. +255, +254, +234, +27)."
+msgstr "Use an African country code (e.g. +255, +254, +234, +27)."
+
+#: templates/accounts/login.html
+msgid "Create a new account"
+msgstr "Create a new account"
+
+#: templates/accounts/register.html
+msgid "Already have an account?"
+msgstr "Already have an account?"
+
+#: templates/base.html
+msgid "Kiswahili"
+msgstr "Kiswahili"
+
+#: templates/base.html
+msgid "English"
+msgstr "English"

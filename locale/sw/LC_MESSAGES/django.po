@@ -1,0 +1,174 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2024-04-09 22:45+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: sw\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: templates/pages/home.html:25
+msgid "Simulizi kwa kila msomaji"
+msgstr "Simulizi kwa kila msomaji"
+
+#: templates/pages/home.html:26
+msgid "Discover the best serialized stories from East Africa."
+msgstr "Gundua hadithi bora zaidi za mfululizo kutoka Afrika Mashariki."
+
+#: templates/pages/home.html:27
+msgid "Explore fresh chapters, continue reading where you left off, and unlock premium stories from top Swahili authors. All in one polished reading experience."
+msgstr "Chunguza sura mpya, endelea kusoma ulipoishia, na fungua hadithi za malipo kutoka kwa waandishi bora wa Kiswahili. Yote katika uzoefu wa kusoma uliorekebishwa."
+
+#: templates/pages/home.html:29
+msgid "Browse stories"
+msgstr "Vinjari hadithi"
+
+#: templates/pages/home.html:30
+msgid "Join Qissa"
+msgstr "Jiunge na Qissa"
+
+#: templates/pages/home.html:35
+msgid "Stories available now"
+msgstr "Hadithi zinazopatikana sasa"
+
+#: templates/pages/home.html:38
+msgid "Active readers daily"
+msgstr "Wasomaji amilifu kila siku"
+
+#: templates/pages/home.html:41
+msgid "Fast access"
+msgstr "Ufikiaji wa haraka"
+
+#: templates/pages/home.html:42
+msgid "One-step login and chapter reading"
+msgstr "Kuingia kwa hatua moja na kusoma sura"
+
+#: templates/pages/home.html:50
+msgid "Search by title, author, or genre..."
+msgstr "Tafuta kwa jina, mwandishi, au aina..."
+
+#: templates/pages/home.html:51
+msgid "Search"
+msgstr "Tafuta"
+
+#: templates/pages/home.html:58
+msgid "Continue reading:"
+msgstr "Endelea kusoma:"
+
+#: templates/pages/home.html:67
+msgid "Featured stories"
+msgstr "Hadithi maarufu"
+
+#: templates/pages/home.html:68
+msgid "Latest and most loved releases"
+msgstr "Matoleo ya hivi karibuni na yanayopendwa zaidi"
+
+#: templates/pages/home.html:75
+msgid "views"
+msgstr "maoni"
+
+#: templates/pages/home.html:79
+msgid "No stories available yet. Please check back soon."
+msgstr "Hakuna hadithi zinazopatikana bado. Tafadhali angalia tena hivi karibuni."
+
+#: templates/partials/navbar.html
+msgid "Dashboard"
+msgstr "Dashibodi"
+
+#: templates/partials/navbar.html
+msgid "Logout"
+msgstr "Toka"
+
+#: templates/partials/navbar.html
+msgid "Login"
+msgstr "Ingia"
+
+#: templates/partials/navbar.html
+msgid "Register"
+msgstr "Jisajili"
+
+#: templates/accounts/login.html
+msgid "Welcome back"
+msgstr "Karibu tena"
+
+#: templates/accounts/login.html
+msgid "Email"
+msgstr "Barua pepe"
+
+#: templates/accounts/login.html
+msgid "Password"
+msgstr "Neno la siri"
+
+#: templates/accounts/login.html
+msgid "Sign in"
+msgstr "Ingia"
+
+#: templates/accounts/login.html
+msgid "Don't have an account?"
+msgstr "Huna akaunti?"
+
+#: templates/accounts/register.html
+msgid "Create your account"
+msgstr "Tengeneza akaunti yako"
+
+#: templates/accounts/register.html
+msgid "Full Name"
+msgstr "Jina kamili"
+
+#: templates/accounts/register.html
+msgid "Create account"
+msgstr "Tengeneza akaunti"
+
+#: templates/accounts/register.html
+msgid "Already have an account?"
+msgstr "Je, tayari una akaunti?"
+
+#: templates/stories/story_detail.html
+msgid "Chapter"
+msgstr "Sura"
+
+#: templates/stories/story_detail.html
+msgid "Read"
+msgstr "Soma"
+
+#: templates/stories/story_detail.html
+msgid "Unlock"
+msgstr "Fungua"
+
+#: templates/stories/story_detail.html
+msgid "Purchase"
+msgstr "Nunua"
+
+#: templates/accounts/login.html
+msgid "Home"
+msgstr "Nyumbani"
+
+#: templates/accounts/login.html
+msgid "Use an African country code (e.g. +255, +254, +234, +27)."
+msgstr "Tumia namba ya simu ya Afrika (kwa mfano +255, +254, +234, +27)."
+
+#: templates/accounts/login.html
+msgid "Create a new account"
+msgstr "Tengeneza akaunti mpya"
+
+#: templates/accounts/register.html
+msgid "Already have an account?"
+msgstr "Je, tayari una akaunti?"
+
+#: templates/base.html
+msgid "Kiswahili"
+msgstr "Kiswahili"
+
+#: templates/base.html
+msgid "English"
+msgstr "English"

@@ -1,4 +1,5 @@
 <nav class="navbar">
+  {% load i18n %}
   <style>
     .navbar {
       width: 100%;
@@ -102,17 +103,17 @@
       {% if user.is_authenticated %}
 
         {% if user.is_staff %}
-          <a href="{% url 'dashboard_home' %}">Dashboard</a>
+          <a href="{% url 'dashboard_home' %}">{% trans "Dashboard" %}</a>
         {% endif %}
 
         <form method="post" action="{% url 'logout' %}">
           {% csrf_token %}
-          <button type="submit" class="logout-btn">Logout</button>
+          <button type="submit" class="logout-btn">{% trans "Logout" %}</button>
         </form>
 
       {% else %}
-        <a href="{% url 'login' %}">Login</a>
-        <a href="{% url 'register' %}">Register</a>
+        <a href="{% url 'login' %}">{% trans "Login" %}</a>
+        <a href="{% url 'register' %}">{% trans "Register" %}</a>
       {% endif %}
 
     </div>

@@ -56,6 +56,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.locale.LocaleMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -90,15 +91,10 @@ WSGI_APPLICATION = 'core.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'qissadb',          # your PostgreSQL database
-        'USER': 'postgres',         # the DB user
-        'PASSWORD': 'ian ',          # the new password
-        'HOST': 'localhost',        # or your DB host
-        'PORT': '5432',             # default PostgreSQL port
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
-
 
 
 # Password validation
@@ -123,11 +119,20 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'sw'
+
+LANGUAGES = [
+    ('sw', 'Kiswahili'),
+    ('en', 'English'),
+]
 
 TIME_ZONE = 'UTC'
 
 USE_I18N = True
+
+LOCALE_PATHS = [
+    BASE_DIR / 'locale',
+]
 
 USE_TZ = True
 
