@@ -24,8 +24,8 @@
 </style>
 
 <div class="access-header">
-  <h2>Story Access</h2>
-  <p>First 4 chapters are free. Activate a reader to unlock the full story.</p>
+  <h2>Ufikiaji wa Hadithi</h2>
+  <p>Sura 4 za kwanza ni bure. Fungua msomaji ili apate hadithi nzima.</p>
 </div>
 
 {% if messages %}
@@ -36,9 +36,9 @@
 
 <div class="story-select">
   <form method="get">
-    <label for="story"><strong>Select Story:</strong></label>
+    <label for="story"><strong>Chagua Hadithi:</strong></label>
     <select name="story" id="story" onchange="this.form.submit()" required>
-      <option value="">-- Choose story --</option>
+      <option value="">-- Chagua hadithi --</option>
       {% for story in stories %}
         <option value="{{ story.id }}" {% if selected_story and selected_story.id == story.id %}selected{% endif %}>
           {{ story.title }}
@@ -53,10 +53,10 @@
     <table>
       <thead>
         <tr>
-          <th>Name</th>
-          <th>Phone</th>
-          <th>Status</th>
-          <th>Activate</th>
+          <th>Jina</th>
+          <th>Simu</th>
+          <th>Hali</th>
+          <th>Fungua</th>
         </tr>
       </thead>
       <tbody>
@@ -66,22 +66,22 @@
             <td>{{ reader.phone }}</td>
             <td>
               {% if reader.id in story_access_map %}
-                <span class="status-pill active">Active</span>
+                <span class="status-pill active">Imefunguliwa</span>
               {% else %}
-                <span class="status-pill inactive">Inactive</span>
+                <span class="status-pill inactive">Haijafunguliwa</span>
               {% endif %}
             </td>
             <td>
               <form method="post" action="{% url 'toggle_story_access' selected_story.id reader.id %}">
                 {% csrf_token %}
                 <button class="btn-toggle" type="submit">
-                  {% if reader.id in story_access_map %}Deactivate{% else %}Activate{% endif %}
+                  {% if reader.id in story_access_map %}Funga{% else %}Fungua{% endif %}
                 </button>
               </form>
             </td>
           </tr>
         {% empty %}
-          <tr><td colspan="4">No readers found.</td></tr>
+          <tr><td colspan="4">Hakuna wasomaji waliopatikana.</td></tr>
         {% endfor %}
       </tbody>
     </table>

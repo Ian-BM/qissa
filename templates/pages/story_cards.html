@@ -5,17 +5,17 @@
       flex-direction: column;
       align-items: center;
       box-sizing: border-box;
-      width: 100px;
-      max-width: 100px;
-      min-height: 300px;
-      background: #fff;
-      border-width: 0;
+      width: 124px;
+      max-width: 124px;
+      min-height: 0;
+      background: var(--surface);
+      border-width: 1px;
       border-style: solid;
-      border-color: white;
+      border-color: var(--border);
       border-radius: 16px;
       overflow: hidden;
       text-decoration: none;
-      color: #111;
+      color: var(--heading);
       transition: transform 0.2s ease, box-shadow 0.2s ease;
     }
 
@@ -26,9 +26,9 @@
 
     .story-cover {
       width: 100%;
-      height: 120px;
+      height: 164px;
       overflow: hidden;
-      background: #f1f1f1;
+      background: var(--surface-soft);
     }
 
     .story-cover img {
@@ -41,25 +41,25 @@
     .cover-placeholder {
       width: 100%;
       height: 100%;
-      background: linear-gradient(135deg, #f3f3f3, #e9e9e9);
+      background: linear-gradient(135deg, var(--surface-soft), var(--tag-bg));
     }
 
     .story-info {
-      padding: 10px 8px;
+      width: 100%;
+      padding: 8px 8px 4px;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: flex-start;
-      flex: 1;
       text-align: center;
-      gap: 4px;
+      gap: 2px;
     }
 
     .story-info h3 {
       font-size: 0.85rem;
       margin: 0;
       line-height: 1.2;
-      min-height: 2.4em;
+      min-height: 2.2em;
       display: -webkit-box;
       -webkit-line-clamp: 2;
       -webkit-box-orient: vertical;
@@ -72,7 +72,8 @@
 
     .story-info span {
       font-size: 0.85rem;
-      color: #656d7a;
+      color: var(--text);
+      padding-bottom: 4px;
     }
   </style>
 
@@ -87,6 +88,6 @@
   <div class="story-info">
     <h3>{{ story.title }}</h3>
     <p>{{ story.description|truncatechars:80 }}</p>
-    <span>{{ story.views }} reads</span>
+    <span>{{ story.views }} mionekano</span>
   </div>
 </a>

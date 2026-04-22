@@ -179,6 +179,7 @@ def toggle_story_access(request, story_id, user_id):
 
     access, created = StoryAccess.objects.get_or_create(user=user, story=story)
     if created:
+        StoryAccess.mark_view_if_needed(user=user, story=story)
         messages.success(request, f"Activated {user.phone} for {story.title}.")
     else:
         access.delete()

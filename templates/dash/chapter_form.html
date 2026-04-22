@@ -2,7 +2,7 @@
 {% block content %}
 
 <h2>
-  {% if mode == "create" %}Add Chapter{% else %}Edit Chapter{% endif %}
+  {% if mode == "create" %}Ongeza Sura{% else %}Hariri Sura{% endif %}
   — {{ story.title }}
 </h2>
 
@@ -10,7 +10,7 @@
   {% csrf_token %}
   {{ form.as_p }}
   <button type="submit">
-    {% if mode == "create" %}Create{% else %}Save{% endif %}
+    {% if mode == "create" %}Unda{% else %}Hifadhi{% endif %}
   </button>
 </form>
 

@@ -1,17 +1,58 @@
 {% extends "base.html" %}
 {% block content %}
 
-<h2>
-  {% if mode == "create" %}Create Story{% else %}Edit Story{% endif %}
-</h2>
+<style>
+  .story-form-wrap {
+    max-width: 760px;
+    margin: 0 auto;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 24px;
+  }
+  .story-form-wrap h2 {
+    margin-top: 0;
+    margin-bottom: 16px;
+  }
+  .story-form-wrap p {
+    display: grid;
+    gap: 8px;
+    margin: 0 0 14px;
+  }
+  .story-form-wrap input,
+  .story-form-wrap textarea,
+  .story-form-wrap select {
+    width: 100%;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 10px 12px;
+    background: var(--surface-soft);
+    color: var(--heading);
+  }
+  .story-form-wrap button {
+    border: 0;
+    padding: 10px 16px;
+    border-radius: 10px;
+    background: var(--accent-primary);
+    color: #fff;
+    font-weight: 700;
+    cursor: pointer;
+  }
+</style>
 
-<form method="post" enctype="multipart/form-data">
-  {% csrf_token %}
-  {{ form.as_p }}
+<div class="story-form-wrap">
+  <h2>
+    {% if mode == "create" %}Unda Hadithi{% else %}Hariri Hadithi{% endif %}
+  </h2>
 
-  <button type="submit">
-    {% if mode == "create" %}Create{% else %}Save Changes{% endif %}
-  </button>
-</form>
+  <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.as_p }}
+
+    <button type="submit">
+      {% if mode == "create" %}Unda{% else %}Hifadhi Mabadiliko{% endif %}
+    </button>
+  </form>
+</div>
 
 {% endblock %}

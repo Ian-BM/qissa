@@ -10,9 +10,9 @@
     margin-bottom: 22px;
   }
   .dash-title h2 { font-size: 28px; margin-bottom: 6px; }
-  .dash-title p { color: #666; }
+  .dash-title p { color: var(--text); }
   .btn-primary {
-    background: #111;
+    background: var(--accent-primary);
     color: #fff;
     border-radius: 8px;
     padding: 10px 16px;
@@ -25,13 +25,23 @@
     gap: 16px;
   }
   .story-card {
-    background: #fff;
-    border: 1px solid #eaeaea;
+    background: var(--surface);
+    border: 1px solid var(--border);
     border-radius: 12px;
     padding: 16px;
   }
   .story-card h3 { margin-bottom: 8px; }
-  .meta { color: #666; font-size: 14px; margin-bottom: 12px; }
+  .category-chip {
+    display: inline-flex;
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 12px;
+    margin-bottom: 8px;
+    background: var(--tag-bg);
+    color: var(--heading);
+    font-weight: 700;
+  }
+  .meta { color: var(--text); font-size: 14px; margin-bottom: 12px; }
   .status { font-size: 13px; font-weight: 700; }
   .published { color: #157347; }
   .draft { color: #b02a37; }
@@ -42,10 +52,11 @@
     margin-top: 14px;
   }
   .btn-secondary {
-    border: 1px solid #ddd;
+    border: 1px solid var(--border);
     border-radius: 8px;
     padding: 8px 12px;
-    background: #fff;
+    background: var(--surface-soft);
+    color: var(--heading);
     font-size: 14px;
   }
 </style>
@@ -53,12 +64,12 @@
 
 <div class="dash-header">
   <div class="dash-title">
-    <h2>Dashboard</h2>
-    <p>Manage stories, chapters, and reader access from one place.</p>
+    <h2>Dashibodi</h2>
+    <p>Simamia hadithi, sura, na ufikiaji wa wasomaji sehemu moja.</p>
   </div>
   <div style="display:flex;gap:10px;flex-wrap:wrap;">
-    <a href="{% url 'story_create' %}" class="btn-primary">+ Create Story</a>
-    <a href="{% url 'unlock_chapter' %}" class="btn-secondary">Reader Access</a>
+    <a href="{% url 'story_create' %}" class="btn-primary">+ Unda Hadithi</a>
+    <a href="{% url 'unlock_chapter' %}" class="btn-secondary">Ufikiaji wa Wasomaji</a>
   </div>
 </div>
 
@@ -66,23 +77,24 @@
   {% for story in stories %}
     <div class="story-card">
       <h3>{{ story.title }}</h3>
-      <div class="meta">{{ story.chapters.count }} chapters · {{ story.access_grants.count }} activated readers</div>
+      <div class="category-chip">{{ story.category.name|default:"Bila kategoria" }}</div>
+      <div class="meta">{{ story.chapters.count }} sura · {{ story.access_grants.count }} wasomaji waliofunguliwa</div>
       <div class="status {% if story.is_published %}published{% else %}draft{% endif %}">
-        {% if story.is_published %}● Published{% else %}● Draft{% endif %}
+        {% if story.is_published %}● Imechapishwa{% else %}● Rasimu{% endif %}
       </div>
 
       <div class="actions">
-        <a class="btn-secondary" href="{% url 'story_edit' story.id %}">Edit Story</a>
-        <a class="btn-secondary" href="{% url 'chapter_list' story.id %}">Manage Chapters</a>
-        <a class="btn-secondary" href="{% url 'unlock_chapter' %}?story={{ story.id }}">Activate Readers</a>
+        <a class="btn-secondary" href="{% url 'story_edit' story.id %}">Hariri Hadithi</a>
+        <a class="btn-secondary" href="{% url 'chapter_list' story.id %}">Simamia Sura</a>
+        <a class="btn-secondary" href="{% url 'unlock_chapter' %}?story={{ story.id }}">Fungua Wasomaji</a>
         <a class="btn-secondary" href="{% url 'story_toggle_publish' story.id %}">
-          {% if story.is_published %}Unpublish{% else %}Publish{% endif %}
+          {% if story.is_published %}Ondoa Uchapishaji{% else %}Chapisha{% endif %}
         </a>
       </div>
     </div>
 
   {% empty %}
-    <p>No stories yet.</p>
+    <p>Hakuna hadithi bado.</p>
   {% endfor %}
 </div>
 

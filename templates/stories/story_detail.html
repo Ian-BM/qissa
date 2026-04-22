@@ -4,36 +4,113 @@
 {% block content %}
 
 <style>
-  .story-detail-wrapper { max-width: 1000px; margin: 40px auto; padding: 0 20px; }
-  .back-btn { display: inline-block; margin-bottom: 20px; color: #1f1f1f; font-weight: 600; }
-  .story-detail-card { display: flex; gap: 30px; align-items: flex-start; justify-content: center; }
-  .story-cover img { width: 260px; height: 400px; object-fit: cover; border-radius: 12px; box-shadow: 0 8px 25px rgba(0,0,0,0.15); }
+  .story-detail-wrapper {
+    max-width: 1000px;
+    margin: 40px auto;
+    padding: 0 20px;
+  }
+  .back-btn {
+    display: inline-block;
+    margin-bottom: 20px;
+    color: var(--heading);
+    font-weight: 600;
+  }
+  .story-detail-card {
+    display: flex;
+    gap: 30px;
+    align-items: flex-start;
+    justify-content: center;
+  }
+  .story-cover img {
+    width: 260px;
+    height: 400px;
+    object-fit: cover;
+    border-radius: 12px;
+    box-shadow: 0 12px 26px rgba(0,0,0,0.15);
+  }
   .story-info { max-width: 560px; }
-  .story-info h1 { margin: 0 0 10px; font-size: 28px; color: #1f1f1f; }
-  .story-price { display: inline-block; margin-bottom: 14px; padding: 6px 14px; font-weight: 600; font-size: 14px; border: 1px solid #e5e5e5; border-radius: 6px; background: #fafafa; }
-  .story-info p { font-size: 15px; line-height: 1.6; color: #444; margin-bottom: 15px; }
-  .note { font-size: 14px; color: #666; margin-bottom: 20px; }
+  .story-category {
+    display: inline-flex;
+    margin-bottom: 10px;
+    font-size: 0.78rem;
+    font-weight: 700;
+    border-radius: 999px;
+    padding: 6px 12px;
+    background: var(--tag-bg);
+    color: var(--text);
+  }
+  .story-info h1 {
+    margin: 0 0 10px;
+    font-size: 28px;
+    color: var(--heading);
+  }
+  .story-price {
+    display: inline-block;
+    margin-bottom: 14px;
+    padding: 6px 14px;
+    font-weight: 600;
+    font-size: 14px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: var(--surface-soft);
+  }
+  .story-info p {
+    font-size: 15px;
+    line-height: 1.6;
+    color: var(--text);
+    margin-bottom: 15px;
+  }
+  .note { font-size: 14px; color: var(--text); margin-bottom: 20px; }
   .chapter-list ul { list-style: none; padding: 0; }
   .chapter-list li { margin-bottom: 10px; }
   .chapter-link {
-    display: flex; justify-content: space-between; align-items: center;
-    color: #1f1f1f; font-weight: 600; padding: 10px 12px; border-radius: 8px; background: #f1f3f6;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: var(--heading);
+    font-weight: 600;
+    padding: 10px 12px;
+    border-radius: 8px;
+    background: var(--tag-bg);
+    transition: transform 0.2s ease, background 0.2s ease;
+  }
+  .chapter-link:hover { background: var(--surface-soft); transform: translateX(2px); }
+  .lock-tag {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 34px;
+    height: 26px;
+    font-size: 14px;
+    color: #ffffff;
+    background: #ef4444;
+    border-radius: 999px;
+    padding: 0 10px;
+    font-weight: 700;
+    animation: lock-bounce 1.25s ease-in-out infinite;
+  }
+
+  @keyframes lock-bounce {
+    0%, 100% {
+      transform: translateY(0) rotate(0deg);
     }
+    30% {
+      transform: translateY(-1px) rotate(-8deg);
+    }
+    60% {
+      transform: translateY(-1px) rotate(8deg);
+    }
+  }
 
-  .chapter-link:hover { background: #e5e5e5; }
-  .lock-tag { font-size: 12px; color: #b02a37; }
-
-   @media (max-width: 768px) {
+  @media (max-width: 768px) {
     .story-detail-card { flex-direction: column; align-items: center; text-align: center; }
     .story-info { max-width: 100%; }
   }
-
-
 </style>
 
 <div class="story-detail-wrapper">
 
-  <a href="{% url 'home' %}" class="back-btn">← Back to Home</a>
+  <a href="{% url 'home' %}" class="back-btn" data-i18n="story.back">← Rudi Nyumbani</a>
 
   <div class="story-detail-card">
 
@@ -46,32 +123,32 @@
     </div>
 
     <div class="story-info">
+      <div class="story-category">{{ story.category.name|default:"Uncategorized" }}</div>
       <h1>{{ story.title }}</h1>
 
-      <!-- PRICE -->
       {% if story.price > 0 %}
-        <div class="story-price">Ruhusa Kamili: TZS {{ story.price }}</div>
+        <div class="story-price" id="storyPriceBadge" data-price="{{ story.price }}">Ruhusa Kamili: TZS {{ story.price }}</div>
       {% else %}
-        <div class="story-price">Bure</div>
+        <div class="story-price" id="storyPriceBadge" data-price="0">Bure</div>
       {% endif %}
 
       <p>{{ story.description }}</p>
-      <div class="note">Chapters 1-{{ free_chapter_limit }} ni bure. Kwa chapter zilizobaki ni zakulipia.</div>
+      <div class="note" id="storyFreeNote" data-limit="{{ free_chapter_limit }}">Chapters 1-{{ free_chapter_limit }} ni bure. Kwa chapter zilizobaki ni zakulipia.</div>
 
       <div class="chapter-list">
-        <h3>Chapters</h3>
+        <h3 data-i18n="story.chapters">Sura</h3>
         <ul>
           {% for chapter in chapters %}
             <li>
               <a class="chapter-link" href="{% url 'chapter_reader' chapter.id %}">
-                <span>Chapter {{ chapter.order }} — {{ chapter.title }}</span>
+                <span><span data-i18n="reader.chapter">Sura</span> {{ chapter.order }} — {{ chapter.title }}</span>
                 {% if chapter.order > free_chapter_limit and not has_story_access %}
-                  <span class="lock-tag">🔒</span>
+                  <span class="lock-tag" aria-label="Imefungwa" title="Imefungwa">🔒</span>
                 {% endif %}
               </a>
             </li>
           {% empty %}
-            <li>No chapters yet.</li>
+            <li data-i18n="story.noChapters">Hakuna sura bado.</li>
           {% endfor %}
         </ul>
       </div>
@@ -80,6 +157,26 @@
   </div>
 
 </div>
+
+<script>
+  (function () {
+    const storyPrice = document.getElementById("storyPriceBadge");
+    const freeNote = document.getElementById("storyFreeNote");
+    if (!storyPrice || !freeNote || !window.qissaT) return;
+
+    const renderStoryInterface = () => {
+      const price = Number(storyPrice.dataset.price || "0");
+      const limit = freeNote.dataset.limit || "4";
+      storyPrice.textContent = price > 0
+        ? window.qissaT("story.fullAccess", { price: price.toLocaleString() })
+        : window.qissaT("story.free");
+      freeNote.textContent = window.qissaT("story.freeNote", { n: limit });
+    };
+
+    renderStoryInterface();
+    document.addEventListener("qissa:languagechange", renderStoryInterface);
+  })();
+</script>
 
 {% endblock %}
 

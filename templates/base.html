@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="{{ LANGUAGE_CODE }}">
+<html lang="sw">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -8,69 +8,92 @@
   {% load static %}
   {% load i18n %}
 
-  <!-- Inline SVG favicon -->
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='18' fill='%23111'/%3E%3Cpath d='M20 30 Q50 20 80 30 L80 75 Q50 65 20 75 Z' fill='%23f6a01a' opacity='0.9'/%3E%3Cline x1='50' y1='25' x2='50' y2='75' stroke='%23111' stroke-width='2'/%3E%3Ctext x='50%25' y='55%25' text-anchor='middle' fill='white' font-size='32' font-family='Georgia, serif' dy='.3em'%3EQ%3C/text%3E%3C/svg%3E">
 
   <style>
-    /* ===== BASE ===== */
-    *, *::before, *::after {
-      box-sizing: border-box;
+    :root {
+      --bg: #f8fafc;
+      --surface: #ffffff;
+      --surface-soft: #f1f5f9;
+      --accent-primary: #111827;
+      --accent-secondary: #334155;
+      --heading: #0f172a;
+      --text: #334155;
+      --tag-bg: #e2e8f0;
+      --free: #16a34a;
+      --locked: #dc2626;
+      --border: #e2e8f0;
+      --header-bg: rgba(255, 255, 255, 0.9);
+      --footer-bg: #111827;
+      --footer-text: #cbd5e1;
     }
 
-    html {
-      scroll-behavior: smooth;
+    html[data-theme="dark"] {
+      --bg: #0B0B1A;
+      --surface: #141428;
+      --surface-soft: #1E1E3A;
+      --accent-primary: #FF4D6D;
+      --accent-secondary: #FF6B81;
+      --heading: #FFFFFF;
+      --text: #B8B8C7;
+      --tag-bg: #1E1E3A;
+      --free: #22C55E;
+      --locked: #EF4444;
+      --border: #262640;
+      --header-bg: rgba(11, 11, 26, 0.9);
+      --footer-bg: #0B0B1A;
+      --footer-text: #B8B8C7;
     }
+
+    *, *::before, *::after { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
 
     body {
       margin: 0;
       min-height: 100vh;
       font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      background: #f8fafc;
-      color: #0f172a;
+      background: var(--bg);
+      color: var(--text);
       display: flex;
       flex-direction: column;
+      opacity: 0;
+      transform: translateY(8px);
+      transition: opacity 0.45s ease, transform 0.45s ease, background-color 0.35s ease, color 0.35s ease;
     }
 
-    img {
-      max-width: 100%;
-      display: block;
+    body.page-ready {
+      opacity: 1;
+      transform: none;
     }
 
-    a {
-      color: inherit;
-      text-decoration: none;
-    }
-
-    button,
-    input,
-    textarea,
-    select {
-      font: inherit;
-    }
+    img { max-width: 100%; display: block; }
+    a { color: inherit; text-decoration: none; }
+    button, input, textarea, select { font: inherit; }
 
     .site-shell {
       width: 100%;
       max-width: 1100px;
       margin: 0 auto;
       padding: 0 20px;
-      width: 100%;
     }
 
     .site-header {
       position: sticky;
       top: 0;
-      z-index: 20;
-      background: #ffffff;
-      border-bottom: 1px solid #e2e8f0;
-      box-shadow: 0 10px 30px rgba(15, 23, 42, 0.06);
+      z-index: 30;
+      background: var(--header-bg);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--border);
+      box-shadow: 0 8px 28px rgba(15, 23, 42, 0.06);
     }
 
     .header-inner {
+      position: relative;
       display: flex;
       align-items: center;
       justify-content: space-between;
       gap: 16px;
-      padding: 18px 0;
+      padding: 16px 0;
     }
 
     .brand-link {
@@ -79,7 +102,7 @@
       gap: 10px;
       font-weight: 800;
       font-size: 1.2rem;
-      color: #111827;
+      color: var(--heading);
     }
 
     .brand-mark {
@@ -98,36 +121,57 @@
     .nav-links {
       display: flex;
       align-items: center;
-      gap: 16px;
+      gap: 10px;
       flex-wrap: wrap;
       font-size: 0.95rem;
     }
 
     .nav-links a,
     .nav-links button {
-      color: #475569;
+      color: var(--text);
       border-radius: 999px;
       padding: 10px 14px;
-      transition: all 0.2s ease;
+      transition: transform 0.2s ease, background 0.2s ease, color 0.2s ease;
     }
 
     .nav-links a:hover,
     .nav-links button:hover {
-      color: #111827;
-      background: #f1f5f9;
+      color: var(--heading);
+      background: var(--surface-soft);
+      transform: translateY(-1px);
     }
 
     .nav-button {
       border: 1px solid transparent;
-      background: #111827;
-      color: #ffffff;
+      background: var(--accent-primary);
+      color: #ffffff !important;
       padding: 10px 18px;
       border-radius: 999px;
       cursor: pointer;
     }
 
-    .nav-button:hover {
-      background: #0f172a;
+    .language-toggle {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text);
+      border-radius: 999px;
+      padding: 10px 14px;
+      cursor: pointer;
+    }
+
+    .theme-toggle {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text);
+      border-radius: 999px;
+      padding: 10px 14px;
+      cursor: pointer;
     }
 
     main {
@@ -137,8 +181,8 @@
     }
 
     .footer {
-      background: #111827;
-      color: #cbd5e1;
+      background: var(--footer-bg);
+      color: var(--footer-text);
       padding: 24px 0;
       font-size: 0.95rem;
     }
@@ -151,8 +195,21 @@
       flex-wrap: wrap;
     }
 
-    .footer a {
-      color: #fbbf24;
+    .whatsapp-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--free);
+      color: #ffffff;
+      border-radius: 999px;
+      padding: 10px 16px;
+      font-weight: 700;
+      transition: background 0.2s ease, transform 0.2s ease;
+    }
+
+    .whatsapp-btn:hover {
+      filter: brightness(0.94);
+      transform: translateY(-1px);
     }
 
     .btn {
@@ -167,174 +224,374 @@
     }
 
     .btn-primary {
-      background: #111827;
+      background: var(--accent-primary);
       color: white;
       border: 1px solid transparent;
     }
 
     .btn-secondary {
-      background: rgba(15, 23, 42, 0.05);
-      color: #111827;
-      border: 1px solid #e2e8f0;
+      background: var(--surface-soft);
+      color: var(--heading);
+      border: 1px solid var(--border);
     }
 
-    .btn:hover {
-      transform: translateY(-1px);
+    .btn:hover { transform: translateY(-1px); }
+    .section-title { font-size: clamp(1.9rem, 2.6vw, 2.9rem); line-height: 1.04; margin: 0; color: var(--heading); }
+    .text-muted { color: var(--text); }
+    .page-heading { margin-bottom: 16px; }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(12px);
+      transition: opacity 0.45s ease, transform 0.45s ease;
     }
 
-    .section-title {
-      font-size: clamp(1.9rem, 2.6vw, 2.9rem);
-      line-height: 1.04;
-      margin: 0;
-      color: #111827;
+    .reveal.visible {
+      opacity: 1;
+      transform: none;
     }
 
-    .text-muted {
-      color: #64748b;
+    .hamburger {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      border: none;
+      background: none;
+      cursor: pointer;
     }
 
-    .page-heading {
-      margin-bottom: 16px;
+    .hamburger span {
+      width: 26px;
+      height: 3px;
+      background: var(--heading);
+      border-radius: 3px;
+      display: block;
     }
-
-    /* HAMBURGER */
-
-.hamburger {
-  display: none;
-  flex-direction: column;
-  gap: 5px;
-  border: none;
-  background: none;
-  cursor: pointer;
-}
-
-.hamburger span {
-  width: 26px;
-  height: 3px;
-  background: #111827;
-  border-radius: 3px;
-  display: block;
-}
-
-/* MOBILE MENU */
-
-@media (max-width: 768px) {
-
-  .hamburger {
-    display: flex;
-  }
-
-  .nav-links {
-    position: absolute;
-    top: 70px;
-    right: 20px;
-    flex-direction: column;
-    background: white;
-    border: 1px solid #e2e8f0;
-    padding: 16px;
-    border-radius: 12px;
-    box-shadow: 0 15px 40px rgba(0,0,0,0.08);
-    display: none;
-    min-width: 180px;
-  }
-
-  .nav-links.active {
-    display: flex;
-  }
-
-}
 
     @media (max-width: 768px) {
-      .header-inner {
-        flex-direction: row;
-        align-items: flex-start;
+      .hamburger { display: flex; }
+      .nav-links {
+        position: absolute;
+        top: 68px;
+        right: 0;
+        flex-direction: column;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        padding: 16px;
+        border-radius: 12px;
+        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.08);
+        display: none;
+        min-width: 210px;
       }
-
-      main {
-        padding: 32px 0;
-      }
+      .nav-links.active { display: flex; }
+      main { padding: 32px 0; }
     }
-    @media (max-width: 768px){
-
-.nav-links{
-position:absolute;
-top:70px;
-right:20px;
-flex-direction:column;
-background:white;
-border:1px solid #e2e8f0;
-padding:16px;
-border-radius:12px;
-box-shadow:0 15px 40px rgba(0,0,0,0.08);
-display:none;
-min-width:180px;
-}
-
-.nav-links.active{
-display:flex;
-}
-
-}
   </style>
 </head>
-<script>
-document.addEventListener("DOMContentLoaded", function () {
-
-  const hamburger = document.getElementById("hamburger");
-  const navLinks = document.getElementById("navLinks");
-
-  hamburger.addEventListener("click", function () {
-    navLinks.classList.toggle("active");
-  });
-
-});
-</script>
-
 <body>
 <header class="site-header">
   <div class="site-shell header-inner">
-
     <a href="{% url 'home' %}" class="brand-link">
       <span class="brand-mark">Q</span>
       <span>Qissa</span>
     </a>
 
-    <button class="hamburger" id="hamburger">
+    <button class="hamburger" id="hamburger" type="button" aria-label="Toggle menu">
       <span></span>
       <span></span>
       <span></span>
     </button>
 
     <nav class="nav-links" id="navLinks">
+      <button
+        type="button"
+        class="language-toggle"
+        id="languageToggle"
+        aria-label="Badilisha lugha kwenda English"
+        data-i18n-aria-label="nav.toggle.aria"
+      >
+        <span aria-hidden="true">🌐</span>
+        <span id="languageToggleCode">EN</span>
+      </button>
+
+      <button
+        type="button"
+        class="theme-toggle"
+        id="themeToggle"
+        aria-label="Badilisha kwenda mandhari ya giza"
+      >
+        <span aria-hidden="true">🌓</span>
+        <span id="themeToggleText">Giza</span>
+      </button>
 
       {% if user.is_staff %}
-        <a href="{% url 'dashboard_home' %}">Dashboard</a>
+        <a href="{% url 'dashboard_home' %}" data-i18n="nav.dashboard">Dashibodi</a>
       {% endif %}
 
       {% if user.is_authenticated %}
         <form method="post" action="{% url 'logout' %}" style="display:inline;">
           {% csrf_token %}
-          <button type="submit" class="nav-button">Logout</button>
+          <button type="submit" class="nav-button" data-i18n="nav.logout">Toka</button>
         </form>
       {% else %}
-        <a href="{% url 'login' %}">{% trans "Login" %}</a>
-        <a href="{% url 'register' %}" class="nav-button">{% trans "Register" %}</a>
+        <a href="{% url 'login' %}" data-i18n="nav.login">Ingia</a>
+        <a href="{% url 'register' %}" class="nav-button" data-i18n="nav.register">Jisajili</a>
       {% endif %}
-
     </nav>
-
   </div>
 </header>
 
-  <main class="site-shell">
-    {% block content %}{% endblock %}
-  </main>
+<main class="site-shell">
+  {% block content %}{% endblock %}
+</main>
 
-  <footer class="footer">
-    <div class="site-shell footer-inner">
-      <p>© {% now "Y" %} Qissa. Stories, chapters, and author publishing across East Africa.</p>
-      <a href="https://wa.me/255621932919" target="_blank">Contact support</a>
-    </div>
-  </footer>
+<footer class="footer">
+  <div class="site-shell footer-inner">
+    <p>© <span>{% now "Y" %}</span> <span data-i18n="footer.copy">Qissa. Simulizi, sura, na uchapishaji wa waandishi Afrika Mashariki.</span></p>
+    <a href="https://wa.me/255621932919" target="_blank" class="whatsapp-btn" data-i18n="footer.whatsapp">WhatsApp</a>
+  </div>
+</footer>
+
+<script>
+  window.qissaI18n = {
+    sw: {
+      "nav.dashboard": "Dashibodi",
+      "nav.logout": "Toka",
+      "nav.login": "Ingia",
+      "nav.register": "Jisajili",
+      "nav.toggle.aria": "Badilisha lugha kwenda English",
+      "footer.copy": "Qissa. Simulizi, sura, na uchapishaji wa waandishi Afrika Mashariki.",
+      "footer.whatsapp": "WhatsApp",
+      "reader.back": "Rudi Nyumbani",
+      "reader.moreStories": "Hadithi zaidi",
+      "reader.chapter": "Sura",
+      "reader.prev": "Iliyopita",
+      "reader.next": "Inayofuata",
+      "story.back": "Rudi Nyumbani",
+      "story.chapters": "Sura",
+      "story.noChapters": "Hakuna sura bado.",
+      "story.freeNote": "Sura 1-{n} ni bure. Sura zilizobaki zinahitaji malipo.",
+      "story.fullAccess": "Ruhusa Kamili: TZS {price}",
+      "story.free": "Bure",
+      "story.locked": "Imefungwa",
+      "story.freeTag": "Bure",
+      "comments.title": "Maoni",
+      "comments.post": "Tuma maoni",
+      "comments.placeholder": "Andika maoni yako...",
+      "comments.login": "Ingia",
+      "comments.joinText": "ili ujiunge na mjadala.",
+      "comments.empty": "Hakuna maoni bado. Kuwa wa kwanza kuandika maoni.",
+      "home.browse": "Vinjari hadithi",
+      "home.join": "Jiunge na Qissa",
+      "home.searchPlaceholder": "Tafuta kwa jina, mwandishi, au aina...",
+      "home.searchAria": "Tafuta hadithi",
+      "home.searchBtn": "Tafuta",
+      "home.featured": "Hadithi maarufu",
+      "home.latest": "Mapya na yanayopendwa zaidi",
+      "home.heroTitle": "Gundua hadithi bora za mfululizo kutoka Afrika Mashariki.",
+      "home.heroBody": "Chunguza sura mpya, endelea ulipoishia, na fungua hadithi maalum kutoka kwa waandishi bora wa Kiswahili.",
+      "home.statsAvailable": "Hadithi zinazopatikana sasa",
+      "home.statsReaders": "Wasomaji hai kila siku",
+      "home.statsFast": "Ufikiaji wa haraka",
+      "home.statsOneStep": "Kuingia kwa hatua moja na kusoma sura",
+      "home.views": "mionekano",
+      "home.prev": "Nyuma",
+      "home.next": "Mbele",
+      "home.page": "Ukurasa {current} wa {total}",
+      "home.all": "Zote",
+      "home.empty": "Hakuna hadithi zinazopatikana bado. Tafadhali angalia tena hivi karibuni.",
+      "auth.home": "Nyumbani",
+      "auth.welcome": "Karibu tena",
+      "auth.signIn": "Ingia",
+      "auth.noAccount": "Huna akaunti?",
+      "auth.createAccountTitle": "Tengeneza akaunti yako",
+      "auth.createAccountBtn": "Tengeneza akaunti",
+      "auth.alreadyHave": "Je, tayari una akaunti?",
+      "auth.fullNamePlaceholder": "Jina kamili",
+      "auth.phonePlaceholder": "Namba ya simu",
+      "auth.hint": "Chagua msimbo wa nchi, kisha andika namba bila + au 00.",
+      "theme.dark": "Giza",
+      "theme.light": "Mwanga",
+      "theme.switchToDark": "Badilisha kwenda mandhari ya giza",
+      "theme.switchToLight": "Badilisha kwenda mandhari ya mwanga"
+    },
+    en: {
+      "nav.dashboard": "Dashboard",
+      "nav.logout": "Logout",
+      "nav.login": "Login",
+      "nav.register": "Register",
+      "nav.toggle.aria": "Switch interface to Kiswahili",
+      "footer.copy": "Qissa. Stories, chapters, and author publishing across East Africa.",
+      "footer.whatsapp": "WhatsApp",
+      "reader.back": "Back to Home",
+      "reader.moreStories": "More stories",
+      "reader.chapter": "Chapter",
+      "reader.prev": "Previous",
+      "reader.next": "Next",
+      "story.back": "Back to Home",
+      "story.chapters": "Chapters",
+      "story.noChapters": "No chapters yet.",
+      "story.freeNote": "Chapters 1-{n} are free. The remaining chapters require payment.",
+      "story.fullAccess": "Full Access: TZS {price}",
+      "story.free": "Free",
+      "story.locked": "Locked",
+      "story.freeTag": "Free",
+      "comments.title": "Comments",
+      "comments.post": "Post comment",
+      "comments.placeholder": "Write your comment...",
+      "comments.login": "Login",
+      "comments.joinText": "to join the discussion.",
+      "comments.empty": "No comments yet. Be the first one to comment.",
+      "home.browse": "Browse stories",
+      "home.join": "Join Qissa",
+      "home.searchPlaceholder": "Search by title, author, or genre...",
+      "home.searchAria": "Search stories",
+      "home.searchBtn": "Search",
+      "home.featured": "Featured stories",
+      "home.latest": "Latest and most loved releases",
+      "home.heroTitle": "Discover the best serialized stories from East Africa.",
+      "home.heroBody": "Explore fresh chapters, continue where you left off, and unlock premium stories from top Swahili authors.",
+      "home.statsAvailable": "Stories available now",
+      "home.statsReaders": "Active readers daily",
+      "home.statsFast": "Fast access",
+      "home.statsOneStep": "One-step login and chapter reading",
+      "home.views": "views",
+      "home.prev": "Prev",
+      "home.next": "Next",
+      "home.page": "Page {current} of {total}",
+      "home.all": "All",
+      "home.empty": "No stories available yet. Please check back soon.",
+      "auth.home": "Home",
+      "auth.welcome": "Welcome back",
+      "auth.signIn": "Sign in",
+      "auth.noAccount": "Don't have an account?",
+      "auth.createAccountTitle": "Create your account",
+      "auth.createAccountBtn": "Create account",
+      "auth.alreadyHave": "Already have an account?",
+      "auth.fullNamePlaceholder": "Full Name",
+      "auth.phonePlaceholder": "Phone number",
+      "auth.hint": "Choose country code, then enter number without + or 00.",
+      "theme.dark": "Dark",
+      "theme.light": "Light",
+      "theme.switchToDark": "Switch to dark mode",
+      "theme.switchToLight": "Switch to light mode"
+    }
+  };
+
+  window.qissaT = function(key, vars = {}) {
+    const lang = localStorage.getItem("qissa_ui_lang") || "sw";
+    const dict = window.qissaI18n[lang] || window.qissaI18n.sw;
+    let value = dict[key] || key;
+    Object.keys(vars).forEach((name) => {
+      value = value.replace(`{${name}}`, vars[name]);
+    });
+    return value;
+  };
+
+  (function () {
+    const html = document.documentElement;
+    const toggleButton = document.getElementById("languageToggle");
+    const toggleCode = document.getElementById("languageToggleCode");
+    const themeToggle = document.getElementById("themeToggle");
+    const themeToggleText = document.getElementById("themeToggleText");
+    const hamburger = document.getElementById("hamburger");
+    const navLinks = document.getElementById("navLinks");
+
+    function activeLanguage() {
+      return localStorage.getItem("qissa_ui_lang") || "sw";
+    }
+
+    function applyLanguage(lang) {
+      const dictionary = window.qissaI18n[lang] || window.qissaI18n.sw;
+      html.lang = lang;
+      localStorage.setItem("qissa_ui_lang", lang);
+
+      document.querySelectorAll("[data-i18n]").forEach((element) => {
+        const key = element.dataset.i18n;
+        if (dictionary[key]) {
+          element.textContent = dictionary[key];
+        }
+      });
+
+      document.querySelectorAll("[data-i18n-placeholder]").forEach((element) => {
+        const key = element.dataset.i18nPlaceholder;
+        if (dictionary[key]) {
+          element.setAttribute("placeholder", dictionary[key]);
+        }
+      });
+
+      document.querySelectorAll("[data-i18n-aria-label]").forEach((element) => {
+        const key = element.dataset.i18nAriaLabel;
+        if (dictionary[key]) {
+          element.setAttribute("aria-label", dictionary[key]);
+        }
+      });
+
+      if (toggleCode) {
+        toggleCode.textContent = lang === "sw" ? "EN" : "SW";
+      }
+
+      updateThemeToggleLabel();
+
+      document.dispatchEvent(new CustomEvent("qissa:languagechange", { detail: { lang } }));
+    }
+
+    function activeTheme() {
+      return localStorage.getItem("qissa_theme") || "light";
+    }
+
+    function applyTheme(theme) {
+      html.dataset.theme = theme;
+      localStorage.setItem("qissa_theme", theme);
+      updateThemeToggleLabel();
+    }
+
+    function updateThemeToggleLabel() {
+      if (!themeToggleText || !window.qissaT) return;
+      const theme = activeTheme();
+      themeToggleText.textContent = window.qissaT(theme === "dark" ? "theme.light" : "theme.dark");
+      if (themeToggle) {
+        themeToggle.setAttribute(
+          "aria-label",
+          window.qissaT(theme === "dark" ? "theme.switchToLight" : "theme.switchToDark")
+        );
+      }
+    }
+
+    if (toggleButton) {
+      toggleButton.addEventListener("click", function () {
+        const nextLanguage = activeLanguage() === "sw" ? "en" : "sw";
+        applyLanguage(nextLanguage);
+      });
+    }
+
+    if (hamburger && navLinks) {
+      hamburger.addEventListener("click", function () {
+        navLinks.classList.toggle("active");
+      });
+    }
+
+    if (themeToggle) {
+      themeToggle.addEventListener("click", function () {
+        const nextTheme = activeTheme() === "dark" ? "light" : "dark";
+        applyTheme(nextTheme);
+      });
+    }
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("visible");
+        }
+      });
+    }, { threshold: 0.12 });
+
+    document.querySelectorAll(".reveal").forEach((item) => observer.observe(item));
+
+    applyTheme(activeTheme());
+    applyLanguage(activeLanguage());
+    document.body.classList.add("page-ready");
+  })();
+</script>
 </body>
 </html>
