@@ -75,6 +75,20 @@
       color: var(--text);
       padding-bottom: 4px;
     }
+    .story-like {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .story-like-heart {
+      display: inline-block;
+      animation: story-like-pop 1.25s ease-in-out infinite;
+      transform-origin: center;
+    }
+    @keyframes story-like-pop {
+      0%, 100% { transform: scale(1); }
+      45% { transform: scale(1.2); }
+    }
   </style>
 
   <div class="story-cover">
@@ -88,6 +102,6 @@
   <div class="story-info">
     <h3>{{ story.title }}</h3>
     <p>{{ story.description|truncatechars:80 }}</p>
-    <span>{{ story.views }} mionekano</span>
+    <span><span class="story-like"><span class="story-like-heart" aria-hidden="true">❤</span>{{ story.likes_count|default:0 }}</span>{% if user.is_staff %} · 👁 {{ story.views }}{% endif %}</span>
   </div>
 </a>

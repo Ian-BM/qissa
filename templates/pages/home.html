@@ -265,6 +265,20 @@
     font-size: 0.85rem;
     padding-bottom: 4px;
   }
+  .heart-wrap {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+  }
+  .heart-icon {
+    display: inline-block;
+    animation: heart-pop 1.35s ease-in-out infinite;
+    transform-origin: center;
+  }
+  @keyframes heart-pop {
+    0%, 100% { transform: scale(1); }
+    40% { transform: scale(1.22); }
+  }
 
   .pagination {
     display: flex;
@@ -310,9 +324,9 @@
     <div class="hero-copy">
       <span class="hero-eyebrow">{% trans "Simulizi kwa kila msomaji" %}</span>
       <h1 class="hero-title" data-i18n="home.heroTitle">Gundua hadithi bora za mfululizo kutoka Afrika Mashariki.</h1>
-      <p data-i18n="home.heroBody">Chunguza sura mpya, endelea ulipoishia, na fungua hadithi maalum kutoka kwa waandishi bora wa Kiswahili.</p>
+      <p data-i18n="home.heroBody">Soma hadithi kali za mapenzi, drama na maisha halisi — popote ulipo.</p>
       <div class="hero-actions">
-        <a href="#stories" class="btn btn-primary" data-i18n="home.browse">{% trans "Browse stories" %}</a>
+        <a href="#stories" class="btn btn-primary" data-i18n="home.browse">Anza kusoma</a>
         <a href="{% url 'register' %}" class="btn btn-secondary" data-i18n="home.join">{% trans "Join Qissa" %}</a>
       </div>
     </div>
@@ -392,7 +406,12 @@
           <div class="story-card-content">
             <h3>{{ story.title|truncatechars:48 }}</h3>
             <div class="story-category-tag">{{ story.category.name|default:"Bila kategoria" }}</div>
-            <div class="story-meta">👁 {{ story.views }} <span data-i18n="home.views">{% trans "views" %}</span></div>
+            <div class="story-meta">
+              <span class="heart-wrap"><span class="heart-icon" aria-hidden="true">❤</span> {{ story.likes_count|default:0 }}</span>
+              {% if user.is_staff %}
+                <span>👁 {{ story.views }}</span>
+              {% endif %}
+            </div>
           </div>
         </a>
       {% empty %}

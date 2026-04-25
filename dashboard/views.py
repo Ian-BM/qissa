@@ -1,3 +1,4 @@
+from django.db.models import Count, Q
 from django.shortcuts import render, redirect, get_object_or_404
 from stories.models import Story
 from stories.forms import StoryForm
@@ -8,7 +9,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 from accounts.models import User
 from core.utils import admin_required
 from stories.forms import ChapterForm, StoryForm
-from stories.models import Chapter, Story, StoryAccess
+from stories.models import Chapter, Story, StoryAccess, StoryReaction
 
 
 
@@ -18,7 +19,10 @@ def dashboard_home(request):
     if not request.user.is_staff:
         return redirect('/')
     
-    stories = Story.objects.all().order_by("-created_at")
+    stories = Story.objects.annotate(
+        likes_count=Count("reactions", filter=Q(reactions__value=StoryReaction.LIKE)),
+        dislikes_count=Count("reactions", filter=Q(reactions__value=StoryReaction.DISLIKE)),
+    ).order_by("-created_at")
     return render(
         request,
         "dash/home.html",

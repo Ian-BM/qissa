@@ -1,8 +1,9 @@
 from django.contrib.auth.decorators import login_required
+from django.db.models import Count, Q
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_http_methods
 
-from .models import Chapter, Story, StoryAccess
+from .models import Chapter, Story, StoryAccess, StoryReaction
 
 FREE_CHAPTER_LIMIT = 4
 
@@ -10,7 +11,10 @@ FREE_CHAPTER_LIMIT = 4
 @require_http_methods(["GET"])
 def story_detail(request, slug):
     story = get_object_or_404(
-        Story.objects.select_related("category"),
+        Story.objects.select_related("category").annotate(
+            likes_count=Count("reactions", filter=Q(reactions__value=StoryReaction.LIKE)),
+            dislikes_count=Count("reactions", filter=Q(reactions__value=StoryReaction.DISLIKE)),
+        ),
         slug=slug,
     )
 
@@ -20,6 +24,13 @@ def story_detail(request, slug):
         request.user.is_authenticated
         and StoryAccess.objects.filter(user=request.user, story=story).exists()
     )
+    current_reaction = None
+    if request.user.is_authenticated:
+        current_reaction = (
+            StoryReaction.objects.filter(story=story, user=request.user)
+            .values_list("value", flat=True)
+            .first()
+        )
 
     return render(
         request,
@@ -29,8 +40,26 @@ def story_detail(request, slug):
             "chapters": chapters,
             "free_chapter_limit": FREE_CHAPTER_LIMIT,
             "has_story_access": has_story_access,
+            "current_reaction": current_reaction,
         },
     )
+
+
+@login_required
+@require_http_methods(["POST"])
+def story_react(request, slug):
+    story = get_object_or_404(Story, slug=slug)
+    reaction = request.POST.get("reaction")
+    if reaction not in {"like", "dislike"}:
+        return redirect("story_detail", slug=slug)
+
+    value = StoryReaction.LIKE if reaction == "like" else StoryReaction.DISLIKE
+    StoryReaction.objects.update_or_create(
+        story=story,
+        user=request.user,
+        defaults={"value": value},
+    )
+    return redirect("story_detail", slug=slug)
 
 
 @login_required
@@ -71,7 +100,9 @@ def chapter_reader(request, id):
 
     related = Story.objects.filter(
         is_published=True,
-    ).exclude(id=story.id)
+    ).exclude(id=story.id).annotate(
+        likes_count=Count("reactions", filter=Q(reactions__value=StoryReaction.LIKE)),
+    )
     if story.category_id:
         related = related.filter(category_id=story.category_id)
     related = related.order_by("-created_at")[:8]

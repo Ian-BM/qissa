@@ -1,8 +1,8 @@
-from django.db.models import Q
+from django.db.models import Count, Q
 from django.shortcuts import render
 from django.core.paginator import Paginator
 
-from stories.models import Story, StoryCategory
+from stories.models import Story, StoryCategory, StoryReaction
 
 
 def home(request):
@@ -11,7 +11,9 @@ def home(request):
 
     stories = Story.objects.filter(
         is_published=True
-    ).select_related("category").order_by("-created_at")
+    ).select_related("category").annotate(
+        likes_count=Count("reactions", filter=Q(reactions__value=StoryReaction.LIKE))
+    ).order_by("-created_at")
 
     if query:
         stories = stories.filter(

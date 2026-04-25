@@ -133,3 +133,25 @@ class StoryComment(models.Model):
 
     def __str__(self):
         return f"{self.user} on {self.story}"
+
+
+class StoryReaction(models.Model):
+    LIKE = 1
+    DISLIKE = -1
+    REACTION_CHOICES = (
+        (LIKE, "Like"),
+        (DISLIKE, "Dislike"),
+    )
+
+    story = models.ForeignKey(Story, on_delete=models.CASCADE, related_name="reactions")
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    value = models.SmallIntegerField(choices=REACTION_CHOICES)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        unique_together = ("story", "user")
+        ordering = ["-updated_at"]
+
+    def __str__(self):
+        return f"{self.user} -> {self.story} ({self.value})"
