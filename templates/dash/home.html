@@ -88,6 +88,7 @@
       <div class="category-chip">{{ story.category.name|default:"Bila kategoria" }}</div>
       <div class="meta">{{ story.chapters.count }} sura · {{ story.access_grants.count }} wasomaji waliofunguliwa</div>
       <div class="reaction-meta">
+        <span>👁 {{ story.views|default:0 }}</span>
         <span>👍 {{ story.likes_count|default:0 }}</span>
         <span>👎 {{ story.dislikes_count|default:0 }}</span>
       </div>
