@@ -20,6 +20,7 @@ def story_detail(request, slug):
             dislikes_count=Count(
                 "reactions", filter=Q(reactions__value=StoryReaction.DISLIKE)
             ),
+            chapter_count=Count("chapters", distinct=True),
         ),
         slug=slug,
     )
@@ -45,6 +46,7 @@ def story_detail(request, slug):
             likes_count=Count(
                 "reactions", filter=Q(reactions__value=StoryReaction.LIKE)
             ),
+            chapter_count=Count("chapters", distinct=True),
         )
     )
     if story.category_id:
@@ -61,6 +63,7 @@ def story_detail(request, slug):
         {
             "story": story,
             "chapters": chapters,
+            "total_chapters": story.chapter_count,
             "free_chapter_limit": FREE_CHAPTER_LIMIT,
             "has_story_access": has_story_access,
             "current_reaction": current_reaction,
@@ -130,6 +133,7 @@ def chapter_reader(request, id):
         is_published=True,
     ).exclude(id=story.id).select_related("category", "author").annotate(
         likes_count=Count("reactions", filter=Q(reactions__value=StoryReaction.LIKE)),
+        chapter_count=Count("chapters", distinct=True),
     )
     if story.category_id:
         related = related.filter(category_id=story.category_id)

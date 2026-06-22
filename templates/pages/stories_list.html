@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}Simulizi Ndefu — Qissa{% endblock %}
+
+{% block content %}
+<style>
+  .stories-page { display: grid; gap: 28px; padding: 4px 0 24px; }
+  .stories-hero h1 { margin: 0 0 8px; color: var(--heading); font-size: clamp(1.5rem, 3vw, 2rem); }
+  .stories-hero p { margin: 0; color: var(--text); line-height: 1.65; }
+  .stories-toolbar {
+    display: grid;
+    gap: 12px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 16px;
+  }
+  .stories-search { display: flex; gap: 0; }
+  .stories-search input {
+    flex: 1;
+    border: 1px solid var(--border);
+    border-right: none;
+    border-radius: 10px 0 0 10px;
+    padding: 10px 12px;
+    background: var(--surface-soft);
+    color: var(--heading);
+  }
+  .stories-search button {
+    border: 1px solid var(--accent-primary);
+    background: var(--accent-primary);
+    color: #fff;
+    padding: 0 16px;
+    border-radius: 0 10px 10px 0;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .stories-filters { display: flex; flex-wrap: wrap; gap: 8px; }
+  .filter-chip {
+    padding: 6px 12px;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    background: var(--surface-soft);
+    color: var(--heading);
+    font-size: 0.82rem;
+  }
+  .filter-chip.active { border-color: var(--accent-primary); }
+  .story-card__category { margin-top: 4px; font-size: 0.75rem; color: var(--text); }
+  .pagination { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; }
+  .pagination a, .pagination span {
+    padding: 8px 14px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--heading);
+    font-size: 0.88rem;
+  }
+</style>
+
+<div class="stories-page">
+  <section class="stories-hero">
+    <h1>Simulizi Ndefu</h1>
+    <p>Hadithi za mfululizo — angalia idadi ya sura, mitazamo, na kategoria.</p>
+  </section>
+
+  <section class="stories-toolbar">
+    <form method="get" class="stories-search" role="search">
+      <input type="text" name="q" value="{{ query|default:'' }}" placeholder="Tafuta hadithi...">
+      <button type="submit">{% trans "Search" %}</button>
+    </form>
+    {% if categories %}
+    <div class="stories-filters">
+      <a href="{% if query %}?q={{ query }}{% else %}?{% endif %}" class="filter-chip {% if not selected_category_slug %}active{% endif %}">Zote</a>
+      {% for category in categories %}
+        <a href="?category={{ category.slug }}{% if query %}&q={{ query }}{% endif %}" class="filter-chip {% if selected_category_slug == category.slug %}active{% endif %}">{{ category.name }}</a>
+      {% endfor %}
+    </div>
+    {% endif %}
+  </section>
+
+  <section>
+    <div class="story-grid">
+      {% for story in stories %}
+        {% include "pages/story_cards.html" with story=story show_category=True %}
+      {% empty %}
+        <p>Hakuna hadithi zinazopatikana bado.</p>
+      {% endfor %}
+    </div>
+    {% if page_obj.has_other_pages %}
+      <div class="pagination" style="margin-top:20px;">
+        {% if page_obj.has_previous %}
+          <a href="?page={{ page_obj.previous_page_number }}{% if query %}&q={{ query }}{% endif %}{% if selected_category_slug %}&category={{ selected_category_slug }}{% endif %}">Nyuma</a>
+        {% endif %}
+        <span>Ukurasa {{ page_obj.number }} wa {{ page_obj.paginator.num_pages }}</span>
+        {% if page_obj.has_next %}
+          <a href="?page={{ page_obj.next_page_number }}{% if query %}&q={{ query }}{% endif %}{% if selected_category_slug %}&category={{ selected_category_slug }}{% endif %}">Mbele</a>
+        {% endif %}
+      </div>
+    {% endif %}
+  </section>
+</div>
+{% endblock %}

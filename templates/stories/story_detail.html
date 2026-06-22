@@ -157,9 +157,13 @@
       <h1>{{ story.title }}</h1>
 
       <div class="story-stats">
+        {% if story.author %}
+          <span>✍ {{ story.author.pen_name }}</span>
+        {% endif %}
+        <span>📖 {{ total_chapters }} Sura</span>
         <span>👁 {{ story.views }} mitazamo</span>
         <span>❤ {{ story.likes_count }}</span>
-        <span>🛒 {{ sales_count }} mauzo</span>
+        <span>{% if story.is_completed %}✅ Imekamilika{% else %}🔄 Inaendelea{% endif %}</span>
       </div>
 
       {% if story.price > 0 %}
@@ -214,7 +218,7 @@
   {% if related_stories %}
     <section class="related-section">
       {% include "partials/section_header.html" with title="Hadithi Zinazohusiana" %}
-      <div class="content-grid">
+      <div class="story-grid">
         {% for related in related_stories %}
           {% include "pages/story_cards.html" with story=related %}
         {% endfor %}

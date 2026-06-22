@@ -1,5 +1,6 @@
 from django.contrib import messages
-from django.db.models import Count, Q, Sum
+from django.db import transaction
+from django.db.models import Count, F, Max, Q, Sum
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_http_methods
 
@@ -79,9 +80,9 @@ def story_create(request):
     if request.method == "POST":
         form = StoryForm(request.POST, request.FILES)
         if form.is_valid():
-            form.save()
-            messages.success(request, "Story created.")
-            return redirect("story_list")
+            story = form.save()
+            messages.success(request, "Story created. Add chapters below.")
+            return redirect("story_manage", story_id=story.id)
     else:
         form = StoryForm()
     return render(request, "dash/story_form.html", {"form": form, "mode": "create"})
@@ -108,12 +109,25 @@ def story_edit(request, story_id):
 
 @admin_required
 def story_manage(request, story_id):
-    story = get_object_or_404(Story, id=story_id)
+    story = get_object_or_404(
+        Story.objects.annotate(
+            chapter_count=Count("chapters"),
+            last_chapter_at=Max("chapters__created_at"),
+        ),
+        id=story_id,
+    )
     monetization = get_story_monetization(story)
+    chapters = story.chapters.order_by("order")
+    last_updated = story.last_chapter_at or story.updated_at or story.created_at
     return render(
         request,
         "dash/story_manage.html",
-        {"story": story, "monetization": monetization},
+        {
+            "story": story,
+            "monetization": monetization,
+            "chapters": chapters,
+            "last_updated": last_updated,
+        },
     )
 
 
@@ -170,10 +184,12 @@ def chapter_create(request, story_id):
             if "is_locked" not in request.POST:
                 chapter.is_locked = default_chapter_locked(chapter.order)
             chapter.save()
+            story.save(update_fields=["updated_at"])
             messages.success(request, "Chapter created.")
             return redirect("story_manage", story_id=story.id)
     else:
-        form = ChapterForm()
+        next_order = story.chapters.aggregate(Max("order"))["order__max"] or 0
+        form = ChapterForm(initial={"order": next_order + 1})
     return render(
         request,
         "dash/chapter_form.html",
@@ -188,6 +204,7 @@ def chapter_edit(request, chapter_id):
         form = ChapterForm(request.POST, instance=chapter)
         if form.is_valid():
             form.save()
+            chapter.story.save(update_fields=["updated_at"])
             messages.success(request, "Chapter updated.")
             return redirect("story_manage", story_id=chapter.story.id)
     else:
@@ -225,6 +242,58 @@ def chapter_bulk_lock(request, story_id):
         is_locked=lock_value
     )
     messages.success(request, f"Updated {updated} chapter(s).")
+    return redirect("story_manage", story_id=story.id)
+
+
+@admin_required
+@require_http_methods(["POST"])
+def chapter_delete(request, chapter_id):
+    chapter = get_object_or_404(Chapter, id=chapter_id)
+    story = chapter.story
+    title = chapter.title
+    order = chapter.order
+    chapter.delete()
+    Chapter.objects.filter(story=story, order__gt=order).update(order=F("order") - 1)
+    story.save(update_fields=["updated_at"])
+    messages.success(request, f'Deleted chapter "{title}".')
+    return redirect("story_manage", story_id=story.id)
+
+
+@admin_required
+@require_http_methods(["POST"])
+def chapter_reorder(request, chapter_id):
+    chapter = get_object_or_404(Chapter, id=chapter_id)
+    direction = request.POST.get("direction")
+    story = chapter.story
+
+    if direction == "up":
+        neighbor = (
+            Chapter.objects.filter(story=story, order__lt=chapter.order)
+            .order_by("-order")
+            .first()
+        )
+    elif direction == "down":
+        neighbor = (
+            Chapter.objects.filter(story=story, order__gt=chapter.order)
+            .order_by("order")
+            .first()
+        )
+    else:
+        messages.error(request, "Invalid reorder action.")
+        return redirect("story_manage", story_id=story.id)
+
+    if not neighbor:
+        messages.info(request, "Chapter is already at the boundary.")
+        return redirect("story_manage", story_id=story.id)
+
+    with transaction.atomic():
+        temp_order = (story.chapters.aggregate(Max("order"))["order__max"] or 0) + 1000
+        Chapter.objects.filter(pk=chapter.pk).update(order=temp_order)
+        Chapter.objects.filter(pk=neighbor.pk).update(order=chapter.order)
+        Chapter.objects.filter(pk=chapter.pk).update(order=neighbor.order)
+
+    story.save(update_fields=["updated_at"])
+    messages.success(request, "Chapter order updated.")
     return redirect("story_manage", story_id=story.id)
 
 

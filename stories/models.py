@@ -1,3 +1,6 @@
+import math
+import re
+
 from django.conf import settings
 from django.db import models
 from django.db.models import F
@@ -54,7 +57,12 @@ class Story(models.Model):
     locked_chapter_clicks = models.PositiveIntegerField(default=0)
     purchase_attempts = models.PositiveIntegerField(default=0)
     is_published = models.BooleanField(default=False)
+    is_completed = models.BooleanField(
+        default=False,
+        help_text="Mark as completed when the series has ended.",
+    )
     created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
         ordering = ["-created_at"]
@@ -72,6 +80,14 @@ class Story(models.Model):
 
     def __str__(self):
         return self.title
+
+    @property
+    def estimated_read_minutes(self):
+        words = sum(
+            len(re.findall(r"\w+", chapter.content or ""))
+            for chapter in self.chapters.all()
+        )
+        return max(1, math.ceil(words / 200))
 
 
 class Chapter(models.Model):

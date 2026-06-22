@@ -44,7 +44,8 @@
         </td>
         <td>
           <div class="dash-actions">
-            <a href="{% url 'story_manage' story.id %}" class="dash-btn dash-btn-sm dash-btn-primary">Manage</a>
+            <a href="{% url 'story_detail' story.slug %}" class="dash-btn dash-btn-sm" target="_blank" rel="noopener">View</a>
+            <a href="{% url 'story_manage' story.id %}" class="dash-btn dash-btn-sm dash-btn-primary">Manage Chapters</a>
             <a href="{% url 'story_edit' story.id %}" class="dash-btn dash-btn-sm">Edit</a>
             <form method="post" action="{% url 'story_toggle_publish' story.id %}" style="margin:0;">
               {% csrf_token %}

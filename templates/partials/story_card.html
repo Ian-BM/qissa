@@ -1,0 +1,42 @@
+{% load static %}
+{# Unified card for long-form stories and shorts #}
+{% if short %}
+<a href="{% url 'short_detail' short.slug %}" class="story-card">
+  <div class="story-card__cover">
+    {% if short.cover_image %}
+      <img src="{{ short.cover_image.url }}" alt="{{ short.title }}" loading="lazy">
+    {% else %}
+      <div class="story-card__placeholder">{{ short.category_emoji }}</div>
+    {% endif %}
+  </div>
+  <div class="story-card__body">
+    <h3 class="story-card__title">{{ short.title }}</h3>
+    <div class="story-card__meta">
+      <span>⚡ {{ short.read_time }} Min</span>
+      <span>❤️ {{ short.likes }}</span>
+      <span>👁 {{ short.views }}</span>
+    </div>
+  </div>
+</a>
+{% elif story %}
+<a href="{% url 'story_detail' story.slug %}" class="story-card">
+  <div class="story-card__cover">
+    {% if story.cover %}
+      <img src="{{ story.cover.url }}" alt="{{ story.title }}" loading="lazy">
+    {% else %}
+      <div class="story-card__placeholder">📖</div>
+    {% endif %}
+  </div>
+  <div class="story-card__body">
+    <h3 class="story-card__title">{{ story.title }}</h3>
+    <div class="story-card__meta">
+      <span>📖 {% if story.chapter_count is not None %}{{ story.chapter_count }}{% else %}{{ story.chapters.count }}{% endif %} Sura</span>
+      <span>👁 {{ story.views }}</span>
+      <span>❤️ {{ story.likes_count|default:0 }}</span>
+    </div>
+    {% if show_category and story.category %}
+    <div class="story-card__category">{{ story.category.name }}</div>
+    {% endif %}
+  </div>
+</a>
+{% endif %}

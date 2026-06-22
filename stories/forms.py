@@ -16,20 +16,46 @@ class StoryForm(forms.ModelForm):
 
     class Meta:
         model = Story
-        fields = ["title", "category", "description", "price", "cover", "is_published"]
+        fields = [
+            "title",
+            "description",
+            "cover",
+            "category",
+            "is_published",
+            "is_completed",
+            "price",
+        ]
         widgets = {
             "title": forms.TextInput(attrs={"placeholder": "Story title"}),
             "category": forms.Select(),
-            "description": forms.Textarea(attrs={"rows": 5}),
+            "description": forms.Textarea(attrs={"rows": 5, "placeholder": "Story description"}),
             "price": forms.NumberInput(attrs={"min": "0", "step": "0.01"}),
+        }
+        labels = {
+            "is_published": "Published",
+            "is_completed": "Series completed",
+        }
+        help_texts = {
+            "is_published": "Uncheck to save as draft.",
+            "is_completed": "Check when the story series has ended.",
         }
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields["category"].queryset = StoryCategory.objects.all()
         self.fields["category"].required = False
+        self.fields["price"].required = False
         self.order_fields(
-            ["title", "category", "new_category_name", "description", "price", "cover", "is_published"]
+            [
+                "title",
+                "description",
+                "cover",
+                "category",
+                "new_category_name",
+                "is_published",
+                "is_completed",
+                "price",
+            ]
         )
 
     def save(self, commit=True):

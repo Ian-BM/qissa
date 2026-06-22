@@ -121,7 +121,7 @@
   {% if related_shorts %}
     <section class="related-section">
       {% include "partials/section_header.html" with title="Endelea Kusoma" subtitle="Unaweza pia kupenda" %}
-      <div class="shorts-grid">
+      <div class="story-grid">
         {% for related in related_shorts %}
           {% include "shorts/_card.html" with short=related %}
         {% endfor %}

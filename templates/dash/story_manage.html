@@ -6,22 +6,82 @@
 <div class="dash-page-header">
   <div>
     <h1>{{ story.title }}</h1>
-    <p>Manage chapters, locking, and monetization for this story.</p>
+    <p>Manage chapters and story settings.</p>
   </div>
   <div style="display:flex;gap:8px;flex-wrap:wrap;">
-    <a href="{% url 'story_edit' story.id %}" class="dash-btn">Story Settings</a>
-    <form method="post" action="{% url 'story_toggle_publish' story.id %}" style="margin:0;">
-      {% csrf_token %}
-      <button type="submit" class="dash-btn">
-        {% if story.is_published %}Unpublish{% else %}Publish{% endif %}
-      </button>
-    </form>
+    <a href="{% url 'story_detail' story.slug %}" class="dash-btn" target="_blank" rel="noopener">View Story</a>
+    <a href="{% url 'story_edit' story.id %}" class="dash-btn">Edit Story</a>
     <a href="{% url 'chapter_create' story.id %}" class="dash-btn dash-btn-primary">+ Add Chapter</a>
   </div>
 </div>
 
 <section class="dash-section">
-  <h2>💰 Monetization</h2>
+  <h2>Story Overview</h2>
+  <div class="dash-grid-4">
+    <div class="dash-card dash-stat-card">
+      <span class="dash-stat-label">Total Chapters</span>
+      <span class="dash-stat-value">{{ story.chapter_count }}</span>
+    </div>
+    <div class="dash-card dash-stat-card">
+      <span class="dash-stat-label">Total Views</span>
+      <span class="dash-stat-value">{{ story.views }}</span>
+    </div>
+    <div class="dash-card dash-stat-card">
+      <span class="dash-stat-label">Last Updated</span>
+      <span class="dash-stat-value" style="font-size:1rem;">{{ last_updated|date:"M j, Y" }}</span>
+    </div>
+    <div class="dash-card dash-stat-card">
+      <span class="dash-stat-label">Status</span>
+      <span class="dash-stat-value" style="font-size:1rem;">
+        {% if story.is_completed %}Completed{% else %}Ongoing{% endif %}
+      </span>
+      <span class="dash-stat-sub">{% if story.is_published %}Published{% else %}Draft{% endif %}</span>
+    </div>
+  </div>
+</section>
+
+<section class="dash-section">
+  <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:16px;">
+    <h2 style="margin:0;">Chapters</h2>
+    <a href="{% url 'chapter_create' story.id %}" class="dash-btn dash-btn-sm dash-btn-primary">+ Add Chapter</a>
+  </div>
+
+  <div class="dash-card" style="padding:0;overflow:hidden;">
+    <ul style="list-style:none;margin:0;padding:0;">
+      {% for chapter in chapters %}
+      <li style="display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 16px;border-bottom:1px solid var(--dash-border);flex-wrap:wrap;">
+        <div>
+          <strong>Chapter {{ chapter.order }}</strong>
+          <span style="color:var(--dash-text);margin-left:8px;">{{ chapter.title }}</span>
+          {% if chapter.is_locked %}
+            <span class="dash-badge dash-badge-locked" style="margin-left:8px;">Locked</span>
+          {% endif %}
+        </div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;">
+          <a href="{% url 'chapter_edit' chapter.id %}" class="dash-btn dash-btn-sm">Edit</a>
+          <form method="post" action="{% url 'chapter_reorder' chapter.id %}" style="margin:0;display:inline-flex;gap:4px;">
+            {% csrf_token %}
+            <button type="submit" name="direction" value="up" class="dash-btn dash-btn-sm" title="Move up">↑</button>
+            <button type="submit" name="direction" value="down" class="dash-btn dash-btn-sm" title="Move down">↓</button>
+          </form>
+          <form method="post" action="{% url 'chapter_delete' chapter.id %}" style="margin:0;" onsubmit="return confirm('Delete Chapter {{ chapter.order }}: {{ chapter.title|escapejs }}?');">
+            {% csrf_token %}
+            <button type="submit" class="dash-btn dash-btn-sm dash-btn-danger">Delete</button>
+          </form>
+        </div>
+      </li>
+      {% empty %}
+      <li style="padding:20px 16px;color:var(--dash-text);">
+        No chapters yet.
+        <a href="{% url 'chapter_create' story.id %}">Add the first chapter</a>.
+      </li>
+      {% endfor %}
+    </ul>
+  </div>
+</section>
+
+<section class="dash-section">
+  <h2>Monetization &amp; Analytics</h2>
   <div class="dash-grid-4">
     <div class="dash-card dash-stat-card">
       <span class="dash-stat-label">Story Price</span>
@@ -35,7 +95,6 @@
     <div class="dash-card dash-stat-card">
       <span class="dash-stat-label">Locked / Unlocked</span>
       <span class="dash-stat-value">{{ monetization.locked_count }} / {{ monetization.unlocked_count }}</span>
-      <span class="dash-stat-sub">Premium vs free chapters</span>
     </div>
     <div class="dash-card dash-stat-card">
       <span class="dash-stat-label">Total Purchases</span>
@@ -45,34 +104,15 @@
     <div class="dash-card dash-stat-card">
       <span class="dash-stat-label">Conversion Rate</span>
       <span class="dash-stat-value">{{ monetization.conversion_rate }}%</span>
-      <span class="dash-stat-sub">{{ monetization.locked_clicks }} locked clicks</span>
     </div>
   </div>
 
-  <div class="dash-grid-2" style="margin-top:16px;">
-    <div class="dash-card">
-      <h3 style="margin:0 0 12px;font-size:0.95rem;">Purchase Funnel</h3>
-      <p style="margin:0 0 8px;color:var(--dash-text);font-size:0.88rem;">Locked Chapter Clicks: <strong>{{ monetization.locked_clicks }}</strong></p>
-      <p style="margin:0 0 8px;color:var(--dash-text);font-size:0.88rem;">Purchase Attempts: <strong>{{ monetization.purchase_attempts }}</strong></p>
-      <p style="margin:0 0 8px;color:var(--dash-text);font-size:0.88rem;">Successful Purchases: <strong>{{ monetization.purchase_count }}</strong></p>
-      <p style="margin:0;color:var(--dash-text);font-size:0.88rem;">Conversion: <strong>{{ monetization.conversion_rate }}%</strong></p>
-    </div>
-    <div class="dash-card">
-      <h3 style="margin:0 0 12px;font-size:0.95rem;">Revenue Projection</h3>
-      <p style="margin:0 0 8px;color:var(--dash-text);font-size:0.88rem;">Current Price: <strong>TZS {{ story.price|floatformat:0 }}</strong></p>
-      <p style="margin:0 0 8px;color:var(--dash-text);font-size:0.88rem;">Total Revenue: <strong>TZS {{ monetization.revenue|floatformat:0 }}</strong></p>
-      <p style="margin:0;color:var(--dash-text);font-size:0.88rem;">Projected (unconverted clicks): <strong>TZS {{ monetization.projected_revenue|floatformat:0 }}</strong></p>
-    </div>
-  </div>
-</section>
-
-<section class="dash-section">
-  <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:16px;">
-    <h2 style="margin:0;">Chapters</h2>
+  <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin:20px 0 16px;">
+    <h3 style="margin:0;font-size:0.95rem;">Chapter Analytics</h3>
     <form method="post" action="{% url 'chapter_bulk_lock' story.id %}" id="bulkForm" style="display:flex;gap:8px;align-items:center;">
       {% csrf_token %}
-      <button type="submit" name="action" value="lock" class="dash-btn dash-btn-sm">🔒 Lock Selected</button>
-      <button type="submit" name="action" value="unlock" class="dash-btn dash-btn-sm">🔓 Unlock Selected</button>
+      <button type="submit" name="action" value="lock" class="dash-btn dash-btn-sm">Lock Selected</button>
+      <button type="submit" name="action" value="unlock" class="dash-btn dash-btn-sm">Unlock Selected</button>
     </form>
   </div>
 
@@ -84,9 +124,7 @@
           <th>#</th>
           <th>Title</th>
           <th>Views</th>
-          <th>Unique Readers</th>
-          <th>Drop-off</th>
-          <th>Status</th>
+          <th>Readers</th>
           <th>Lock</th>
           <th>Actions</th>
         </tr>
@@ -97,17 +135,9 @@
         <tr>
           <td><input type="checkbox" name="chapter_ids" value="{{ chapter.id }}" form="bulkForm"></td>
           <td>{{ chapter.order }}</td>
-          <td><strong>{{ chapter.title }}</strong></td>
+          <td>{{ chapter.title }}</td>
           <td>{{ chapter.views|default:0 }}</td>
           <td>{{ item.unique_readers }}</td>
-          <td>{% if item.drop_off_rate is not None %}{{ item.drop_off_rate }}%{% else %}—{% endif %}</td>
-          <td>
-            {% if chapter.is_locked %}
-              <span class="dash-badge dash-badge-locked">🔒 Locked</span>
-            {% else %}
-              <span class="dash-badge dash-badge-free">🟢 Free</span>
-            {% endif %}
-          </td>
           <td>
             <form method="post" action="{% url 'chapter_toggle_lock' chapter.id %}" style="margin:0;">
               {% csrf_token %}
@@ -117,11 +147,13 @@
               </label>
             </form>
           </td>
-          <td><a href="{% url 'chapter_edit' chapter.id %}" class="dash-btn dash-btn-sm">Edit</a></td>
+          <td>
+            <a href="{% url 'chapter_edit' chapter.id %}" class="dash-btn dash-btn-sm">Edit</a>
+          </td>
         </tr>
         {% endwith %}
         {% empty %}
-        <tr><td colspan="9">No chapters yet. <a href="{% url 'chapter_create' story.id %}">Add the first chapter</a>.</td></tr>
+        <tr><td colspan="7">No chapters yet.</td></tr>
         {% endfor %}
       </tbody>
     </table>

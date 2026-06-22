@@ -6,7 +6,7 @@
 <div class="dash-page-header">
   <div>
     <h1>{% if mode == "create" %}Create Story{% else %}Edit Story{% endif %}</h1>
-    <p>Story settings, pricing, and publishing.</p>
+    <p>{% if mode == "create" %}Create a new long-form story with chapters.{% else %}Update story details and status.{% endif %}</p>
   </div>
   {% if story %}
     <a href="{% url 'story_manage' story.id %}" class="dash-btn">← Back to Manage</a>

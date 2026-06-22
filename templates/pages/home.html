@@ -8,12 +8,7 @@
 
 <style>
   .hero {
-    display: grid;
-    gap: 24px;
-    padding: 4px 0 8px;
-  }
-
-  .hero-copy {
+    padding: 4px 0 0;
     max-width: 560px;
   }
 
@@ -28,63 +23,40 @@
   }
 
   .hero-title {
-    font-size: clamp(1.75rem, 3.5vw, 2.5rem);
+    font-size: clamp(1.75rem, 3.5vw, 2.4rem);
     line-height: 1.12;
-    margin: 0 0 14px;
+    margin: 0 0 12px;
     color: var(--heading);
   }
 
   .hero-copy p {
     margin: 0;
     color: var(--text);
-    font-size: 0.98rem;
-    line-height: 1.7;
+    font-size: 0.96rem;
+    line-height: 1.65;
   }
 
   .hero-actions {
     display: flex;
     flex-wrap: wrap;
     gap: 10px;
-    margin-top: 18px;
-  }
-
-  .hero-stats {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 12px;
-  }
-
-  .stat-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 14px 16px;
-    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
-  }
-
-  .stat-card strong {
-    display: block;
-    font-size: 1.35rem;
-    margin-bottom: 4px;
-    color: var(--heading);
-  }
-
-  .stat-card span {
-    color: var(--text);
-    font-size: 0.82rem;
+    margin-top: 16px;
   }
 
   .search-panel {
     display: grid;
-    gap: 16px;
-    justify-items: center;
+    gap: 14px;
+  }
+
+  .category-section {
+    display: grid;
+    gap: 10px;
   }
 
   .category-row {
     display: flex;
     flex-wrap: wrap;
     gap: 8px;
-    justify-content: center;
   }
 
   .category-chip {
@@ -141,21 +113,13 @@
     font-size: 0.88rem;
   }
 
-  .continue-reading {
-    display: block;
-    padding: 14px 16px;
-    border-radius: 12px;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    color: var(--heading);
-    font-size: 0.9rem;
-    width: 100%;
-    max-width: 480px;
-  }
-
-  .continue-reading a {
-    color: var(--accent-primary);
-    font-weight: 600;
+  .section-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 14px;
   }
 
   .pagination {
@@ -164,7 +128,7 @@
     gap: 10px;
     align-items: center;
     flex-wrap: wrap;
-    margin-top: 24px;
+    margin-top: 20px;
   }
 
   .pagination a,
@@ -176,12 +140,6 @@
     color: var(--heading);
     font-size: 0.88rem;
   }
-
-  @media (max-width: 768px) {
-    .hero-stats {
-      grid-template-columns: 1fr;
-    }
-  }
 </style>
 
 <div class="homepage-compact">
@@ -191,23 +149,8 @@
       <h1 class="hero-title" data-i18n="home.heroTitle">Gundua hadithi bora za mfululizo kutoka Afrika Mashariki.</h1>
       <p data-i18n="home.heroBody">Soma hadithi kali za mapenzi, drama na maisha halisi — popote ulipo.</p>
       <div class="hero-actions">
-        <a href="#stories" class="btn btn-primary" data-i18n="home.browse">Anza kusoma</a>
+        <a href="#simulizi-fupi" class="btn btn-primary" data-i18n="home.browse">Anza kusoma</a>
         <a href="{% url 'register' %}" class="btn btn-secondary" data-i18n="home.join">{% trans "Join Qissa" %}</a>
-      </div>
-    </div>
-
-    <div class="hero-stats">
-      <div class="stat-card">
-        <strong>{{ stats.stories_count }}</strong>
-        <span>📚 Hadithi</span>
-      </div>
-      <div class="stat-card">
-        <strong>{{ stats.readers_count }}</strong>
-        <span>👥 Wasomaji</span>
-      </div>
-      <div class="stat-card">
-        <strong>{{ stats.categories_count }}</strong>
-        <span>🏷️ Kategoria</span>
       </div>
     </div>
   </section>
@@ -225,47 +168,34 @@
       >
       <button type="submit" data-i18n="home.searchBtn">{% trans "Search" %}</button>
     </form>
-
-    {% if categories %}
-      <div class="category-row" id="categories">
-        <a
-          href="{% if query %}?q={{ query }}{% else %}?{% endif %}"
-          class="category-chip {% if not selected_category_slug %}active{% endif %}"
-          data-i18n="home.all"
-        >Zote</a>
-        {% for category in categories %}
-          <a
-            href="?category={{ category.slug }}{% if query %}&q={{ query }}{% endif %}"
-            class="category-chip {% if selected_category_slug == category.slug %}active{% endif %}"
-          >{{ category.name }}</a>
-        {% endfor %}
-      </div>
-    {% endif %}
-
-    {% if bookmark %}
-      <div class="continue-reading">
-        {% trans "Continue reading:" %}
-        <a href="{% url 'chapter_reader' bookmark.chapter.id %}">{{ bookmark.story.title }} — {{ bookmark.chapter.title }}</a>
-      </div>
-    {% endif %}
   </section>
 
-  {% if trending_stories %}
-  <section class="page-section reveal">
-    {% include "partials/section_header.html" with eyebrow="🔥 Trending" title="Hadithi Maarufu" subtitle="Zinazosomwa zaidi sasa hivi." %}
-    <div class="content-grid">
-      {% for story in trending_stories %}
-        {% include "partials/content_card.html" with story=story %}
+  {% if categories %}
+  <section class="category-section reveal" id="categories">
+    <h2 class="home-section-title" data-i18n="home.chooseCategory">Chagua Kategoria</h2>
+    <div class="category-row">
+      <a
+        href="{% if query %}?q={{ query }}{% else %}?{% endif %}"
+        class="category-chip {% if not selected_category_slug %}active{% endif %}"
+        data-i18n="home.all"
+      >Zote</a>
+      {% for category in categories %}
+        <a
+          href="?category={{ category.slug }}{% if query %}&q={{ query }}{% endif %}"
+          class="category-chip {% if selected_category_slug == category.slug %}active{% endif %}"
+        >{{ category.name }}</a>
       {% endfor %}
     </div>
   </section>
   {% endif %}
 
   {% if latest_shorts %}
-  <section class="page-section reveal">
-    {% url 'short_list' as short_list_url %}
-    {% include "partials/section_header.html" with eyebrow="⚡ Simulizi za Dakika 5" title="Hadithi Fupi za Kusoma Haraka" subtitle="Simulizi fupi zinazoweza kusomwa ndani ya dakika chache." view_all_url=short_list_url %}
-    <div class="shorts-grid">
+  <section id="simulizi-fupi" class="page-section reveal">
+    <div class="section-head">
+      <h2 class="home-section-title" style="margin:0;" data-i18n="home.shortsTitle">Simulizi Fupi</h2>
+      <a href="{% url 'short_list' %}" class="btn btn-secondary btn-sm">View All</a>
+    </div>
+    <div class="story-grid">
       {% for short in latest_shorts %}
         {% include "shorts/_card.html" with short=short %}
       {% endfor %}
@@ -273,11 +203,17 @@
   </section>
   {% endif %}
 
-  <section id="stories" class="page-section reveal">
-    {% include "partials/section_header.html" with eyebrow="📚 Qissa Originals" title="Hadithi za Mfululizo" subtitle="Simulizi ndefu za kusoma kwa utulivu." %}
-    <div class="content-grid">
+  <section id="simulizi-ndefu" class="page-section reveal">
+    <div class="section-head">
+      <div>
+        <h2 class="home-section-title" style="margin:0;" data-i18n="home.longTitle">Simulizi Ndefu</h2>
+        <p class="home-section-sub" data-i18n="home.longSubtitle">Hadithi za mfululizo za kusoma kwa utulivu.</p>
+      </div>
+      <a href="{% url 'stories_list' %}" class="btn btn-secondary btn-sm">View All</a>
+    </div>
+    <div class="story-grid">
       {% for story in stories %}
-        {% include "partials/content_card.html" with story=story %}
+        {% include "pages/story_cards.html" with story=story %}
       {% empty %}
         <p data-i18n="home.empty">Hakuna hadithi zinazopatikana bado. Tafadhali angalia tena hivi karibuni.</p>
       {% endfor %}
@@ -297,24 +233,12 @@
       </div>
     {% endif %}
   </section>
-
-  {% if new_releases %}
-  <section class="page-section reveal">
-    {% include "partials/section_header.html" with eyebrow="🆕 New Releases" title="Matoleo Mapya" subtitle="Hadithi mpya zilizochapishwa hivi karibuni." %}
-    <div class="content-grid">
-      {% for story in new_releases %}
-        {% include "partials/content_card.html" with story=story %}
-      {% endfor %}
-    </div>
-  </section>
-  {% endif %}
 </div>
 
 <script>
   (function () {
     const pageCounter = document.getElementById("homePageCounter");
     if (!pageCounter) return;
-
     const renderPageCounter = () => {
       if (!window.qissaT) return;
       pageCounter.textContent = window.qissaT("home.page", {
@@ -322,7 +246,6 @@
         total: pageCounter.dataset.total
       });
     };
-
     renderPageCounter();
     document.addEventListener("qissa:languagechange", renderPageCounter);
   })();

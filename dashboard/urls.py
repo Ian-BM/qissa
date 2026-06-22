@@ -31,6 +31,16 @@ urlpatterns = [
         views.chapter_toggle_lock,
         name="chapter_toggle_lock",
     ),
+    path(
+        "chapters/<int:chapter_id>/delete/",
+        views.chapter_delete,
+        name="chapter_delete",
+    ),
+    path(
+        "chapters/<int:chapter_id>/reorder/",
+        views.chapter_reorder,
+        name="chapter_reorder",
+    ),
     path("monetization/", views.monetization_overview, name="dashboard_monetization"),
     path("performance/", views.performance_overview, name="dashboard_performance"),
     path("shorts/", views.shorts_overview, name="dashboard_shorts"),

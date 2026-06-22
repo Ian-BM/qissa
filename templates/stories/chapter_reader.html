@@ -10,19 +10,27 @@
     padding: 0 4px;
   }
 
+  .reader-nav-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin: 0 0 20px;
+  }
+
+  .reader-nav-row a {
+    color: var(--heading);
+    font-weight: 600;
+    font-size: 0.88rem;
+    text-decoration: none;
+  }
+
   .reader-header {
     display: flex;
     align-items: flex-start;
     gap: 12px;
     margin-bottom: 24px;
-  }
-
-  .back-btn {
-    text-decoration: none;
-    font-weight: 600;
-    color: var(--heading);
-    font-size: 0.9rem;
-    flex-shrink: 0;
   }
 
   .story-title {
@@ -41,6 +49,23 @@
     object-fit: cover;
     margin: 0 auto 8px;
     border: 1px solid var(--border);
+  }
+
+  .chapter-heading {
+    text-align: center;
+    margin: 0 0 24px;
+  }
+
+  .chapter-heading h2 {
+    margin: 0 0 6px;
+    font-size: clamp(1.2rem, 2.5vw, 1.5rem);
+    color: var(--heading);
+  }
+
+  .chapter-heading p {
+    margin: 0;
+    color: var(--text);
+    font-size: 0.9rem;
   }
 
   .chapter-nav {
@@ -74,6 +99,28 @@
     margin-bottom: 40px;
   }
 
+  .chapter-footer-nav {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 12px;
+    margin: 32px 0 0;
+    padding-top: 20px;
+    border-top: 1px solid var(--border);
+  }
+
+  .chapter-footer-nav a {
+    color: var(--heading);
+    font-weight: 600;
+    font-size: 0.9rem;
+    text-decoration: none;
+  }
+
+  .chapter-footer-nav .disabled {
+    color: var(--text);
+    opacity: 0.5;
+  }
+
   .more-stories {
     margin-top: 48px;
   }
@@ -81,8 +128,12 @@
 
 <div class="reader-page">
 
+  <div class="reader-nav-row">
+    <a href="{% url 'story_detail' chapter.story.slug %}">← Rudi kwenye Hadithi</a>
+    <a href="{% url 'home' %}">Nyumbani</a>
+  </div>
+
   <div class="reader-header">
-    <a href="/" class="back-btn"><span>← </span><span data-i18n="reader.back">Rudi Nyumbani</span></a>
     <div class="story-title">
       {% if chapter.story.cover %}
         <img class="story-cover-thumb" src="{{ chapter.story.cover.url }}" alt="{{ chapter.story.title }}">
@@ -91,6 +142,10 @@
       {% endif %}
       {{ chapter.story.title }}
     </div>
+  </div>
+
+  <div class="chapter-heading">
+    <h2><span data-i18n="reader.chapter">Sura</span> {{ chapter.order }}: {{ chapter.title }}</h2>
   </div>
 
   <div class="chapter-nav">
@@ -111,6 +166,20 @@
     {{ chapter.content|linebreaks }}
   </div>
 
+  <div class="chapter-footer-nav">
+    {% if prev_chapter %}
+      <a href="{% url 'chapter_reader' prev_chapter.id %}">← Sura {{ prev_chapter.order }}</a>
+    {% else %}
+      <span class="disabled">← Hakuna sura iliyotangulia</span>
+    {% endif %}
+    <a href="{% url 'story_detail' chapter.story.slug %}">Rudi kwenye Hadithi</a>
+    {% if next_chapter %}
+      <a href="{% url 'chapter_reader' next_chapter.id %}">Sura {{ next_chapter.order }} →</a>
+    {% else %}
+      <span class="disabled">Hakuna sura inayofuata →</span>
+    {% endif %}
+  </div>
+
   <div class="chapter-nav">
     {% for story_chapter in chapters %}
       <a
@@ -125,7 +194,7 @@
 
   <div class="more-stories">
     {% include "partials/section_header.html" with title="Hadithi zaidi" %}
-    <div class="content-grid">
+    <div class="story-grid">
       {% for story in related|slice:":4" %}
         {% include "pages/story_cards.html" %}
       {% empty %}
