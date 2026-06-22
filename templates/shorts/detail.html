@@ -1,0 +1,132 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ short.title }} — Qissa Shorts{% endblock %}
+
+{% block content %}
+<style>
+  .short-detail { max-width: 700px; margin: 0 auto; padding: 4px 0 40px; }
+  .short-back { display: inline-block; margin-bottom: 16px; font-weight: 600; color: var(--heading); font-size: 0.9rem; }
+  .short-hero {
+    margin-bottom: 28px;
+  }
+  .short-hero-cover {
+    max-height: 240px;
+    border-radius: 12px;
+    overflow: hidden;
+    background: var(--surface-soft);
+    margin-bottom: 16px;
+  }
+  .short-hero-cover img { width: 100%; height: 100%; object-fit: cover; max-height: 240px; }
+  .short-hero-cover .placeholder {
+    min-height: 160px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 3rem;
+    background: linear-gradient(135deg, var(--surface-soft), var(--tag-bg));
+  }
+  .short-hero-body .category {
+    display: inline-flex;
+    padding: 4px 10px;
+    border-radius: 999px;
+    background: var(--tag-bg);
+    font-size: 0.76rem;
+    font-weight: 700;
+    margin-bottom: 10px;
+  }
+  .short-hero-body h1 {
+    margin: 0 0 12px;
+    font-size: clamp(1.4rem, 3.5vw, 1.9rem);
+    line-height: 1.25;
+    color: var(--heading);
+  }
+  .short-hero-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    font-size: 0.86rem;
+    color: var(--text);
+  }
+  .short-engagement {
+    margin: 32px 0 24px;
+    padding: 18px;
+    border-radius: 12px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    text-align: center;
+  }
+  .short-engagement p { margin: 0 0 12px; font-weight: 600; color: var(--heading); font-size: 0.95rem; }
+  .short-engagement-actions {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .like-btn, .share-inline-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 16px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    background: var(--surface-soft);
+    color: var(--heading);
+    font-weight: 600;
+    font-size: 0.88rem;
+    cursor: pointer;
+    text-decoration: none;
+  }
+  .like-btn.liked { background: rgba(239, 68, 68, 0.12); border-color: #ef4444; }
+  .related-section { margin-top: 48px; }
+</style>
+
+<article class="short-detail">
+  <a href="{% url 'short_list' %}" class="short-back">← Rudi kwa Shorts</a>
+
+  {% include "shorts/_share.html" %}
+
+  <header class="short-hero">
+    {% if short.cover_image %}
+      <div class="short-hero-cover"><img src="{{ short.cover_image.url }}" alt="{{ short.title }}"></div>
+    {% else %}
+      <div class="short-hero-cover"><div class="placeholder">{{ short.category_emoji }}</div></div>
+    {% endif %}
+    <div class="short-hero-body">
+      <span class="category">{{ short.category_emoji }} {{ short.category_label }}</span>
+      <h1>{{ short.title }}</h1>
+      <div class="short-hero-meta">
+        <span>⚡ {{ short.read_time }} Min Read</span>
+        <span>👁 {{ short.views }} Views</span>
+        <span>❤️ {{ short.likes }}</span>
+      </div>
+    </div>
+  </header>
+
+  <div class="reading-prose">{{ short.content }}</div>
+
+  <div class="short-engagement">
+    <p>Je, simulizi hii imegusa moyo wako?</p>
+    <div class="short-engagement-actions">
+      <form method="post" action="{% url 'short_like' short.slug %}" style="margin:0;">
+        {% csrf_token %}
+        <button type="submit" class="like-btn {% if user_has_liked %}liked{% endif %}">❤️ Like</button>
+      </form>
+      <button type="button" class="share-inline-btn copy-short-link" data-url="{{ story_url }}">🔗 Share</button>
+    </div>
+  </div>
+
+  {% include "shorts/_share.html" %}
+
+  {% if related_shorts %}
+    <section class="related-section">
+      {% include "partials/section_header.html" with title="Endelea Kusoma" subtitle="Unaweza pia kupenda" %}
+      <div class="shorts-grid">
+        {% for related in related_shorts %}
+          {% include "shorts/_card.html" with short=related %}
+        {% endfor %}
+      </div>
+    </section>
+  {% endif %}
+</article>
+{% endblock %}

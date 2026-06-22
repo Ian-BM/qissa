@@ -1,58 +1,47 @@
-{% extends "base.html" %}
-{% block content %}
+{% extends "dash/base.html" %}
 
-<style>
-  .story-form-wrap {
-    max-width: 760px;
-    margin: 0 auto;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    padding: 24px;
-  }
-  .story-form-wrap h2 {
-    margin-top: 0;
-    margin-bottom: 16px;
-  }
-  .story-form-wrap p {
-    display: grid;
-    gap: 8px;
-    margin: 0 0 14px;
-  }
-  .story-form-wrap input,
-  .story-form-wrap textarea,
-  .story-form-wrap select {
-    width: 100%;
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 10px 12px;
-    background: var(--surface-soft);
-    color: var(--heading);
-  }
-  .story-form-wrap button {
-    border: 0;
-    padding: 10px 16px;
-    border-radius: 10px;
-    background: var(--accent-primary);
-    color: #fff;
-    font-weight: 700;
-    cursor: pointer;
-  }
-</style>
+{% block dash_title %}{% if mode == "create" %}New Story{% else %}Edit Story{% endif %}{% endblock %}
 
-<div class="story-form-wrap">
-  <h2>
-    {% if mode == "create" %}Unda Hadithi{% else %}Hariri Hadithi{% endif %}
-  </h2>
+{% block dash_content %}
+<div class="dash-page-header">
+  <div>
+    <h1>{% if mode == "create" %}Create Story{% else %}Edit Story{% endif %}</h1>
+    <p>Story settings, pricing, and publishing.</p>
+  </div>
+  {% if story %}
+    <a href="{% url 'story_manage' story.id %}" class="dash-btn">← Back to Manage</a>
+  {% endif %}
+</div>
 
+<div class="dash-card" style="max-width:640px;">
   <form method="post" enctype="multipart/form-data">
     {% csrf_token %}
     {{ form.as_p }}
-
-    <button type="submit">
-      {% if mode == "create" %}Unda{% else %}Hifadhi Mabadiliko{% endif %}
-    </button>
+    <button type="submit" class="dash-btn dash-btn-primary">{% if mode == "create" %}Create{% else %}Save{% endif %}</button>
   </form>
 </div>
 
+{% if monetization %}
+<section class="dash-section" style="margin-top:28px;">
+  <h2>💰 Price Overview</h2>
+  <div class="dash-grid-4">
+    <div class="dash-card dash-stat-card">
+      <span class="dash-stat-label">Current Price</span>
+      <span class="dash-stat-value">TZS {{ story.price|floatformat:0 }}</span>
+    </div>
+    <div class="dash-card dash-stat-card">
+      <span class="dash-stat-label">Total Revenue</span>
+      <span class="dash-stat-value">TZS {{ monetization.revenue|floatformat:0 }}</span>
+    </div>
+    <div class="dash-card dash-stat-card">
+      <span class="dash-stat-label">Purchases</span>
+      <span class="dash-stat-value">{{ monetization.purchase_count }}</span>
+    </div>
+    <div class="dash-card dash-stat-card">
+      <span class="dash-stat-label">Conversion</span>
+      <span class="dash-stat-value">{{ monetization.conversion_rate }}%</span>
+    </div>
+  </div>
+</section>
+{% endif %}
 {% endblock %}

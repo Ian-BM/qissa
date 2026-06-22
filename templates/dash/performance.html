@@ -1,0 +1,57 @@
+{% extends "dash/base.html" %}
+
+{% block dash_title %}Performance{% endblock %}
+
+{% block dash_content %}
+<div class="dash-page-header">
+  <div>
+    <h1>👁 Performance</h1>
+    <p>Story views, categories, and reader engagement.</p>
+  </div>
+</div>
+
+<div class="dash-grid-2">
+  <div class="dash-card dash-chart-card">
+    <h2>Story Views</h2>
+    <canvas id="perfChart" height="220"></canvas>
+  </div>
+  <div class="dash-card dash-chart-card">
+    <h2>Category Views</h2>
+    <canvas id="catChart" height="220"></canvas>
+  </div>
+</div>
+
+<div class="dash-grid-2" style="margin-top:16px;">
+  <div class="dash-card dash-stat-card">
+    <span class="dash-stat-label">🔥 Top Story</span>
+    <span class="dash-stat-value" style="font-size:1.1rem;">{{ leaders.best_views_story.title|default:"—" }}</span>
+    <span class="dash-stat-sub">{% if leaders.best_views_story %}{{ leaders.best_views_story.views }} views{% endif %}</span>
+  </div>
+  <div class="dash-card dash-stat-card">
+    <span class="dash-stat-label">⚡ Top Short</span>
+    <span class="dash-stat-value" style="font-size:1.1rem;">{{ leaders.best_short.title|default:"—" }}</span>
+    <span class="dash-stat-sub">{% if leaders.best_short %}{{ leaders.best_short.views }} views{% endif %}</span>
+  </div>
+</div>
+{% endblock %}
+
+{% block dash_extra_js %}
+<script>
+  new Chart(document.getElementById("perfChart"), {
+    type: "bar",
+    data: {
+      labels: [{% for s in story_perf %}"{{ s.title|truncatechars:18|escapejs }}",{% endfor %}],
+      datasets: [{ data: [{% for s in story_perf %}{{ s.views|default:0 }},{% endfor %}], backgroundColor: "rgba(17,24,39,0.75)" }],
+    },
+    options: { plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true } } },
+  });
+  new Chart(document.getElementById("catChart"), {
+    type: "doughnut",
+    data: {
+      labels: [{% for c in category_perf %}"{{ c.name|escapejs }}",{% endfor %}],
+      datasets: [{ data: [{% for c in category_perf %}{{ c.total_views|default:0 }},{% endfor %}], backgroundColor: ["#111827","#f59e0b","#3b82f6","#10b981","#ef4444","#8b5cf6","#ec4899","#64748b"] }],
+    },
+    options: { plugins: { legend: { position: "bottom" } } },
+  });
+</script>
+{% endblock %}

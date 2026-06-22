@@ -2,6 +2,7 @@ from django import forms
 
 from .models import Chapter, Story, StoryCategory
 
+
 class StoryForm(forms.ModelForm):
     new_category_name = forms.CharField(
         required=False,
@@ -44,6 +45,7 @@ class StoryForm(forms.ModelForm):
             story.save()
             self.save_m2m()
         return story
+
 
 class ChapterForm(forms.ModelForm):
     class Meta:

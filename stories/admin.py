@@ -1,5 +1,6 @@
 from django.contrib import admin
-from .models import Chapter, Story, StoryCategory, StoryComment
+
+from .models import Chapter, Purchase, Story, StoryCategory, StoryComment
 
 
 @admin.register(StoryCategory)
@@ -29,3 +30,29 @@ class StoryCommentAdmin(admin.ModelAdmin):
     list_display = ("story", "user", "created_at")
     search_fields = ("story__title", "user__phone", "user__name", "body")
     list_filter = ("story", "created_at")
+
+
+@admin.register(Purchase)
+class PurchaseAdmin(admin.ModelAdmin):
+    list_display = (
+        "reader",
+        "story",
+        "amount_paid",
+        "payment_reference",
+        "purchased_at",
+    )
+    list_filter = ("purchased_at", "story")
+    search_fields = ("reader__phone", "story__title", "payment_reference")
+    readonly_fields = (
+        "reader",
+        "story",
+        "amount_paid",
+        "payment_reference",
+        "purchased_at",
+    )
+
+    def has_change_permission(self, request, obj=None):
+        return False
+
+    def has_delete_permission(self, request, obj=None):
+        return False

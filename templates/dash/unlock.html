@@ -1,90 +1,62 @@
-{% extends "base.html" %}
+{% extends "dash/base.html" %}
 
-{% block content %}
-<style>
-  .access-header { margin-bottom: 20px; }
-  .access-header h2 { margin-bottom: 6px; }
-  .access-header p { color: #666; }
-  .story-select {
-    background: #fff;
-    border: 1px solid #e4e4e4;
-    border-radius: 10px;
-    padding: 16px;
-    margin-bottom: 16px;
-  }
-  .story-select select { padding: 10px; border-radius: 8px; border: 1px solid #d9d9d9; min-width: 220px; }
-  .access-table-wrap { overflow-x: auto; background: #fff; border: 1px solid #e4e4e4; border-radius: 10px; }
-  table { width: 100%; border-collapse: collapse; }
-  th, td { text-align: left; padding: 12px; border-bottom: 1px solid #f0f0f0; }
-  th { background: #fafafa; font-size: 13px; text-transform: uppercase; letter-spacing: .04em; color:#666; }
-  .status-pill { padding: 4px 10px; border-radius: 999px; font-size: 12px; font-weight: 700; }
-  .active { background: #e7f7ee; color: #157347; }
-  .inactive { background: #f8ecee; color: #b02a37; }
-  .btn-toggle { border: 1px solid #ddd; border-radius: 8px; background: #111; color: #fff; padding: 7px 12px; cursor: pointer; }
-</style>
+{% block dash_title %}Reader Access{% endblock %}
 
-<div class="access-header">
-  <h2>Ufikiaji wa Hadithi</h2>
-  <p>Sura 4 za kwanza ni bure. Fungua msomaji ili apate hadithi nzima.</p>
+{% block dash_content %}
+<div class="dash-page-header">
+  <div>
+    <h1>⚙ Reader Access</h1>
+    <p>Manually grant or revoke story access for readers.</p>
+  </div>
 </div>
 
-{% if messages %}
-  {% for message in messages %}
-    <p style="margin-bottom:8px; color:#157347;">{{ message }}</p>
-  {% endfor %}
-{% endif %}
-
-<div class="story-select">
+<div class="dash-card" style="margin-bottom:20px;">
   <form method="get">
-    <label for="story"><strong>Chagua Hadithi:</strong></label>
-    <select name="story" id="story" onchange="this.form.submit()" required>
-      <option value="">-- Chagua hadithi --</option>
-      {% for story in stories %}
-        <option value="{{ story.id }}" {% if selected_story and selected_story.id == story.id %}selected{% endif %}>
-          {{ story.title }}
-        </option>
+    <label for="story" style="font-size:0.88rem;font-weight:600;">Select Story</label>
+    <select name="story" id="story" onchange="this.form.submit()" style="display:block;width:100%;max-width:400px;margin-top:8px;padding:10px;border:1px solid var(--dash-border);border-radius:10px;">
+      <option value="">— Choose a story —</option>
+      {% for s in stories %}
+        <option value="{{ s.id }}" {% if selected_story and selected_story.id == s.id %}selected{% endif %}>{{ s.title }}</option>
       {% endfor %}
     </select>
   </form>
 </div>
 
 {% if selected_story %}
-  <div class="access-table-wrap">
-    <table>
-      <thead>
-        <tr>
-          <th>Jina</th>
-          <th>Simu</th>
-          <th>Hali</th>
-          <th>Fungua</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for reader in users %}
-          <tr>
-            <td>{{ reader.name|default:"-" }}</td>
-            <td>{{ reader.phone }}</td>
-            <td>
-              {% if reader.id in story_access_map %}
-                <span class="status-pill active">Imefunguliwa</span>
-              {% else %}
-                <span class="status-pill inactive">Haijafunguliwa</span>
-              {% endif %}
-            </td>
-            <td>
-              <form method="post" action="{% url 'toggle_story_access' selected_story.id reader.id %}">
-                {% csrf_token %}
-                <button class="btn-toggle" type="submit">
-                  {% if reader.id in story_access_map %}Funga{% else %}Fungua{% endif %}
-                </button>
-              </form>
-            </td>
-          </tr>
-        {% empty %}
-          <tr><td colspan="4">Hakuna wasomaji waliopatikana.</td></tr>
-        {% endfor %}
-      </tbody>
-    </table>
-  </div>
+<div class="dash-table-wrap">
+  <table class="dash-table">
+    <thead>
+      <tr>
+        <th>Reader</th>
+        <th>Phone</th>
+        <th>Access</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for user in users %}
+      <tr>
+        <td>{{ user.name|default:"—" }}</td>
+        <td>{{ user.phone }}</td>
+        <td>
+          {% if user.id in story_access_map %}
+            <span class="dash-badge dash-badge-free">Active</span>
+          {% else %}
+            <span class="dash-badge dash-badge-locked">No Access</span>
+          {% endif %}
+        </td>
+        <td>
+          <form method="post" action="{% url 'toggle_story_access' selected_story.id user.id %}" style="margin:0;">
+            {% csrf_token %}
+            <button type="submit" class="dash-btn dash-btn-sm">
+              {% if user.id in story_access_map %}Revoke{% else %}Grant{% endif %}
+            </button>
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
 {% endif %}
 {% endblock %}

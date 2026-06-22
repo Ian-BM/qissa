@@ -1,114 +1,125 @@
-{% extends "base.html" %}
-{% block content %}
-<style>
-  .dash-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 16px;
-    flex-wrap: wrap;
-    margin-bottom: 22px;
-  }
-  .dash-title h2 { font-size: 28px; margin-bottom: 6px; }
-  .dash-title p { color: var(--text); }
-  .btn-primary {
-    background: var(--accent-primary);
-    color: #fff;
-    border-radius: 8px;
-    padding: 10px 16px;
-    font-weight: 600;
-    display: inline-block;
-  }
-  .dash-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-    gap: 16px;
-  }
-  .story-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 16px;
-  }
-  .story-card h3 { margin-bottom: 8px; }
-  .category-chip {
-    display: inline-flex;
-    padding: 4px 10px;
-    border-radius: 999px;
-    font-size: 12px;
-    margin-bottom: 8px;
-    background: var(--tag-bg);
-    color: var(--heading);
-    font-weight: 700;
-  }
-  .meta { color: var(--text); font-size: 14px; margin-bottom: 12px; }
-  .reaction-meta {
-    color: var(--text);
-    font-size: 13px;
-    margin-bottom: 10px;
-    display: flex;
-    gap: 12px;
-    align-items: center;
-  }
-  .status { font-size: 13px; font-weight: 700; }
-  .published { color: #157347; }
-  .draft { color: #b02a37; }
-  .actions {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    margin-top: 14px;
-  }
-  .btn-secondary {
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 8px 12px;
-    background: var(--surface-soft);
-    color: var(--heading);
-    font-size: 14px;
-  }
-</style>
+{% extends "dash/base.html" %}
 
+{% block dash_title %}Analytics{% endblock %}
 
-<div class="dash-header">
-  <div class="dash-title">
-    <h2>Dashibodi</h2>
-    <p>Simamia hadithi, sura, na ufikiaji wa wasomaji sehemu moja.</p>
+{% block dash_content %}
+<div class="dash-page-header">
+  <div>
+    <h1>Creator Dashboard</h1>
+    <p>Overview of stories, shorts, readers, and revenue.</p>
   </div>
-  <div style="display:flex;gap:10px;flex-wrap:wrap;">
-    <a href="{% url 'story_create' %}" class="btn-primary">+ Unda Hadithi</a>
-    <a href="{% url 'unlock_chapter' %}" class="btn-secondary">Ufikiaji wa Wasomaji</a>
+  <a href="{% url 'story_create' %}" class="dash-btn dash-btn-primary">+ Create Story</a>
+</div>
+
+<div class="dash-grid-4">
+  <div class="dash-card dash-stat-card">
+    <span class="dash-stat-label">📚 Total Stories</span>
+    <span class="dash-stat-value">{{ stats.total_stories }}</span>
+    <span class="dash-stat-sub">{{ stats.draft_stories }} drafts</span>
+  </div>
+  <div class="dash-card dash-stat-card">
+    <span class="dash-stat-label">⚡ Total Shorts</span>
+    <span class="dash-stat-value">{{ stats.total_shorts }}</span>
+    <span class="dash-stat-sub">Published shorts</span>
+  </div>
+  <div class="dash-card dash-stat-card">
+    <span class="dash-stat-label">👁 Total Views</span>
+    <span class="dash-stat-value">{{ stats.total_views|default:0 }}</span>
+    <span class="dash-stat-sub">Stories + shorts</span>
+  </div>
+  <div class="dash-card dash-stat-card">
+    <span class="dash-stat-label">💰 Revenue</span>
+    <span class="dash-stat-value">TZS {{ stats.total_revenue|floatformat:0|default:"0" }}</span>
+    <span class="dash-stat-sub">{{ stats.total_purchases }} purchases</span>
   </div>
 </div>
 
-<div class="dash-grid">
-  {% for story in stories %}
-    <div class="story-card">
-      <h3>{{ story.title }}</h3>
-      <div class="category-chip">{{ story.category.name|default:"Bila kategoria" }}</div>
-      <div class="meta">{{ story.chapters.count }} sura · {{ story.access_grants.count }} wasomaji waliofunguliwa</div>
-      <div class="reaction-meta">
-        <span>👁 {{ story.views|default:0 }}</span>
-        <span>👍 {{ story.likes_count|default:0 }}</span>
-        <span>👎 {{ story.dislikes_count|default:0 }}</span>
-      </div>
-      <div class="status {% if story.is_published %}published{% else %}draft{% endif %}">
-        {% if story.is_published %}● Imechapishwa{% else %}● Rasimu{% endif %}
-      </div>
-
-      <div class="actions">
-        <a class="btn-secondary" href="{% url 'story_edit' story.id %}">Hariri Hadithi</a>
-        <a class="btn-secondary" href="{% url 'chapter_list' story.id %}">Simamia Sura</a>
-        <a class="btn-secondary" href="{% url 'unlock_chapter' %}?story={{ story.id }}">Fungua Wasomaji</a>
-        <a class="btn-secondary" href="{% url 'story_toggle_publish' story.id %}">
-          {% if story.is_published %}Ondoa Uchapishaji{% else %}Chapisha{% endif %}
-        </a>
-      </div>
-    </div>
-
-  {% empty %}
-    <p>Hakuna hadithi bado.</p>
-  {% endfor %}
+<div class="dash-grid-2">
+  <div class="dash-card dash-stat-card">
+    <span class="dash-stat-label">🔥 Best Performing Story</span>
+    <span class="dash-stat-value" style="font-size:1.1rem;">{{ leaders.best_views_story.title|default:"—" }}</span>
+    <span class="dash-stat-sub">{% if leaders.best_views_story %}{{ leaders.best_views_story.views }} views{% else %}No data yet{% endif %}</span>
+  </div>
+  <div class="dash-card dash-stat-card">
+    <span class="dash-stat-label">⚡ Best Performing Short</span>
+    <span class="dash-stat-value" style="font-size:1.1rem;">{{ leaders.best_short.title|default:"—" }}</span>
+    <span class="dash-stat-sub">{% if leaders.best_short %}{{ leaders.best_short.views }} views{% else %}No data yet{% endif %}</span>
+  </div>
+  <div class="dash-card dash-stat-card">
+    <span class="dash-stat-label">📈 Fastest Growing Story</span>
+    <span class="dash-stat-value" style="font-size:1.1rem;">{{ leaders.fastest_growing_story.title|default:"—" }}</span>
+    <span class="dash-stat-sub">Latest published story</span>
+  </div>
+  <div class="dash-card dash-stat-card">
+    <span class="dash-stat-label">💎 Highest Revenue Story</span>
+    <span class="dash-stat-value" style="font-size:1.1rem;">{{ leaders.best_revenue_story.title|default:"—" }}</span>
+    <span class="dash-stat-sub">{% if leaders.best_revenue_story %}TZS {{ leaders.best_revenue_story.revenue|default:0|floatformat:0 }}{% else %}No sales yet{% endif %}</span>
+  </div>
 </div>
 
+<div class="dash-grid-2">
+  <div class="dash-card dash-chart-card">
+    <h2>Story Performance</h2>
+    <canvas id="storyPerfChart" height="200"></canvas>
+  </div>
+  <div class="dash-card dash-chart-card">
+    <h2>Revenue Trend</h2>
+    <canvas id="revenueChart" height="200"></canvas>
+  </div>
+  <div class="dash-card dash-chart-card">
+    <h2>Reader Growth</h2>
+    <canvas id="readerChart" height="200"></canvas>
+  </div>
+  <div class="dash-card dash-chart-card">
+    <h2>Top Categories</h2>
+    <canvas id="categoryChart" height="200"></canvas>
+  </div>
+</div>
+{% endblock %}
+
+{% block dash_extra_js %}
+<script>
+  const revenueData = [
+    {% for row in revenue_trend %}{ day: "{{ row.day }}", total: {{ row.total|default:0 }} },{% endfor %}
+  ];
+  const readerData = [
+    {% for row in reader_growth %}{ day: "{{ row.day }}", count: {{ row.count }} },{% endfor %}
+  ];
+  const categoryData = [
+    {% for row in category_perf %}{ name: "{{ row.name|escapejs }}", views: {{ row.total_views|default:0 }} },{% endfor %}
+  ];
+
+  function makeChart(id, type, labels, data) {
+    const el = document.getElementById(id);
+    if (!el || !labels.length) return;
+    new Chart(el, {
+      type,
+      data: {
+        labels,
+        datasets: [{
+          data,
+          backgroundColor: type === "line" ? "rgba(17,24,39,0.1)" : "rgba(245,158,11,0.75)",
+          borderColor: "#111827",
+          borderWidth: type === "line" ? 2 : 0,
+          fill: type === "line",
+          tension: 0.35,
+        }],
+      },
+      options: {
+        responsive: true,
+        plugins: { legend: { display: false } },
+        scales: type === "line" ? { y: { beginAtZero: true } } : {},
+      },
+    });
+  }
+
+  makeChart(
+    "storyPerfChart", "bar",
+    [{% for s in story_perf %}"{{ s.title|truncatechars:20|escapejs }}",{% endfor %}],
+    [{% for s in story_perf %}{{ s.views|default:0 }},{% endfor %}]
+  );
+  makeChart("revenueChart", "line", revenueData.map(r => r.day), revenueData.map(r => r.total));
+  makeChart("readerChart", "line", readerData.map(r => r.day), readerData.map(r => r.count));
+  makeChart("categoryChart", "bar", categoryData.map(c => c.name), categoryData.map(c => c.views));
+</script>
 {% endblock %}

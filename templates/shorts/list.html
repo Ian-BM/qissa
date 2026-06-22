@@ -1,0 +1,123 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Simulizi Fupi — Qissa Shorts{% endblock %}
+
+{% block content %}
+<style>
+  .shorts-page { display: grid; gap: 32px; padding: 4px 0 24px; }
+  .shorts-hero { max-width: 560px; }
+  .shorts-hero h1 { margin: 0 0 8px; color: var(--heading); font-size: clamp(1.5rem, 3vw, 2rem); }
+  .shorts-hero p { margin: 0; color: var(--text); line-height: 1.65; font-size: 0.95rem; }
+  .shorts-toolbar {
+    display: grid;
+    gap: 12px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 16px;
+  }
+  .shorts-search { display: flex; gap: 0; max-width: 100%; }
+  .shorts-search input {
+    flex: 1;
+    border: 1px solid var(--border);
+    border-right: none;
+    border-radius: 10px 0 0 10px;
+    padding: 10px 12px;
+    background: var(--surface-soft);
+    color: var(--heading);
+    font-size: 0.9rem;
+  }
+  .shorts-search button {
+    border: 1px solid var(--accent-primary);
+    background: var(--accent-primary);
+    color: #fff;
+    padding: 0 16px;
+    border-radius: 0 10px 10px 0;
+    font-weight: 600;
+    font-size: 0.88rem;
+    cursor: pointer;
+  }
+  .shorts-filters, .shorts-sort { display: flex; flex-wrap: wrap; gap: 8px; }
+  .filter-chip, .sort-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 6px 12px;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    background: var(--surface-soft);
+    color: var(--heading);
+    font-size: 0.82rem;
+    font-weight: 600;
+  }
+  .filter-chip.active, .sort-chip.active {
+    border-color: var(--accent-primary);
+    background: var(--surface);
+  }
+  .shorts-pagination {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .shorts-pagination a, .shorts-pagination span {
+    padding: 8px 14px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--heading);
+    font-size: 0.88rem;
+  }
+</style>
+
+<section class="shorts-page">
+  <div class="shorts-hero">
+    <h1>⚡ Qissa Shorts</h1>
+    <p>Simulizi fupi za hisia — soma ndani ya dakika 3–5 popote ulipo.</p>
+  </div>
+
+  <div class="shorts-toolbar">
+    <form method="get" class="shorts-search" role="search">
+      <input type="text" name="q" value="{{ query }}" placeholder="Tafuta simulizi fupi...">
+      {% if selected_category %}<input type="hidden" name="category" value="{{ selected_category }}">{% endif %}
+      {% if sort %}<input type="hidden" name="sort" value="{{ sort }}">{% endif %}
+      <button type="submit">Tafuta</button>
+    </form>
+
+    <div class="shorts-filters">
+      {% for value, label, emoji in category_filters %}
+        <a
+          href="?{% if query %}q={{ query }}&{% endif %}{% if sort %}sort={{ sort }}&{% endif %}{% if value %}category={{ value }}{% endif %}"
+          class="filter-chip {% if selected_category == value %}active{% endif %}"
+        >{% if emoji %}{{ emoji }} {% endif %}{{ label }}</a>
+      {% endfor %}
+    </div>
+
+    <div class="shorts-sort">
+      <a href="?{% if query %}q={{ query }}&{% endif %}{% if selected_category %}category={{ selected_category }}&{% endif %}sort=newest" class="sort-chip {% if sort != 'trending' %}active{% endif %}">Mpya</a>
+      <a href="?{% if query %}q={{ query }}&{% endif %}{% if selected_category %}category={{ selected_category }}&{% endif %}sort=trending" class="sort-chip {% if sort == 'trending' %}active{% endif %}">🔥 Inayovuma</a>
+    </div>
+  </div>
+
+  <div class="shorts-grid">
+    {% for short in shorts %}
+      {% include "shorts/_card.html" with short=short %}
+    {% empty %}
+      <p>Hakuna simulizi fupi zinazopatikana bado.</p>
+    {% endfor %}
+  </div>
+
+  {% if page_obj.has_other_pages %}
+    <div class="shorts-pagination">
+      {% if page_obj.has_previous %}
+        <a href="?page={{ page_obj.previous_page_number }}{% if query %}&q={{ query }}{% endif %}{% if selected_category %}&category={{ selected_category }}{% endif %}{% if sort %}&sort={{ sort }}{% endif %}">Nyuma</a>
+      {% endif %}
+      <span>Ukurasa {{ page_obj.number }} wa {{ page_obj.paginator.num_pages }}</span>
+      {% if page_obj.has_next %}
+        <a href="?page={{ page_obj.next_page_number }}{% if query %}&q={{ query }}{% endif %}{% if selected_category %}&category={{ selected_category }}{% endif %}{% if sort %}&sort={{ sort }}{% endif %}">Mbele</a>
+      {% endif %}
+    </div>
+  {% endif %}
+</section>
+{% endblock %}

@@ -88,25 +88,6 @@
     margin-bottom: 18px;
     text-align: left;
   }
-
-  .phone-row {
-    display: flex;
-    gap: 10px;
-    margin-bottom: 16px;
-  }
-
-  .phone-row select,
-  .phone-row input {
-    margin-bottom: 0;
-  }
-
-  .phone-row select {
-    flex: 0 0 48%;
-  }
-
-  .phone-row input {
-    flex: 1;
-  }
 </style>
 
 <a href="{% url 'home' %}" class="back-home">← <span data-i18n="auth.home">{% trans "Home" %}</span></a>
@@ -122,15 +103,8 @@
     <form method="post">
       {% csrf_token %}
       <input type="text" name="name" placeholder="Jina kamili" data-i18n-placeholder="auth.fullNamePlaceholder" value="{{ name }}" required>
-      <div class="phone-row">
-        <select name="country_code" required>
-          {% for code, label in country_choices %}
-            <option value="{{ code }}" {% if selected_country_code == code %}selected{% endif %}>{{ label }}</option>
-          {% endfor %}
-        </select>
-        <input type="tel" name="phone_number" placeholder="{% trans 'Phone number' %}" data-i18n-placeholder="auth.phonePlaceholder" value="{{ phone_number }}" required inputmode="numeric" pattern="^[0-9][0-9\s\-\(\)]{5,14}$">
-      </div>
-      <div class="hint" data-i18n="auth.hint">{% trans "Choose country code, then enter number without + or 00." %}</div>
+      <input type="tel" name="phone" placeholder="{% trans 'Phone number' %}" data-i18n-placeholder="auth.phonePlaceholder" value="{{ phone }}" required inputmode="numeric" pattern="^0\d{8,12}$">
+      <div class="hint" data-i18n="auth.hint">{% trans "Enter your phone number, e.g. 0754938633." %}</div>
       <button type="submit" data-i18n="auth.createAccountBtn">Tengeneza akaunti</button>
     </form>
 

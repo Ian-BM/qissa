@@ -1,0 +1,54 @@
+{% extends "dash/base.html" %}
+
+{% block dash_title %}Monetization{% endblock %}
+
+{% block dash_content %}
+<div class="dash-page-header">
+  <div>
+    <h1>💰 Monetization</h1>
+    <p>Top earning stories and conversion performance.</p>
+  </div>
+</div>
+
+<div class="dash-table-wrap">
+  <table class="dash-table">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Story</th>
+        <th>Sales</th>
+        <th>Revenue</th>
+        <th>Locked Clicks</th>
+        <th>Conversion</th>
+        <th>Price</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for story in stories %}
+      <tr>
+        <td>{{ forloop.counter }}</td>
+        <td>
+          <strong>{{ story.title }}</strong>
+          <div style="font-size:0.8rem;color:var(--dash-text);">
+            <a href="{% url 'story_manage' story.id %}">Manage →</a>
+          </div>
+        </td>
+        <td>{{ story.sales_count|default:0 }}</td>
+        <td>TZS {{ story.revenue|default:0|floatformat:0 }}</td>
+        <td>{{ story.locked_chapter_clicks|default:0 }}</td>
+        <td>
+          {% if story.locked_chapter_clicks %}
+            {% widthratio story.sales_count|default:0 story.locked_chapter_clicks 100 %}%
+          {% else %}
+            —
+          {% endif %}
+        </td>
+        <td>TZS {{ story.price|floatformat:0 }}</td>
+      </tr>
+      {% empty %}
+      <tr><td colspan="7">No monetization data yet.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

@@ -1,0 +1,10 @@
+<div class="section-header">
+  <div class="section-header__copy">
+    {% if eyebrow %}<p class="section-eyebrow">{{ eyebrow }}</p>{% endif %}
+    <h2 class="section-heading">{{ title }}</h2>
+    {% if subtitle %}<p class="section-subtitle">{{ subtitle }}</p>{% endif %}
+  </div>
+  {% if view_all_url %}
+    <a href="{{ view_all_url }}" class="btn btn-secondary btn-sm">{{ view_all_label|default:"View All" }}</a>
+  {% endif %}
+</div>

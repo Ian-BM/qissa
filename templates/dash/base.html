@@ -1,0 +1,403 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="sw">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block dash_title %}Dashboard{% endblock %} — Qissa</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <style>
+    :root {
+      --dash-bg: #f4f6f9;
+      --dash-surface: #ffffff;
+      --dash-border: #e8ecf1;
+      --dash-text: #64748b;
+      --dash-heading: #0f172a;
+      --dash-accent: #111827;
+      --dash-accent-soft: #f1f5f9;
+      --dash-success: #16a34a;
+      --dash-warning: #f59e0b;
+      --dash-danger: #dc2626;
+      --dash-sidebar: #0f172a;
+      --dash-sidebar-text: #cbd5e1;
+      --dash-sidebar-active: #ffffff;
+      --dash-shadow: 0 2px 12px rgba(15, 23, 42, 0.06);
+      --dash-radius: 14px;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: var(--dash-bg);
+      color: var(--dash-heading);
+    }
+
+    .dash-layout {
+      display: grid;
+      grid-template-columns: 240px 1fr;
+      min-height: 100vh;
+    }
+
+    .dash-sidebar {
+      background: var(--dash-sidebar);
+      color: var(--dash-sidebar-text);
+      padding: 20px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      overflow-y: auto;
+    }
+
+    .dash-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 10px 20px;
+      color: #fff;
+      font-weight: 800;
+      font-size: 1.05rem;
+      text-decoration: none;
+    }
+
+    .dash-brand-mark {
+      width: 32px;
+      height: 32px;
+      border-radius: 10px;
+      background: #f59e0b;
+      color: #111;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+    }
+
+    .dash-nav a {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 12px;
+      border-radius: 10px;
+      color: var(--dash-sidebar-text);
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 500;
+      transition: background 0.15s ease, color 0.15s ease;
+    }
+
+    .dash-nav a:hover,
+    .dash-nav a.active {
+      background: rgba(255, 255, 255, 0.1);
+      color: var(--dash-sidebar-active);
+    }
+
+    .dash-nav-spacer { flex: 1; }
+
+    .dash-main {
+      padding: 28px 32px 48px;
+      max-width: 1280px;
+    }
+
+    .dash-page-header {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin-bottom: 28px;
+    }
+
+    .dash-page-header h1 {
+      margin: 0 0 6px;
+      font-size: 1.75rem;
+      font-weight: 700;
+    }
+
+    .dash-page-header p {
+      margin: 0;
+      color: var(--dash-text);
+      font-size: 0.92rem;
+    }
+
+    .dash-grid-4 {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .dash-grid-2 {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .dash-card {
+      background: var(--dash-surface);
+      border: 1px solid var(--dash-border);
+      border-radius: var(--dash-radius);
+      padding: 20px;
+      box-shadow: var(--dash-shadow);
+    }
+
+    .dash-stat-card {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      min-height: 110px;
+    }
+
+    .dash-stat-label {
+      font-size: 0.82rem;
+      color: var(--dash-text);
+      font-weight: 600;
+    }
+
+    .dash-stat-value {
+      font-size: 1.65rem;
+      font-weight: 800;
+      line-height: 1.1;
+    }
+
+    .dash-stat-sub {
+      font-size: 0.8rem;
+      color: var(--dash-text);
+    }
+
+    .dash-section {
+      margin-bottom: 28px;
+    }
+
+    .dash-section h2 {
+      margin: 0 0 16px;
+      font-size: 1.1rem;
+      font-weight: 700;
+    }
+
+    .dash-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 9px 14px;
+      border-radius: 10px;
+      border: 1px solid var(--dash-border);
+      background: var(--dash-surface);
+      color: var(--dash-heading);
+      font-size: 0.88rem;
+      font-weight: 600;
+      text-decoration: none;
+      cursor: pointer;
+      transition: background 0.15s ease;
+    }
+
+    .dash-btn:hover { background: var(--dash-accent-soft); }
+
+    .dash-btn-primary {
+      background: var(--dash-accent);
+      color: #fff;
+      border-color: var(--dash-accent);
+    }
+
+    .dash-btn-primary:hover { filter: brightness(1.05); }
+
+    .dash-btn-danger {
+      background: #fef2f2;
+      color: #b91c1c;
+      border-color: #fecaca;
+    }
+
+    .dash-btn-danger:hover { background: #fee2e2; }
+
+    .dash-btn-sm { padding: 6px 10px; font-size: 0.8rem; }
+
+    .dash-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      align-items: center;
+    }
+
+    .dash-table-wrap {
+      overflow-x: auto;
+      border: 1px solid var(--dash-border);
+      border-radius: var(--dash-radius);
+      background: var(--dash-surface);
+      box-shadow: var(--dash-shadow);
+    }
+
+    .dash-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.88rem;
+    }
+
+    .dash-table th,
+    .dash-table td {
+      padding: 12px 14px;
+      text-align: left;
+      border-bottom: 1px solid var(--dash-border);
+    }
+
+    .dash-table th {
+      font-size: 0.76rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--dash-text);
+      background: #fafbfc;
+    }
+
+    .dash-table tr:last-child td { border-bottom: none; }
+
+    .dash-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 0.76rem;
+      font-weight: 700;
+    }
+
+    .dash-badge-free { background: #dcfce7; color: #166534; }
+    .dash-badge-locked { background: #fee2e2; color: #991b1b; }
+
+    .dash-toggle {
+      position: relative;
+      width: 44px;
+      height: 24px;
+      display: inline-block;
+    }
+
+    .dash-toggle input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .dash-toggle-slider {
+      position: absolute;
+      inset: 0;
+      background: #cbd5e1;
+      border-radius: 999px;
+      cursor: pointer;
+      transition: background 0.2s ease;
+    }
+
+    .dash-toggle-slider::before {
+      content: "";
+      position: absolute;
+      width: 18px;
+      height: 18px;
+      left: 3px;
+      top: 3px;
+      background: #fff;
+      border-radius: 50%;
+      transition: transform 0.2s ease;
+    }
+
+    .dash-toggle input:checked + .dash-toggle-slider {
+      background: var(--dash-danger);
+    }
+
+    .dash-toggle input:checked + .dash-toggle-slider::before {
+      transform: translateX(20px);
+    }
+
+    .dash-messages { margin-bottom: 16px; }
+    .dash-message {
+      padding: 10px 14px;
+      border-radius: 10px;
+      background: #ecfdf5;
+      border: 1px solid #bbf7d0;
+      color: #166534;
+      font-size: 0.88rem;
+      margin-bottom: 8px;
+    }
+
+    .dash-chart-card { min-height: 280px; }
+
+    .dash-hamburger {
+      display: none;
+      background: none;
+      border: none;
+      font-size: 1.4rem;
+      cursor: pointer;
+      padding: 8px;
+    }
+
+    @media (max-width: 960px) {
+      .dash-layout { grid-template-columns: 1fr; }
+      .dash-sidebar {
+        position: fixed;
+        left: -260px;
+        width: 240px;
+        z-index: 100;
+        transition: left 0.2s ease;
+      }
+      .dash-sidebar.open { left: 0; }
+      .dash-hamburger { display: inline-flex; }
+      .dash-main { padding: 20px 16px 40px; }
+      .dash-grid-4 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .dash-grid-2 { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 520px) {
+      .dash-grid-4 { grid-template-columns: 1fr; }
+    }
+  </style>
+  {% block dash_extra_css %}{% endblock %}
+</head>
+<body>
+  <div class="dash-layout">
+    <aside class="dash-sidebar" id="dashSidebar">
+      <a href="{% url 'dashboard_home' %}" class="dash-brand">
+        <span class="dash-brand-mark">Q</span>
+        <span>Qissa Studio</span>
+      </a>
+      <nav class="dash-nav">
+        <a href="{% url 'dashboard_home' %}" class="{% if request.resolver_match.url_name == 'dashboard_home' %}active{% endif %}">📊 Analytics</a>
+        <a href="{% url 'story_list' %}" class="{% if 'story' in request.resolver_match.url_name or request.resolver_match.url_name == 'chapter_list' %}active{% endif %}">📚 Stories</a>
+        <a href="{% url 'dashboard_shorts' %}" class="{% if 'short' in request.resolver_match.url_name %}active{% endif %}">⚡ Short Stories</a>
+        <a href="{% url 'dashboard_monetization' %}" class="{% if request.resolver_match.url_name == 'dashboard_monetization' %}active{% endif %}">💰 Monetization</a>
+        <a href="{% url 'dashboard_drafts' %}" class="{% if request.resolver_match.url_name == 'dashboard_drafts' %}active{% endif %}">📝 Drafts</a>
+        <a href="{% url 'dashboard_performance' %}" class="{% if request.resolver_match.url_name == 'dashboard_performance' %}active{% endif %}">👁 Performance</a>
+        <a href="{% url 'unlock_chapter' %}" class="{% if request.resolver_match.url_name == 'unlock_chapter' %}active{% endif %}">⚙ Access</a>
+        <div class="dash-nav-spacer"></div>
+        <a href="{% url 'home' %}">← Back to Site</a>
+        <form method="post" action="{% url 'logout' %}" style="margin:0;">
+          {% csrf_token %}
+          <button type="submit" class="dash-btn" style="width:100%;margin-top:4px;">Logout</button>
+        </form>
+      </nav>
+    </aside>
+
+    <main class="dash-main">
+      <button class="dash-hamburger" id="dashHamburger" type="button" aria-label="Menu">☰</button>
+
+      {% if messages %}
+        <div class="dash-messages">
+          {% for message in messages %}
+            <div class="dash-message">{{ message }}</div>
+          {% endfor %}
+        </div>
+      {% endif %}
+
+      {% block dash_content %}{% endblock %}
+    </main>
+  </div>
+
+  <script>
+    const sidebar = document.getElementById("dashSidebar");
+    const hamburger = document.getElementById("dashHamburger");
+    if (hamburger && sidebar) {
+      hamburger.addEventListener("click", () => sidebar.classList.toggle("open"));
+    }
+  </script>
+  {% block dash_extra_js %}{% endblock %}
+</body>
+</html>

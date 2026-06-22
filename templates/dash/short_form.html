@@ -1,0 +1,26 @@
+{% extends "dash/base.html" %}
+
+{% block dash_title %}{% if mode == "create" %}New Short{% else %}Edit Short{% endif %}{% endblock %}
+
+{% block dash_content %}
+<div class="dash-page-header">
+  <div>
+    <h1>{% if mode == "create" %}Create Short Story{% else %}Edit Short Story{% endif %}</h1>
+    <p>Quick-read content for Qissa Shorts.</p>
+  </div>
+  <a href="{% url 'dashboard_shorts' %}" class="dash-btn">← Back to Shorts</a>
+</div>
+
+<div class="dash-card" style="max-width:720px;">
+  <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:16px;">
+      <button type="submit" class="dash-btn dash-btn-primary">
+        {% if mode == "create" %}Create Short{% else %}Save Changes{% endif %}
+      </button>
+      <a href="{% url 'dashboard_shorts' %}" class="dash-btn">Cancel</a>
+    </div>
+  </form>
+</div>
+{% endblock %}

@@ -1,0 +1,48 @@
+<style>
+  .short-share-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin: 14px 0;
+  }
+  .short-share-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 14px;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--heading);
+    font-weight: 600;
+    font-size: 0.88rem;
+    cursor: pointer;
+    text-decoration: none;
+  }
+  .short-share-btn.whatsapp { background: #25d366; color: #fff; border-color: #25d366; }
+  .short-share-btn.facebook { background: #1877f2; color: #fff; border-color: #1877f2; }
+</style>
+
+<div class="short-share-row">
+  <a class="short-share-btn whatsapp" href="https://wa.me/?text={{ share_text|urlencode }}" target="_blank" rel="noopener">WhatsApp</a>
+  <a class="short-share-btn facebook" href="https://www.facebook.com/sharer/sharer.php?u={{ story_url|urlencode }}" target="_blank" rel="noopener">Facebook</a>
+  <button type="button" class="short-share-btn copy-short-link" data-url="{{ story_url }}">Copy Link</button>
+</div>
+
+<script>
+  (function () {
+    document.querySelectorAll(".copy-short-link").forEach((btn) => {
+      if (btn.dataset.bound) return;
+      btn.dataset.bound = "1";
+      btn.addEventListener("click", async () => {
+        try {
+          await navigator.clipboard.writeText(btn.dataset.url);
+          btn.textContent = "Copied!";
+          setTimeout(() => { btn.textContent = "Copy Link"; }, 1800);
+        } catch (e) {
+          window.prompt("Copy this link:", btn.dataset.url);
+        }
+      });
+    });
+  })();
+</script>

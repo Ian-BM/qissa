@@ -9,26 +9,9 @@ AFRICAN_COUNTRY_CALLING_CODES = {
     "290", "291", "297", "298", "299",
 }
 
-EAST_AFRICAN_COUNTRY_CHOICES = (
-    ("+255", "Tanzania (+255)"),
-    ("+254", "Kenya (+254)"),
-    ("+256", "Uganda (+256)"),
-    ("+250", "Rwanda (+250)"),
-    ("+257", "Burundi (+257)"),
-    ("+211", "South Sudan (+211)"),
-    ("+251", "Ethiopia (+251)"),
-    ("+252", "Somalia (+252)"),
-    ("+253", "Djibouti (+253)"),
-    ("+291", "Eritrea (+291)"),
-    ("+243", "DR Congo (+243)"),
-)
-
-EAST_AFRICAN_COUNTRY_CODES = {code[1:] for code, _ in EAST_AFRICAN_COUNTRY_CHOICES}
-
 
 class PhoneValidationError(ValueError):
     pass
-
 
 
 def normalize_phone(phone: str) -> str:
@@ -38,42 +21,37 @@ def normalize_phone(phone: str) -> str:
     return cleaned
 
 
-
-def validate_african_phone(phone: str) -> str:
+def validate_phone(phone: str) -> str:
     normalized = normalize_phone(phone)
 
-    if not normalized.startswith("+"):
-        raise PhoneValidationError("Use international format with country code, e.g. +2557XXXXXXXX.")
+    if re.fullmatch(r"0\d{8,12}", normalized):
+        return normalized
 
-    if not re.fullmatch(r"\+[1-9]\d{8,14}", normalized):
-        raise PhoneValidationError("Enter a valid international phone number.")
+    if normalized.startswith("+"):
+        if not re.fullmatch(r"\+[1-9]\d{8,14}", normalized):
+            raise PhoneValidationError("Enter a valid phone number.")
+        digits = normalized[1:]
+        if not any(
+            digits.startswith(code)
+            for code in sorted(AFRICAN_COUNTRY_CALLING_CODES, key=len, reverse=True)
+        ):
+            raise PhoneValidationError("Enter a valid phone number.")
+        return normalized
 
-    digits = normalized[1:]
-    if not any(digits.startswith(code) for code in sorted(AFRICAN_COUNTRY_CALLING_CODES, key=len, reverse=True)):
-        raise PhoneValidationError("Only African country phone numbers are allowed.")
-
-    return normalized
+    raise PhoneValidationError("Enter a valid phone number.")
 
 
-def validate_east_african_phone(country_code: str, local_number: str) -> str:
-    normalized_code = normalize_phone(country_code)
-    if not re.fullmatch(r"\+[1-9]\d{1,3}", normalized_code):
-        raise PhoneValidationError("Select a valid country code.")
+def phone_lookup_variants(phone: str) -> list[str]:
+    normalized = validate_phone(phone)
+    variants = [normalized]
+    if normalized.startswith("0"):
+        variants.append(f"+255{normalized[1:]}")
+    elif normalized.startswith("+255"):
+        local = f"0{normalized[4:]}"
+        if local not in variants:
+            variants.append(local)
+    return variants
 
-    if normalized_code[1:] not in EAST_AFRICAN_COUNTRY_CODES:
-        raise PhoneValidationError("Select an East African country code.")
 
-    cleaned_local = re.sub(r"[\s\-()]+", "", (local_number or "").strip())
-    if not cleaned_local:
-        raise PhoneValidationError("Enter your phone number.")
-
-    if cleaned_local.startswith("+") or cleaned_local.startswith("00"):
-        raise PhoneValidationError("Enter the phone number without country code.")
-
-    if cleaned_local.startswith("0"):
-        cleaned_local = cleaned_local[1:]
-
-    if not re.fullmatch(r"[1-9]\d{5,12}", cleaned_local):
-        raise PhoneValidationError("Enter a valid phone number.")
-
-    return validate_african_phone(f"{normalized_code}{cleaned_local}")
+# Backward-compatible alias used by models and tests.
+validate_african_phone = validate_phone

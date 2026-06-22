@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.db import models
 from django.db.models import F
 from django.utils import timezone
@@ -39,10 +40,19 @@ class Story(models.Model):
         null=True,
         related_name="stories",
     )
+    author = models.ForeignKey(
+        "accounts.Author",
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+        related_name="stories",
+    )
 
-    price = models.DecimalField(max_digits=8, decimal_places=2, default=0)  # NEW
+    price = models.DecimalField(max_digits=8, decimal_places=2, default=0)
 
     views = models.PositiveIntegerField(default=0)
+    locked_chapter_clicks = models.PositiveIntegerField(default=0)
+    purchase_attempts = models.PositiveIntegerField(default=0)
     is_published = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
 
@@ -74,6 +84,7 @@ class Chapter(models.Model):
     content = models.TextField()
     order = models.PositiveIntegerField()
     is_locked = models.BooleanField(default=False)
+    views = models.PositiveIntegerField(default=0)
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
@@ -84,7 +95,15 @@ class Chapter(models.Model):
         return f"{self.story.title} — Chapter {self.order}: {self.title}"
 
 
-from django.conf import settings
+class ChapterRead(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    chapter = models.ForeignKey(Chapter, on_delete=models.CASCADE, related_name="reads")
+    read_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ("user", "chapter")
+        ordering = ["-read_at"]
+
 
 class ChapterAccess(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
@@ -155,3 +174,78 @@ class StoryReaction(models.Model):
 
     def __str__(self):
         return f"{self.user} -> {self.story} ({self.value})"
+
+
+class Purchase(models.Model):
+    reader = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="purchases",
+    )
+    story = models.ForeignKey(Story, on_delete=models.CASCADE, related_name="purchases")
+    amount_paid = models.DecimalField(max_digits=10, decimal_places=2)
+    payment_reference = models.CharField(max_length=255, blank=True)
+    purchased_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["-purchased_at"]
+        unique_together = ("reader", "story")
+
+    def __str__(self):
+        return f"{self.reader} purchased {self.story}"
+
+
+class WriterEarning(models.Model):
+    author = models.ForeignKey(
+        "accounts.Author",
+        on_delete=models.CASCADE,
+        related_name="earnings",
+    )
+    purchase = models.OneToOneField(
+        Purchase,
+        on_delete=models.CASCADE,
+        related_name="writer_earning",
+    )
+    story = models.ForeignKey(Story, on_delete=models.CASCADE, related_name="earnings")
+    gross_amount = models.DecimalField(max_digits=10, decimal_places=2)
+    writer_share = models.DecimalField(max_digits=10, decimal_places=2)
+    qissa_share = models.DecimalField(max_digits=10, decimal_places=2)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["-created_at"]
+
+    def __str__(self):
+        return f"{self.author} earned {self.writer_share} from {self.story}"
+
+
+class PayoutRequest(models.Model):
+    STATUS_PENDING = "Pending"
+    STATUS_APPROVED = "Approved"
+    STATUS_REJECTED = "Rejected"
+    STATUS_PAID = "Paid"
+    STATUS_CHOICES = [
+        (STATUS_PENDING, "Pending"),
+        (STATUS_APPROVED, "Approved"),
+        (STATUS_REJECTED, "Rejected"),
+        (STATUS_PAID, "Paid"),
+    ]
+
+    author = models.ForeignKey(
+        "accounts.Author",
+        on_delete=models.CASCADE,
+        related_name="payout_requests",
+    )
+    amount = models.DecimalField(max_digits=10, decimal_places=2)
+    mobile_number = models.CharField(max_length=20)
+    status = models.CharField(
+        max_length=20, choices=STATUS_CHOICES, default=STATUS_PENDING
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ["-created_at"]
+
+    def __str__(self):
+        return f"{self.author} — {self.amount} ({self.status})"

@@ -1,0 +1,69 @@
+{% extends "dash/base.html" %}
+
+{% block dash_title %}Short Stories{% endblock %}
+
+{% block dash_content %}
+<div class="dash-page-header">
+  <div>
+    <h1>Short Stories</h1>
+    <p>Create, publish, draft, or delete Qissa Shorts.</p>
+  </div>
+  <a href="{% url 'short_create' %}" class="dash-btn dash-btn-primary">+ Create Short</a>
+</div>
+
+<div class="dash-table-wrap">
+  <table class="dash-table">
+    <thead>
+      <tr>
+        <th>Title</th>
+        <th>Category</th>
+        <th>Read Time</th>
+        <th>Views</th>
+        <th>Likes</th>
+        <th>Status</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for short in shorts %}
+      <tr>
+        <td><strong>{{ short.title }}</strong></td>
+        <td>{{ short.category_emoji }} {{ short.category_label }}</td>
+        <td>{{ short.read_time }} min</td>
+        <td>{{ short.views }}</td>
+        <td>{{ short.likes }}</td>
+        <td>
+          {% if short.published %}
+            <span class="dash-badge dash-badge-free">Published</span>
+          {% else %}
+            <span class="dash-badge dash-badge-locked">Draft</span>
+          {% endif %}
+        </td>
+        <td>
+          <div class="dash-actions">
+            <a href="{% url 'short_edit' short.id %}" class="dash-btn dash-btn-sm">Edit</a>
+            <form method="post" action="{% url 'short_toggle_publish' short.id %}" style="margin:0;">
+              {% csrf_token %}
+              <button type="submit" class="dash-btn dash-btn-sm">
+                {% if short.published %}Unpublish{% else %}Publish{% endif %}
+              </button>
+            </form>
+            <form method="post" action="{% url 'short_delete' short.id %}" style="margin:0;" onsubmit="return confirm('Delete &quot;{{ short.title|escapejs }}&quot;?');">
+              {% csrf_token %}
+              <button type="submit" class="dash-btn dash-btn-sm dash-btn-danger">Delete</button>
+            </form>
+          </div>
+        </td>
+      </tr>
+      {% empty %}
+      <tr>
+        <td colspan="7">
+          No shorts yet.
+          <a href="{% url 'short_create' %}">Create your first short</a>.
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

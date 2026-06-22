@@ -3,22 +3,27 @@ from django.db.models import Count, Q
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_http_methods
 
+from .locking import FREE_CHAPTER_LIMIT, chapter_requires_unlock
 from .models import Chapter, Story, StoryAccess, StoryReaction
-
-FREE_CHAPTER_LIMIT = 4
+from .reader_stats import (
+    record_chapter_read,
+    record_locked_chapter_click,
+    record_purchase_attempt,
+)
 
 
 @require_http_methods(["GET"])
 def story_detail(request, slug):
     story = get_object_or_404(
-        Story.objects.select_related("category").annotate(
+        Story.objects.select_related("category", "author").annotate(
             likes_count=Count("reactions", filter=Q(reactions__value=StoryReaction.LIKE)),
-            dislikes_count=Count("reactions", filter=Q(reactions__value=StoryReaction.DISLIKE)),
+            dislikes_count=Count(
+                "reactions", filter=Q(reactions__value=StoryReaction.DISLIKE)
+            ),
         ),
         slug=slug,
     )
 
-    # Chapters of the story
     chapters = story.chapters.all()
     has_story_access = (
         request.user.is_authenticated
@@ -32,6 +37,24 @@ def story_detail(request, slug):
             .first()
         )
 
+    related = (
+        Story.objects.filter(is_published=True)
+        .exclude(id=story.id)
+        .select_related("category", "author")
+        .annotate(
+            likes_count=Count(
+                "reactions", filter=Q(reactions__value=StoryReaction.LIKE)
+            ),
+        )
+    )
+    if story.category_id:
+        related = related.filter(category_id=story.category_id)
+    related = related.order_by("-created_at")[:6]
+
+    sales_count = story.purchases.count()
+    story_url = request.build_absolute_uri()
+    whatsapp_text = f"Hadithi hii imenivutia sana. Soma hapa: {story_url}"
+
     return render(
         request,
         "stories/story_detail.html",
@@ -41,6 +64,10 @@ def story_detail(request, slug):
             "free_chapter_limit": FREE_CHAPTER_LIMIT,
             "has_story_access": has_story_access,
             "current_reaction": current_reaction,
+            "related_stories": related,
+            "sales_count": sales_count,
+            "story_url": story_url,
+            "whatsapp_text": whatsapp_text,
         },
     )
 
@@ -71,20 +98,21 @@ def chapter_reader(request, id):
     )
     story = chapter.story
 
-    # 🔒 LOCK CHECK
-    requires_unlock = chapter.order > FREE_CHAPTER_LIMIT
-    if requires_unlock:
+    # Lock check uses per-chapter is_locked flag
+    if chapter_requires_unlock(chapter):
         has_story_access = StoryAccess.objects.filter(
             user=request.user,
-            
             story=story,
         ).exists()
 
         if not has_story_access:
+            record_locked_chapter_click(story=story)
             return redirect("payment_page", story_id=story.id)
 
-        # Count a paid view only once per paid user/story.
         StoryAccess.mark_view_if_needed(user=request.user, story=story)
+
+    if request.user.is_authenticated:
+        record_chapter_read(user=request.user, chapter=chapter)
 
     prev_chapter = (
         Chapter.objects.filter(story=story, order__lt=chapter.order)
@@ -100,7 +128,7 @@ def chapter_reader(request, id):
 
     related = Story.objects.filter(
         is_published=True,
-    ).exclude(id=story.id).annotate(
+    ).exclude(id=story.id).select_related("category", "author").annotate(
         likes_count=Count("reactions", filter=Q(reactions__value=StoryReaction.LIKE)),
     )
     if story.category_id:
@@ -123,6 +151,7 @@ def chapter_reader(request, id):
 @require_http_methods(["GET"])
 def payment_page(request, story_id):
     story = get_object_or_404(Story, id=story_id)
+    record_purchase_attempt(story=story)
 
     return render(
         request,

@@ -1,4 +1,5 @@
 from functools import wraps
+
 from django.conf import settings
 from django.http import HttpResponseForbidden
 
@@ -9,7 +10,7 @@ def admin_required(view_func):
         if not request.user.is_authenticated:
             return HttpResponseForbidden("Not authenticated")
 
-        if request.user.phone not in settings.ADMIN_PHONES:
+        if not request.user.is_staff and request.user.phone not in settings.ADMIN_PHONES:
             return HttpResponseForbidden("Admins only")
 
         response = view_func(request, *args, **kwargs)

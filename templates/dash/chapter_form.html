@@ -1,17 +1,24 @@
-{% extends "base.html" %}
-{% block content %}
+{% extends "dash/base.html" %}
 
-<h2>
-  {% if mode == "create" %}Ongeza Sura{% else %}Hariri Sura{% endif %}
-  — {{ story.title }}
-</h2>
+{% block dash_title %}{% if mode == "create" %}New Chapter{% else %}Edit Chapter{% endif %}{% endblock %}
 
-<form method="post">
-  {% csrf_token %}
-  {{ form.as_p }}
-  <button type="submit">
-    {% if mode == "create" %}Unda{% else %}Hifadhi{% endif %}
-  </button>
-</form>
+{% block dash_content %}
+<div class="dash-page-header">
+  <div>
+    <h1>{% if mode == "create" %}Add Chapter{% else %}Edit Chapter{% endif %}</h1>
+    <p>{{ story.title }}</p>
+  </div>
+  <a href="{% url 'story_manage' story.id %}" class="dash-btn">← Back</a>
+</div>
 
+<div class="dash-card" style="max-width:720px;">
+  <form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    {% if mode == "create" %}
+    <p style="font-size:0.85rem;color:var(--dash-text);">Chapters after #4 are locked by default. Change lock status after creation.</p>
+    {% endif %}
+    <button type="submit" class="dash-btn dash-btn-primary">{% if mode == "create" %}Create Chapter{% else %}Save Chapter{% endif %}</button>
+  </form>
+</div>
 {% endblock %}

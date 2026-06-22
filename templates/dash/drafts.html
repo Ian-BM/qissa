@@ -1,0 +1,50 @@
+{% extends "dash/base.html" %}
+
+{% block dash_title %}Drafts{% endblock %}
+
+{% block dash_content %}
+<div class="dash-page-header">
+  <div>
+    <h1>Drafts</h1>
+    <p>Unpublished stories waiting to go live.</p>
+  </div>
+  <a href="{% url 'story_create' %}" class="dash-btn dash-btn-primary">+ Create Story</a>
+</div>
+
+<div class="dash-table-wrap">
+  <table class="dash-table">
+    <thead>
+      <tr>
+        <th>Title</th>
+        <th>Chapters</th>
+        <th>Price</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for story in stories %}
+      <tr>
+        <td><strong>{{ story.title }}</strong></td>
+        <td>{{ story.chapters.count }}</td>
+        <td>TZS {{ story.price|floatformat:0 }}</td>
+        <td>
+          <div class="dash-actions">
+            <a href="{% url 'story_manage' story.id %}" class="dash-btn dash-btn-sm">Manage</a>
+            <form method="post" action="{% url 'story_toggle_publish' story.id %}" style="margin:0;">
+              {% csrf_token %}
+              <button type="submit" class="dash-btn dash-btn-sm dash-btn-primary">Publish</button>
+            </form>
+            <form method="post" action="{% url 'story_delete' story.id %}" style="margin:0;" onsubmit="return confirm('Delete this draft?');">
+              {% csrf_token %}
+              <button type="submit" class="dash-btn dash-btn-sm dash-btn-danger">Delete</button>
+            </form>
+          </div>
+        </td>
+      </tr>
+      {% empty %}
+      <tr><td colspan="4">No drafts. All stories are published.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}
