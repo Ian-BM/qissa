@@ -8,20 +8,20 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
   <style>
     :root {
-      --dash-bg: #f4f6f9;
-      --dash-surface: #ffffff;
-      --dash-border: #e8ecf1;
-      --dash-text: #64748b;
-      --dash-heading: #0f172a;
-      --dash-accent: #111827;
-      --dash-accent-soft: #f1f5f9;
-      --dash-success: #16a34a;
-      --dash-warning: #f59e0b;
-      --dash-danger: #dc2626;
-      --dash-sidebar: #0f172a;
-      --dash-sidebar-text: #cbd5e1;
+      --dash-bg: #0f0f1a;
+      --dash-surface: #16213e;
+      --dash-border: rgba(255, 255, 255, 0.08);
+      --dash-text: #a0a0b0;
+      --dash-heading: #eaeaea;
+      --dash-accent: #e94560;
+      --dash-accent-soft: #1a2a50;
+      --dash-success: #25d366;
+      --dash-warning: #f5a623;
+      --dash-danger: #e94560;
+      --dash-sidebar: #0b0b14;
+      --dash-sidebar-text: #a0a0b0;
       --dash-sidebar-active: #ffffff;
-      --dash-shadow: 0 2px 12px rgba(15, 23, 42, 0.06);
+      --dash-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
       --dash-radius: 14px;
     }
 
@@ -206,12 +206,12 @@
     .dash-btn-primary:hover { filter: brightness(1.05); }
 
     .dash-btn-danger {
-      background: #fef2f2;
-      color: #b91c1c;
-      border-color: #fecaca;
+      background: rgba(233, 69, 96, 0.12);
+      color: #ff8fa3;
+      border-color: rgba(233, 69, 96, 0.4);
     }
 
-    .dash-btn-danger:hover { background: #fee2e2; }
+    .dash-btn-danger:hover { background: rgba(233, 69, 96, 0.22); }
 
     .dash-btn-sm { padding: 6px 10px; font-size: 0.8rem; }
 
@@ -248,7 +248,7 @@
       text-transform: uppercase;
       letter-spacing: 0.04em;
       color: var(--dash-text);
-      background: #fafbfc;
+      background: var(--dash-sidebar);
     }
 
     .dash-table tr:last-child td { border-bottom: none; }
@@ -263,8 +263,8 @@
       font-weight: 700;
     }
 
-    .dash-badge-free { background: #dcfce7; color: #166534; }
-    .dash-badge-locked { background: #fee2e2; color: #991b1b; }
+    .dash-badge-free { background: rgba(37, 211, 102, 0.15); color: #25d366; }
+    .dash-badge-locked { background: rgba(245, 166, 35, 0.15); color: #f5a623; }
 
     .dash-toggle {
       position: relative;
@@ -312,9 +312,9 @@
     .dash-message {
       padding: 10px 14px;
       border-radius: 10px;
-      background: #ecfdf5;
-      border: 1px solid #bbf7d0;
-      color: #166534;
+      background: rgba(37, 211, 102, 0.1);
+      border: 1px solid rgba(37, 211, 102, 0.35);
+      color: #6ee7a8;
       font-size: 0.88rem;
       margin-bottom: 8px;
     }
@@ -363,6 +363,7 @@
         <a href="{% url 'dashboard_home' %}" class="{% if request.resolver_match.url_name == 'dashboard_home' %}active{% endif %}">📊 Analytics</a>
         <a href="{% url 'story_list' %}" class="{% if 'story' in request.resolver_match.url_name or request.resolver_match.url_name == 'chapter_list' %}active{% endif %}">📚 Stories</a>
         <a href="{% url 'dashboard_shorts' %}" class="{% if 'short' in request.resolver_match.url_name %}active{% endif %}">⚡ Short Stories</a>
+        <a href="{% url 'premium_activate' %}" class="{% if request.resolver_match.url_name == 'premium_activate' %}active{% endif %}">💎 Premium</a>
         <a href="{% url 'dashboard_monetization' %}" class="{% if request.resolver_match.url_name == 'dashboard_monetization' %}active{% endif %}">💰 Monetization</a>
         <a href="{% url 'dashboard_drafts' %}" class="{% if request.resolver_match.url_name == 'dashboard_drafts' %}active{% endif %}">📝 Drafts</a>
         <a href="{% url 'dashboard_performance' %}" class="{% if request.resolver_match.url_name == 'dashboard_performance' %}active{% endif %}">👁 Performance</a>

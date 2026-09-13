@@ -3,856 +3,113 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>{% block title %}Qissa - Stories and chapters{% endblock %}</title>
+  {% load static %}
+  <title>{% block title %}Qissa — Simulizi Zinazoumiza Moyo{% endblock %}</title>
+  <meta name="description" content="{% block desc %}Soma simulizi za mapenzi, drama na kusisimua kwa Kiswahili. Hadithi za mfululizo kutoka kwa Qissa.{% endblock %}">
+  <meta property="og:title" content="{% block og_title %}Qissa — Simulizi Zinazoumiza Moyo{% endblock %}">
+  <meta property="og:description" content="{% block og_desc %}Soma simulizi za mapenzi, drama na kusisimua kwa Kiswahili.{% endblock %}">
 
-  <!-- Google tag (gtag.js) -->
+  <link rel="icon" href="{% static 'favicon.svg' %}">
+  <link rel="stylesheet" href="{% static 'css/qissa.css' %}">
+
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-LM9RSQVD12"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
     function gtag(){dataLayer.push(arguments);}
     gtag("js", new Date());
-
     gtag("config", "G-LM9RSQVD12");
   </script>
-
-  {% load static %}
-  {% load i18n %}
-
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='18' fill='%23111'/%3E%3Cpath d='M20 30 Q50 20 80 30 L80 75 Q50 65 20 75 Z' fill='%23f6a01a' opacity='0.9'/%3E%3Cline x1='50' y1='25' x2='50' y2='75' stroke='%23111' stroke-width='2'/%3E%3Ctext x='50%25' y='55%25' text-anchor='middle' fill='white' font-size='32' font-family='Georgia, serif' dy='.3em'%3EQ%3C/text%3E%3C/svg%3E">
-
-  <style>
-    :root {
-      --bg: #f8fafc;
-      --surface: #ffffff;
-      --surface-soft: #f1f5f9;
-      --accent-primary: #111827;
-      --accent-secondary: #334155;
-      --heading: #0f172a;
-      --text: #334155;
-      --tag-bg: #e2e8f0;
-      --free: #16a34a;
-      --locked: #dc2626;
-      --border: #e2e8f0;
-      --header-bg: rgba(255, 255, 255, 0.9);
-      --footer-bg: #111827;
-      --footer-text: #cbd5e1;
-    }
-
-    html[data-theme="dark"] {
-      --bg: #0B0B1A;
-      --surface: #141428;
-      --surface-soft: #1E1E3A;
-      --accent-primary: #FF4D6D;
-      --accent-secondary: #FF6B81;
-      --heading: #FFFFFF;
-      --text: #B8B8C7;
-      --tag-bg: #1E1E3A;
-      --free: #22C55E;
-      --locked: #EF4444;
-      --border: #262640;
-      --header-bg: rgba(11, 11, 26, 0.9);
-      --footer-bg: #0B0B1A;
-      --footer-text: #B8B8C7;
-    }
-
-    *, *::before, *::after { box-sizing: border-box; }
-    html { scroll-behavior: smooth; }
-
-    body {
-      margin: 0;
-      min-height: 100vh;
-      font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      display: flex;
-      flex-direction: column;
-      opacity: 0;
-      transform: translateY(8px);
-      transition: opacity 0.45s ease, transform 0.45s ease, background-color 0.35s ease, color 0.35s ease;
-    }
-
-    body.page-ready {
-      opacity: 1;
-      transform: none;
-    }
-
-    img { max-width: 100%; display: block; }
-    a { color: inherit; text-decoration: none; }
-    button, input, textarea, select { font: inherit; }
-
-    .site-shell {
-      width: 100%;
-      max-width: 1100px;
-      margin: 0 auto;
-      padding: 0 20px;
-    }
-
-    .site-header {
-      position: sticky;
-      top: 0;
-      z-index: 30;
-      background: var(--header-bg);
-      backdrop-filter: blur(10px);
-      border-bottom: 1px solid var(--border);
-      box-shadow: 0 8px 28px rgba(15, 23, 42, 0.06);
-    }
-
-    .header-inner {
-      position: relative;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      padding: 10px 0;
-    }
-
-    .brand-link {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      font-weight: 800;
-      font-size: 1.05rem;
-      color: var(--heading);
-      flex-shrink: 0;
-    }
-
-    .brand-mark {
-      width: 32px;
-      height: 32px;
-      border-radius: 10px;
-      display: grid;
-      place-items: center;
-      background: linear-gradient(135deg, #111827 0%, #f59e0b 100%);
-      color: #ffffff;
-      font-size: 1rem;
-      font-family: Georgia, serif;
-      box-shadow: 0 12px 25px rgba(246, 160, 26, 0.18);
-    }
-
-    .nav-links {
-      display: flex;
-      align-items: center;
-      gap: 4px;
-      flex-wrap: wrap;
-      font-size: 0.88rem;
-    }
-
-    .nav-links a,
-    .nav-links button {
-      color: var(--text);
-      border-radius: 8px;
-      padding: 8px 10px;
-      border: none;
-      background: transparent;
-      transition: background 0.2s ease, color 0.2s ease;
-    }
-
-    .nav-links a:hover,
-    .nav-links button:hover {
-      color: var(--heading);
-      background: var(--surface-soft);
-      transform: none;
-    }
-
-    .nav-button {
-      border: 1px solid transparent;
-      background: var(--accent-primary);
-      color: #ffffff !important;
-      padding: 8px 14px;
-      border-radius: 8px;
-      cursor: pointer;
-      font-size: 0.88rem;
-    }
-
-    .language-toggle {
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-      border: 1px solid var(--border);
-      background: var(--surface);
-      color: var(--text);
-      border-radius: 8px;
-      padding: 6px 10px;
-      cursor: pointer;
-      font-size: 0.8rem;
-      font-weight: 700;
-    }
-
-    .theme-toggle {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      width: 36px;
-      height: 36px;
-      border: 1px solid var(--border);
-      background: var(--surface);
-      color: var(--text);
-      border-radius: 8px;
-      padding: 0;
-      cursor: pointer;
-      font-size: 1.1rem;
-      line-height: 1;
-    }
-
-    main {
-      flex: 1;
-      padding: 32px 0 48px;
-      width: 100%;
-    }
-
-    .footer {
-      background: var(--footer-bg);
-      color: var(--footer-text);
-      padding: 16px 0;
-      font-size: 0.82rem;
-    }
-
-    .footer-inner {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      flex-wrap: wrap;
-    }
-
-    .footer-links {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 14px;
-    }
-
-    .footer-links a {
-      color: var(--footer-text);
-      opacity: 0.9;
-    }
-
-    .footer-links a:hover {
-      opacity: 1;
-      text-decoration: underline;
-    }
-
-    .footer-copy {
-      margin: 0;
-      opacity: 0.85;
-    }
-
-    .whatsapp-btn {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      background: var(--free);
-      color: #ffffff;
-      border-radius: 999px;
-      padding: 10px 16px;
-      font-weight: 700;
-      transition: background 0.2s ease, transform 0.2s ease;
-    }
-
-    .whatsapp-btn:hover {
-      filter: brightness(0.94);
-      transform: translateY(-1px);
-    }
-
-    .btn {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0.5rem;
-      border-radius: 10px;
-      padding: 0.65rem 1.1rem;
-      font-weight: 600;
-      font-size: 0.9rem;
-      transition: background 0.2s ease, transform 0.2s ease;
-    }
-
-    .btn-sm {
-      padding: 0.5rem 0.9rem;
-      font-size: 0.84rem;
-    }
-
-    .btn-primary {
-      background: var(--accent-primary);
-      color: white;
-      border: 1px solid transparent;
-    }
-
-    .btn-secondary {
-      background: var(--surface-soft);
-      color: var(--heading);
-      border: 1px solid var(--border);
-    }
-
-    .btn:hover { transform: translateY(-1px); }
-    .section-title { font-size: clamp(1.35rem, 2.2vw, 1.75rem); line-height: 1.15; margin: 0; color: var(--heading); font-weight: 700; }
-    .section-heading { font-size: clamp(1.35rem, 2.2vw, 1.75rem); line-height: 1.15; margin: 0; color: var(--heading); font-weight: 700; }
-    .section-eyebrow { margin: 0 0 6px; font-size: 0.78rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text); }
-    .section-subtitle { margin: 8px 0 0; font-size: 0.92rem; line-height: 1.6; color: var(--text); }
-    .section-header {
-      display: flex;
-      align-items: flex-end;
-      justify-content: space-between;
-      gap: 16px;
-      flex-wrap: wrap;
-      margin-bottom: 20px;
-    }
-    .text-muted { color: var(--text); }
-    .page-heading { margin-bottom: 20px; }
-
-    /* Unified story card grid */
-    .story-grid,
-    .shorts-grid,
-    .content-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(168px, 1fr));
-      gap: 14px;
-      align-items: start;
-    }
-
-    @media (min-width: 1200px) {
-      .story-grid,
-      .shorts-grid,
-      .content-grid {
-        grid-template-columns: repeat(6, minmax(0, 1fr));
-      }
-    }
-
-    @media (max-width: 1024px) {
-      .story-grid,
-      .shorts-grid,
-      .content-grid {
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-      }
-    }
-
-    @media (max-width: 768px) {
-      .story-grid,
-      .shorts-grid,
-      .content-grid {
-        grid-template-columns: repeat(2, minmax(140px, 1fr));
-        gap: 12px;
-      }
-    }
-
-    .story-card,
-    .short-card,
-    .qissa-card {
-      display: flex;
-      flex-direction: column;
-      width: 100%;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      overflow: hidden;
-      box-shadow: 0 2px 8px rgba(15, 23, 42, 0.05);
-      transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
-      text-decoration: none;
-      color: inherit;
-    }
-
-    .story-card:hover,
-    .short-card:hover,
-    .qissa-card:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 12px 28px rgba(15, 23, 42, 0.1);
-      border-color: rgba(15, 23, 42, 0.1);
-    }
-
-    .story-card__cover,
-    .short-card__cover,
-    .qissa-card__cover {
-      aspect-ratio: 4 / 5;
-      width: 100%;
-      background: var(--surface-soft);
-      overflow: hidden;
-      border-radius: 16px 16px 0 0;
-      flex-shrink: 0;
-      max-height: none;
-    }
-
-    .story-card__cover img,
-    .short-card__cover img,
-    .qissa-card__cover img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      display: block;
-    }
-
-    .story-card__placeholder,
-    .short-card__placeholder,
-    .qissa-card__placeholder {
-      width: 100%;
-      height: 100%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.75rem;
-      background: linear-gradient(145deg, var(--surface-soft), var(--tag-bg));
-    }
-
-    .story-card__body,
-    .short-card__body,
-    .qissa-card__body {
-      padding: 8px 10px 10px;
-    }
-
-    .story-card__title,
-    .short-card__title,
-    .qissa-card__title {
-      margin: 0 0 6px;
-      font-size: 0.88rem;
-      line-height: 1.3;
-      font-weight: 700;
-      color: var(--heading);
-      display: -webkit-box;
-      -webkit-line-clamp: 2;
-      -webkit-box-orient: vertical;
-      overflow: hidden;
-      min-height: unset;
-    }
-
-    .story-card__meta,
-    .short-card__meta {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      gap: 8px;
-      font-size: 0.72rem;
-      color: var(--text);
-      opacity: 0.85;
-      line-height: 1.2;
-    }
-
-    .story-card__meta span,
-    .short-card__meta span {
-      white-space: nowrap;
-    }
-
-    .page-section {
-      margin-bottom: 36px;
-    }
-
-    .homepage-compact {
-      display: grid;
-      gap: 36px;
-    }
-
-    .home-section-title {
-      margin: 0 0 14px;
-      font-size: 1.15rem;
-      font-weight: 700;
-      color: var(--heading);
-    }
-
-    .home-section-sub {
-      margin: -8px 0 14px;
-      font-size: 0.88rem;
-      color: var(--text);
-    }
-
-    /* Medium-style reading */
-    .reading-prose {
-      max-width: 700px;
-      margin: 0 auto;
-      font-size: 1.125rem;
-      line-height: 1.85;
-      color: var(--heading);
-      white-space: pre-wrap;
-      word-wrap: break-word;
-    }
-
-    .reading-prose p {
-      margin: 0 0 1.25em;
-    }
-
-    .reveal {
-      opacity: 0;
-      transform: translateY(12px);
-      transition: opacity 0.45s ease, transform 0.45s ease;
-    }
-
-    .reveal.visible {
-      opacity: 1;
-      transform: none;
-    }
-
-    .hamburger {
-      display: none;
-      flex-direction: column;
-      gap: 5px;
-      border: none;
-      background: none;
-      cursor: pointer;
-    }
-
-    .hamburger span {
-      width: 26px;
-      height: 3px;
-      background: var(--heading);
-      border-radius: 3px;
-      display: block;
-    }
-
-    @media (max-width: 768px) {
-      .hamburger { display: flex; }
-      .nav-links {
-        position: absolute;
-        top: 52px;
-        right: 0;
-        flex-direction: column;
-        align-items: stretch;
-        background: var(--surface);
-        border: 1px solid var(--border);
-        padding: 12px;
-        border-radius: 12px;
-        box-shadow: 0 12px 32px rgba(0, 0, 0, 0.1);
-        display: none;
-        min-width: 200px;
-      }
-      .nav-links.active { display: flex; }
-      main { padding: 24px 0 36px; }
-    }
-  </style>
+  {% block extra_head %}{% endblock %}
 </head>
 <body>
-<header class="site-header">
-  <div class="site-shell header-inner">
-    <a href="{% url 'home' %}" class="brand-link">
-      <span class="brand-mark">Q</span>
-      <span>Qissa</span>
-    </a>
 
-    <button class="hamburger" id="hamburger" type="button" aria-label="Toggle menu">
-      <span></span>
-      <span></span>
-      <span></span>
+<header class="site-header">
+  <div class="shell header-inner">
+    <button class="hamburger" id="hamburger" type="button" aria-label="Fungua menyu">
+      <span></span><span></span><span></span>
     </button>
 
-    <nav class="nav-links" id="navLinks">
-      <a href="{% url 'home' %}" data-i18n="nav.home">Nyumbani</a>
-      <a href="{% url 'stories_list' %}" data-i18n="nav.long_stories">Simulizi Ndefu</a>
-      <a href="{% url 'short_list' %}" data-i18n="nav.shorts">Simulizi Fupi</a>
+    <a href="{% url 'home' %}" class="brand">
+      <span class="brand-dot"></span>
+      Qissa
+    </a>
 
-      <button
-        type="button"
-        class="language-toggle"
-        id="languageToggle"
-        aria-label="Badilisha lugha kwenda English"
-        data-i18n-aria-label="nav.toggle.aria"
-      >
-        <span id="languageToggleCode">EN</span>
-      </button>
-
-      <button
-        type="button"
-        class="theme-toggle"
-        id="themeToggle"
-        aria-label="Badilisha kwenda mandhari ya giza"
-      >
-        <span aria-hidden="true" id="themeToggleIcon">&#127769;</span>
-      </button>
-
-      {% if user.is_staff %}
-        <a href="{% url 'dashboard_home' %}" data-i18n="nav.dashboard">Dashibodi</a>
-      {% endif %}
-
-      {% if user.is_authenticated %}
-        <form method="post" action="{% url 'logout' %}" style="display:inline;">
-          {% csrf_token %}
-          <button type="submit" class="nav-button" data-i18n="nav.logout">Toka</button>
-        </form>
-      {% else %}
-        <a href="{% url 'login' %}" data-i18n="nav.login">Ingia</a>
-        <a href="{% url 'register' %}" class="nav-button" data-i18n="nav.register">Jisajili</a>
-      {% endif %}
+    <nav class="nav-center">
+      <a href="{% url 'home' %}">Nyumbani</a>
+      <a href="{% url 'stories_list' %}">Simulizi Ndefu</a>
+      <a href="{% url 'short_list' %}">Simulizi Fupi</a>
+      <a href="{% url 'home' %}#kategoria">Kategoria</a>
     </nav>
+
+    <div class="nav-right">
+      {% if user.is_staff %}
+        <a href="{% url 'dashboard_home' %}" class="btn btn-secondary btn-sm">Dashibodi</a>
+      {% endif %}
+      {% if user.is_authenticated %}
+        <a href="{% url 'account_dashboard' %}" class="btn btn-secondary btn-sm">Akaunti</a>
+      {% else %}
+        <a href="{% url 'login' %}" class="btn btn-secondary btn-sm">Ingia</a>
+        <a href="{% url 'register' %}" class="btn btn-rose btn-sm">Jisajili</a>
+      {% endif %}
+    </div>
   </div>
 </header>
 
-<main class="site-shell">
+<div class="nav-drawer-overlay" id="navDrawerOverlay"></div>
+<nav class="nav-drawer" id="navDrawer">
+  <button class="nav-drawer-close" id="navDrawerClose" type="button" aria-label="Funga menyu">&times;</button>
+  <a href="{% url 'home' %}">Nyumbani</a>
+  <a href="{% url 'stories_list' %}">Simulizi Ndefu</a>
+  <a href="{% url 'short_list' %}">Simulizi Fupi</a>
+  <a href="{% url 'home' %}#kategoria">Kategoria</a>
+  <a href="{% url 'premium' %}">Premium</a>
+  {% if user.is_staff %}<a href="{% url 'dashboard_home' %}">Dashibodi</a>{% endif %}
+  {% if user.is_authenticated %}
+    <a href="{% url 'account_dashboard' %}">Akaunti Yangu</a>
+    <form method="post" action="{% url 'logout' %}" style="margin:0;">
+      {% csrf_token %}
+      <button type="submit" style="width:100%;text-align:left;background:none;border:none;color:var(--text);font-weight:600;padding:12px 14px;border-radius:8px;cursor:pointer;font-size:0.95rem;">Toka</button>
+    </form>
+  {% else %}
+    <a href="{% url 'login' %}">Ingia</a>
+    <a href="{% url 'register' %}">Jisajili</a>
+  {% endif %}
+</nav>
+
+<main>
   {% if messages %}
-    <div style="margin:16px 0;">
-      {% for message in messages %}
-        <div style="padding:12px 16px;border-radius:12px;margin-bottom:8px;background:var(--surface-soft);border:1px solid var(--border);color:var(--heading);">
-          {{ message }}
-        </div>
-      {% endfor %}
+    <div class="shell">
+      <div class="qissa-messages">
+        {% for message in messages %}
+          <div class="qissa-message">{{ message }}</div>
+        {% endfor %}
+      </div>
     </div>
   {% endif %}
   {% block content %}{% endblock %}
 </main>
 
-<footer class="footer">
-  <div class="site-shell footer-inner">
-    <p class="footer-copy">&copy; {% now "Y" %} Qissa</p>
-    <nav class="footer-links" aria-label="Footer">
-      <a href="{% url 'home' %}" data-i18n="footer.about">Kuhusu</a>
-      <a href="https://wa.me/255621932919" target="_blank" rel="noopener" data-i18n="footer.contact">Wasiliana</a>
-      <a href="#" data-i18n="footer.privacy">Faragha</a>
-      <a href="#" data-i18n="footer.terms">Masharti</a>
-    </nav>
+<footer class="site-footer">
+  <div class="shell">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <a href="{% url 'home' %}" class="brand"><span class="brand-dot"></span>Qissa</a>
+        <p>Simulizi zinazoumiza moyo.</p>
+      </div>
+      <nav class="footer-links">
+        <a href="{% url 'home' %}">Nyumbani</a>
+        <a href="{% url 'stories_list' %}">Simulizi Ndefu</a>
+        <a href="{% url 'short_list' %}">Simulizi Fupi</a>
+        <a href="{% url 'premium' %}">Premium</a>
+        <a href="https://wa.me/255621932919" target="_blank" rel="noopener">Wasiliana</a>
+      </nav>
+      <a href="https://wa.me/255621932919" target="_blank" rel="noopener" class="footer-whatsapp">💬 WhatsApp</a>
+    </div>
+    <div class="footer-bottom">&copy; {% now "Y" %} Qissa · getqissa.com</div>
   </div>
 </footer>
 
-<script>
-  window.qissaI18n = {
-    sw: {
-      "nav.dashboard": "Dashibodi",
-      "nav.home": "Nyumbani",
-      "nav.long_stories": "Simulizi Ndefu",
-      "nav.shorts": "Simulizi Fupi",
-      "nav.logout": "Toka",
-      "nav.login": "Ingia",
-      "nav.register": "Jisajili",
-      "nav.toggle.aria": "Badilisha lugha kwenda English",
-      "footer.about": "Kuhusu",
-      "footer.contact": "Wasiliana",
-      "footer.privacy": "Faragha",
-      "footer.terms": "Masharti",
-      "reader.back": "Rudi Nyumbani",
-      "reader.moreStories": "Hadithi zaidi",
-      "reader.chapter": "Sura",
-      "reader.prev": "Iliyopita",
-      "reader.next": "Inayofuata",
-      "story.back": "Rudi Nyumbani",
-      "story.chapters": "Sura",
-      "story.noChapters": "Hakuna sura bado.",
-      "story.freeNote": "Sura 1-{n} ni bure. Sura zilizobaki zinahitaji malipo.",
-      "story.fullAccess": "Ruhusa Kamili: TZS {price}",
-      "story.free": "Bure",
-      "story.locked": "Imefungwa",
-      "story.freeTag": "Bure",
-      "comments.title": "Maoni",
-      "comments.post": "Tuma maoni",
-      "comments.placeholder": "Andika maoni yako...",
-      "comments.login": "Ingia",
-      "comments.joinText": "ili ujiunge na mjadala.",
-      "comments.empty": "Hakuna maoni bado. Kuwa wa kwanza kuandika maoni.",
-      "home.browse": "Anza kusoma",
-      "home.join": "Jiunge na Qissa",
-      "home.searchPlaceholder": "Tafuta kwa jina, mwandishi, au aina...",
-      "home.searchAria": "Tafuta hadithi",
-      "home.searchBtn": "Tafuta",
-      "home.featured": "Hadithi maarufu",
-      "home.latest": "Mapya na yanayopendwa zaidi",
-      "home.heroTitle": "Gundua hadithi bora za mfululizo kutoka Afrika Mashariki.",
-      "home.heroBody": "Soma hadithi kali za mapenzi, drama na maisha halisi - popote ulipo.",
-      "home.statsAvailable": "Hadithi zinazopatikana sasa",
-      "home.statsReaders": "Wasomaji hai kila siku",
-      "home.statsFast": "Ufikiaji wa haraka",
-      "home.statsOneStep": "Kuingia kwa hatua moja na kusoma sura",
-      "home.views": "mionekano",
-      "home.prev": "Nyuma",
-      "home.next": "Mbele",
-      "home.page": "Ukurasa {current} wa {total}",
-      "home.all": "Zote",
-      "home.chooseCategory": "Chagua Kategoria",
-      "home.shortsTitle": "Simulizi Fupi",
-      "home.longTitle": "Simulizi Ndefu",
-      "home.longSubtitle": "Hadithi za mfululizo za kusoma kwa utulivu.",
-      "home.empty": "Hakuna hadithi zinazopatikana bado. Tafadhali angalia tena hivi karibuni.",
-      "auth.home": "Nyumbani",
-      "auth.welcome": "Karibu tena",
-      "auth.signIn": "Ingia",
-      "auth.noAccount": "Huna akaunti?",
-      "auth.createAccountTitle": "Tengeneza akaunti yako",
-      "auth.createAccountBtn": "Tengeneza akaunti",
-      "auth.alreadyHave": "Je, tayari una akaunti?",
-      "auth.fullNamePlaceholder": "Jina kamili",
-      "auth.phonePlaceholder": "Namba ya simu",
-      "auth.hint": "Andika namba yako ya simu, mfano 0754938633.",
-      "theme.dark": "Giza",
-      "theme.light": "Mwanga",
-      "theme.switchToDark": "Badilisha kwenda mandhari ya giza",
-      "theme.switchToLight": "Badilisha kwenda mandhari ya mwanga"
-    },
-    en: {
-      "nav.dashboard": "Dashboard",
-      "nav.home": "Home",
-      "nav.long_stories": "Long Stories",
-      "nav.shorts": "Short Stories",
-      "nav.logout": "Logout",
-      "nav.login": "Login",
-      "nav.register": "Register",
-      "nav.toggle.aria": "Switch interface to Kiswahili",
-      "footer.about": "About",
-      "footer.contact": "Contact",
-      "footer.privacy": "Privacy",
-      "footer.terms": "Terms",
-      "reader.back": "Back to Home",
-      "reader.moreStories": "More stories",
-      "reader.chapter": "Chapter",
-      "reader.prev": "Previous",
-      "reader.next": "Next",
-      "story.back": "Back to Home",
-      "story.chapters": "Chapters",
-      "story.noChapters": "No chapters yet.",
-      "story.freeNote": "Chapters 1-{n} are free. The remaining chapters require payment.",
-      "story.fullAccess": "Full Access: TZS {price}",
-      "story.free": "Free",
-      "story.locked": "Locked",
-      "story.freeTag": "Free",
-      "comments.title": "Comments",
-      "comments.post": "Post comment",
-      "comments.placeholder": "Write your comment...",
-      "comments.login": "Login",
-      "comments.joinText": "to join the discussion.",
-      "comments.empty": "No comments yet. Be the first one to comment.",
-      "home.browse": "Start reading",
-      "home.join": "Join Qissa",
-      "home.searchPlaceholder": "Search by title, author, or genre...",
-      "home.searchAria": "Search stories",
-      "home.searchBtn": "Search",
-      "home.featured": "Featured stories",
-      "home.latest": "Latest and most loved releases",
-      "home.heroTitle": "Discover the best serialized stories from East Africa.",
-      "home.heroBody": "Read intense love, drama, and real-life stories - wherever you are.",
-      "home.statsAvailable": "Stories available now",
-      "home.statsReaders": "Active readers daily",
-      "home.statsFast": "Fast access",
-      "home.statsOneStep": "One-step login and chapter reading",
-      "home.views": "views",
-      "home.prev": "Prev",
-      "home.next": "Next",
-      "home.page": "Page {current} of {total}",
-      "home.all": "All",
-      "home.chooseCategory": "Choose Category",
-      "home.shortsTitle": "Short Stories",
-      "home.longTitle": "Long Stories",
-      "home.longSubtitle": "Serial stories for relaxed reading.",
-      "home.empty": "No stories available yet. Please check back soon.",
-      "auth.home": "Home",
-      "auth.welcome": "Welcome back",
-      "auth.signIn": "Sign in",
-      "auth.noAccount": "Don't have an account?",
-      "auth.createAccountTitle": "Create your account",
-      "auth.createAccountBtn": "Create account",
-      "auth.alreadyHave": "Already have an account?",
-      "auth.fullNamePlaceholder": "Full Name",
-      "auth.phonePlaceholder": "Phone number",
-      "auth.hint": "Enter your phone number, e.g. 0754938633.",
-      "theme.dark": "Dark",
-      "theme.light": "Light",
-      "theme.switchToDark": "Switch to dark mode",
-      "theme.switchToLight": "Switch to light mode"
-    }
-  };
-
-  window.qissaT = function(key, vars = {}) {
-    const lang = localStorage.getItem("qissa_ui_lang") || "sw";
-    const dict = window.qissaI18n[lang] || window.qissaI18n.sw;
-    let value = dict[key] || key;
-    Object.keys(vars).forEach((name) => {
-      value = value.replace(`{${name}}`, vars[name]);
-    });
-    return value;
-  };
-
-  (function () {
-    const html = document.documentElement;
-    const toggleButton = document.getElementById("languageToggle");
-    const toggleCode = document.getElementById("languageToggleCode");
-    const themeToggle = document.getElementById("themeToggle");
-    const themeToggleIcon = document.getElementById("themeToggleIcon");
-    const hamburger = document.getElementById("hamburger");
-    const navLinks = document.getElementById("navLinks");
-
-    function activeLanguage() {
-      return localStorage.getItem("qissa_ui_lang") || "sw";
-    }
-
-    function applyLanguage(lang) {
-      const dictionary = window.qissaI18n[lang] || window.qissaI18n.sw;
-      html.lang = lang;
-      localStorage.setItem("qissa_ui_lang", lang);
-
-      document.querySelectorAll("[data-i18n]").forEach((element) => {
-        const key = element.dataset.i18n;
-        if (dictionary[key]) {
-          element.textContent = dictionary[key];
-        }
-      });
-
-      document.querySelectorAll("[data-i18n-placeholder]").forEach((element) => {
-        const key = element.dataset.i18nPlaceholder;
-        if (dictionary[key]) {
-          element.setAttribute("placeholder", dictionary[key]);
-        }
-      });
-
-      document.querySelectorAll("[data-i18n-aria-label]").forEach((element) => {
-        const key = element.dataset.i18nAriaLabel;
-        if (dictionary[key]) {
-          element.setAttribute("aria-label", dictionary[key]);
-        }
-      });
-
-      if (toggleCode) {
-        toggleCode.textContent = lang === "sw" ? "EN" : "SW";
-      }
-
-      updateThemeToggleLabel();
-
-      document.dispatchEvent(new CustomEvent("qissa:languagechange", { detail: { lang } }));
-    }
-
-    function activeTheme() {
-      return localStorage.getItem("qissa_theme") || "light";
-    }
-
-    function applyTheme(theme) {
-      html.dataset.theme = theme;
-      localStorage.setItem("qissa_theme", theme);
-      updateThemeToggleLabel();
-    }
-
-    function updateThemeToggleLabel() {
-      const theme = activeTheme();
-      if (themeToggleIcon) {
-        themeToggleIcon.textContent = theme === "dark" ? "\u2600\uFE0F" : "\uD83C\uDF19";
-      }
-      if (themeToggle && window.qissaT) {
-        themeToggle.setAttribute(
-          "aria-label",
-          window.qissaT(theme === "dark" ? "theme.switchToLight" : "theme.switchToDark")
-        );
-      }
-    }
-
-    if (toggleButton) {
-      toggleButton.addEventListener("click", function () {
-        const nextLanguage = activeLanguage() === "sw" ? "en" : "sw";
-        applyLanguage(nextLanguage);
-      });
-    }
-
-    if (hamburger && navLinks) {
-      hamburger.addEventListener("click", function () {
-        navLinks.classList.toggle("active");
-      });
-    }
-
-    if (themeToggle) {
-      themeToggle.addEventListener("click", function () {
-        const nextTheme = activeTheme() === "dark" ? "light" : "dark";
-        applyTheme(nextTheme);
-      });
-    }
-
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add("visible");
-        }
-      });
-    }, { threshold: 0.12 });
-
-    document.querySelectorAll(".reveal").forEach((item) => observer.observe(item));
-
-    applyTheme(activeTheme());
-    applyLanguage(activeLanguage());
-    document.body.classList.add("page-ready");
-  })();
-</script>
+<script src="{% static 'js/qissa.js' %}"></script>
+{% block extra_js %}{% endblock %}
 </body>
 </html>

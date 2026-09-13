@@ -1,0 +1,84 @@
+{% extends "dash/base.html" %}
+
+{% block dash_title %}Premium{% endblock %}
+
+{% block dash_content %}
+<div class="dash-page-header">
+  <div>
+    <h1>Premium Subscriptions</h1>
+    <p>Search a reader by phone number and activate their subscription manually.</p>
+  </div>
+</div>
+
+<div class="dash-card" style="margin-bottom:24px;">
+  <form method="get" style="display:flex;gap:10px;flex-wrap:wrap;">
+    <input
+      type="text"
+      name="phone"
+      value="{{ search_phone }}"
+      placeholder="Search by phone number, e.g. 0754938633"
+      style="flex:1;min-width:220px;padding:10px 14px;border-radius:10px;border:1px solid var(--dash-border);background:var(--dash-bg);color:var(--dash-heading);"
+    >
+    <button type="submit" class="dash-btn dash-btn-primary">Search</button>
+  </form>
+</div>
+
+{% if search_phone %}
+  {% if found_user %}
+    <div class="dash-card" style="margin-bottom:24px;">
+      <h2 style="margin-top:0;">{{ found_user.name|default:"—" }}</h2>
+      <p class="dash-stat-sub">Phone: {{ found_user.phone }} · Joined: {{ found_user.date_joined|date:"d M Y" }}</p>
+      <p>
+        Status:
+        {% if found_user.is_subscription_active %}
+          <span class="dash-badge dash-badge-free">Premium hadi {{ found_user.premium_end|date:"d M Y" }}</span>
+        {% else %}
+          <span class="dash-badge dash-badge-locked">Bure</span>
+        {% endif %}
+      </p>
+
+      <form method="post" action="{% url 'premium_activate' %}" style="display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap;margin-top:16px;">
+        {% csrf_token %}
+        <input type="hidden" name="user_id" value="{{ found_user.id }}">
+        <div>
+          <label class="dash-stat-label" style="display:block;margin-bottom:6px;">Subscription end date</label>
+          <input type="date" name="end_date" required style="padding:10px 14px;border-radius:10px;border:1px solid var(--dash-border);background:var(--dash-bg);color:var(--dash-heading);">
+        </div>
+        <button type="submit" class="dash-btn dash-btn-primary">Activate Premium</button>
+      </form>
+
+      {% if found_user.is_premium %}
+        <form method="post" action="{% url 'premium_deactivate' found_user.id %}" style="margin-top:10px;">
+          {% csrf_token %}
+          <button type="submit" class="dash-btn dash-btn-danger dash-btn-sm">Deactivate Premium</button>
+        </form>
+      {% endif %}
+    </div>
+  {% else %}
+    <p class="dash-stat-sub">No user found for "{{ search_phone }}".</p>
+  {% endif %}
+{% endif %}
+
+<div class="dash-section">
+  <h2>Recent Activations</h2>
+  <div class="dash-table-wrap">
+    <table class="dash-table">
+      <thead>
+        <tr><th>Name</th><th>Phone</th><th>Start</th><th>End</th></tr>
+      </thead>
+      <tbody>
+        {% for u in recent_activations %}
+          <tr>
+            <td>{{ u.name|default:"—" }}</td>
+            <td>{{ u.phone }}</td>
+            <td>{{ u.premium_start|date:"d M Y"|default:"—" }}</td>
+            <td>{{ u.premium_end|date:"d M Y"|default:"—" }}</td>
+          </tr>
+        {% empty %}
+          <tr><td colspan="4">No activations yet.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

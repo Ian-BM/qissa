@@ -1,3 +1,5 @@
+from datetime import date, datetime
+
 from django.contrib import messages
 from django.db import transaction
 from django.db.models import Count, F, Max, Q, Sum
@@ -9,6 +11,7 @@ from core.utils import admin_required
 from dashboard.analytics import (
     get_category_performance,
     get_platform_stats,
+    get_premium_stats,
     get_reader_growth,
     get_revenue_trend,
     get_story_leaderboards,
@@ -41,6 +44,7 @@ def dashboard_home(request):
     reader_growth = get_reader_growth()
     category_perf = get_category_performance()
     story_perf = get_story_performance_chart()
+    premium_stats = get_premium_stats()
 
     return render(
         request,
@@ -52,6 +56,7 @@ def dashboard_home(request):
             "reader_growth": reader_growth,
             "category_perf": category_perf,
             "story_perf": story_perf,
+            "premium_stats": premium_stats,
         },
     )
 
@@ -431,6 +436,62 @@ def unlock_chapter(request):
             "story_access_map": story_access_map,
         },
     )
+
+
+@admin_required
+def premium_activate(request):
+    redirect_resp = _staff_check(request)
+    if redirect_resp:
+        return redirect_resp
+
+    search_phone = request.GET.get("phone", "").strip()
+    found_user = None
+    if search_phone:
+        found_user = User.objects.filter(phone__icontains=search_phone).first()
+
+    if request.method == "POST":
+        user_id = request.POST.get("user_id")
+        end_date_raw = request.POST.get("end_date", "").strip()
+        target_user = get_object_or_404(User, id=user_id)
+        try:
+            end_date = datetime.strptime(end_date_raw, "%Y-%m-%d").date()
+        except ValueError:
+            messages.error(request, "Chagua tarehe sahihi ya mwisho.")
+            return redirect(f"/dashboard/premium/?phone={target_user.phone}")
+
+        target_user.is_premium = True
+        target_user.premium_start = date.today()
+        target_user.premium_end = end_date
+        target_user.save(update_fields=["is_premium", "premium_start", "premium_end"])
+        messages.success(
+            request, f"Premium imewashwa kwa {target_user.name or target_user.phone}."
+        )
+        return redirect(f"/dashboard/premium/?phone={target_user.phone}")
+
+    recent_activations = User.objects.filter(is_premium=True).order_by(
+        "-premium_start"
+    )[:10]
+
+    return render(
+        request,
+        "dash/premium.html",
+        {
+            "search_phone": search_phone,
+            "found_user": found_user,
+            "recent_activations": recent_activations,
+        },
+    )
+
+
+@admin_required
+def premium_deactivate(request, user_id):
+    if request.method != "POST":
+        return redirect("premium_activate")
+    target_user = get_object_or_404(User, id=user_id)
+    target_user.is_premium = False
+    target_user.save(update_fields=["is_premium"])
+    messages.info(request, f"Premium imezimwa kwa {target_user.name or target_user.phone}.")
+    return redirect(f"/dashboard/premium/?phone={target_user.phone}")
 
 
 @admin_required

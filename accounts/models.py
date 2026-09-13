@@ -41,6 +41,24 @@ class User(AbstractBaseUser, PermissionsMixin):
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
 
+    is_premium = models.BooleanField(default=False)
+    premium_start = models.DateField(null=True, blank=True)
+    premium_end = models.DateField(null=True, blank=True)
+    last_read_story = models.ForeignKey(
+        "stories.Story",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="+",
+    )
+    last_read_chapter = models.ForeignKey(
+        "stories.Chapter",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="+",
+    )
+
     objects = UserManager()
 
     def clean(self):
@@ -56,6 +74,13 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     def __str__(self):
         return self.phone
+
+    def is_subscription_active(self):
+        from django.utils import timezone
+
+        if not self.is_premium or not self.premium_end:
+            return False
+        return self.premium_end >= timezone.now().date()
 
 
 class Author(models.Model):

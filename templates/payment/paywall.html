@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Jiunge Premium — Qissa{% endblock %}
+
+{% block content %}
+<div class="paywall-wrap">
+
+  <div class="paywall-reminder">
+    {% if story.cover %}
+      <img src="{{ story.cover.url }}" alt="{{ story.title }}">
+    {% endif %}
+    <div>
+      <h3>{{ story.title }}</h3>
+      <p>Umesoma Sura 1–{{ free_chapter_limit }}. Bado Sura {{ remaining_chapters }} zinakungoja.</p>
+    </div>
+  </div>
+
+  <div class="paywall-head">
+    <h1>Umefikia sura ya malipo</h1>
+    <p>Jiunge Qissa Premium ili kuendelea kusoma bila kikomo.</p>
+  </div>
+
+  <div class="price-block">
+    <span class="amount">TSh 5,000</span>
+    <span class="period">/mwezi</span>
+    <ul class="benefit-list">
+      <li>Sura zote za hadithi zote</li>
+      <li>Hadithi mpya — wewe ni wa kwanza kusoma</li>
+      <li>Simulizi fupi zote bila kikomo</li>
+      <li>Ghairi wakati wowote</li>
+    </ul>
+  </div>
+
+  <div class="step-list">
+    <div class="step">
+      <span class="step__num">1</span>
+      <div class="step__body">
+        <p>Tuma <strong>TSh 5,000</strong> kwa M-Pesa kwenda namba:</p>
+        <button type="button" class="copy-phone" data-copy="0621932919">📋 0621932919</button>
+      </div>
+    </div>
+    <div class="step">
+      <span class="step__num">2</span>
+      <div class="step__body"><p>Piga screenshot ya uthibitisho wa malipo.</p></div>
+    </div>
+    <div class="step">
+      <span class="step__num">3</span>
+      <div class="step__body"><p>Tuma screenshot WhatsApp — akaunti yako inafunguliwa ndani ya dakika 5.</p></div>
+    </div>
+  </div>
+
+  <a href="https://wa.me/255621932919?text={{ whatsapp_message|urlencode }}" target="_blank" rel="noopener" class="btn-whatsapp">
+    💬 Tuma Screenshot WhatsApp
+  </a>
+  <div style="text-align:center;margin-top:14px;">
+    <a href="{% url 'account_dashboard' %}" class="btn btn-secondary btn-block">Nimelipa tayari — ingia akaunti yangu</a>
+  </div>
+
+  <div class="trust-row">
+    <span>🔒 Salama</span>
+    <span>⚡ Haraka</span>
+    <span>✅ Bila Tatizo</span>
+  </div>
+  <p class="auth-note text-center">Malipo yanathibitishwa na mwandishi binafsi.</p>
+
+</div>
+{% endblock %}

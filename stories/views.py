@@ -3,7 +3,7 @@ from django.db.models import Count, Q
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_http_methods
 
-from .locking import FREE_CHAPTER_LIMIT, chapter_requires_unlock
+from .locking import FREE_CHAPTER_LIMIT, chapter_requires_unlock, user_has_chapter_access
 from .models import Chapter, Story, StoryAccess, StoryReaction
 from .reader_stats import (
     record_chapter_read,
@@ -26,9 +26,9 @@ def story_detail(request, slug):
     )
 
     chapters = story.chapters.all()
-    has_story_access = (
-        request.user.is_authenticated
-        and StoryAccess.objects.filter(user=request.user, story=story).exists()
+    has_story_access = request.user.is_authenticated and (
+        request.user.is_subscription_active()
+        or StoryAccess.objects.filter(user=request.user, story=story).exists()
     )
     current_reaction = None
     if request.user.is_authenticated:
@@ -101,14 +101,9 @@ def chapter_reader(request, id):
     )
     story = chapter.story
 
-    # Lock check uses per-chapter is_locked flag
+    # Lock check: Premium subscription first, falling back to a manual grant
     if chapter_requires_unlock(chapter):
-        has_story_access = StoryAccess.objects.filter(
-            user=request.user,
-            story=story,
-        ).exists()
-
-        if not has_story_access:
+        if not user_has_chapter_access(request.user, chapter):
             record_locked_chapter_click(story=story)
             return redirect("payment_page", story_id=story.id)
 
@@ -116,6 +111,10 @@ def chapter_reader(request, id):
 
     if request.user.is_authenticated:
         record_chapter_read(user=request.user, chapter=chapter)
+        User = request.user.__class__
+        User.objects.filter(pk=request.user.pk).update(
+            last_read_story=story, last_read_chapter=chapter
+        )
 
     prev_chapter = (
         Chapter.objects.filter(story=story, order__lt=chapter.order)
@@ -128,6 +127,11 @@ def chapter_reader(request, id):
         .first()
     )
     chapters = Chapter.objects.filter(story=story).order_by("order")
+    next_chapter_locked = bool(
+        next_chapter
+        and next_chapter.is_locked
+        and not user_has_chapter_access(request.user, next_chapter)
+    )
 
     related = Story.objects.filter(
         is_published=True,
@@ -139,6 +143,9 @@ def chapter_reader(request, id):
         related = related.filter(category_id=story.category_id)
     related = related.order_by("-created_at")[:8]
 
+    chapter_url = request.build_absolute_uri()
+    share_text = f"{story.title} — Soma sura hii kwenye Qissa: {chapter_url}"
+
     return render(
         request,
         "stories/chapter_reader.html",
@@ -146,22 +153,37 @@ def chapter_reader(request, id):
             "chapter": chapter,
             "prev_chapter": prev_chapter,
             "next_chapter": next_chapter,
+            "next_chapter_locked": next_chapter_locked,
             "chapters": chapters,
             "related": related,
+            "share_text": share_text,
         },
     )
 
 @login_required
 @require_http_methods(["GET"])
 def payment_page(request, story_id):
-    story = get_object_or_404(Story, id=story_id)
+    story = get_object_or_404(
+        Story.objects.annotate(chapter_count=Count("chapters", distinct=True)),
+        id=story_id,
+    )
     record_purchase_attempt(story=story)
+
+    remaining_chapters = max(story.chapter_count - FREE_CHAPTER_LIMIT, 0)
+    whatsapp_message = (
+        "Habari, nimelipa TSh 5,000 kwa Qissa Premium.\n"
+        f"Jina langu: {request.user.name}\n"
+        f"Namba yangu: {request.user.phone}\n"
+        "Hapa ni screenshot yangu:"
+    )
 
     return render(
         request,
-        "stories/payment.html",
+        "payment/paywall.html",
         {
             "story": story,
             "free_chapter_limit": FREE_CHAPTER_LIMIT,
+            "remaining_chapters": remaining_chapters,
+            "whatsapp_message": whatsapp_message,
         },
     )

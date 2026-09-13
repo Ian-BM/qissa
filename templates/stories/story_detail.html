@@ -1,224 +1,87 @@
 {% extends "base.html" %}
 {% load static %}
+{% load qissa_tags %}
+
+{% block title %}{{ story.title }} — Qissa{% endblock %}
 
 {% block content %}
+<div class="shell" style="padding-top:24px;">
 
-<style>
-  .story-detail-wrapper {
-    max-width: 960px;
-    margin: 0 auto;
-    padding: 0 4px;
-  }
-  .back-btn {
-    display: inline-block;
-    margin-bottom: 20px;
-    color: var(--heading);
-    font-weight: 600;
-    font-size: 0.9rem;
-  }
-  .story-detail-card {
-    display: flex;
-    gap: 28px;
-    align-items: flex-start;
-    margin-bottom: 40px;
-  }
-  .story-cover img {
-    width: 200px;
-    height: 280px;
-    object-fit: cover;
-    border-radius: 12px;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-  }
-  .story-info { flex: 1; min-width: 0; }
-  .story-category {
-    display: inline-flex;
-    margin-bottom: 8px;
-    font-size: 0.72rem;
-    font-weight: 700;
-    border-radius: 999px;
-    padding: 4px 10px;
-    background: var(--tag-bg);
-    color: var(--text);
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
-  }
-  .story-info h1 {
-    margin: 0 0 12px;
-    font-size: clamp(1.5rem, 3vw, 2rem);
-    line-height: 1.2;
-    color: var(--heading);
-  }
-  .story-stats {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 12px;
-    margin-bottom: 12px;
-    font-size: 0.86rem;
-    color: var(--text);
-  }
-  .story-price {
-    display: inline-block;
-    margin-bottom: 12px;
-    padding: 5px 12px;
-    font-weight: 600;
-    font-size: 0.84rem;
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    background: var(--surface-soft);
-  }
-  .story-description {
-    max-width: 700px;
-    font-size: 1.05rem;
-    line-height: 1.75;
-    color: var(--text);
-    margin-bottom: 20px;
-  }
-  .note { font-size: 0.88rem; color: var(--text); margin-bottom: 20px; }
-  .reaction-row {
-    display: flex;
-    gap: 8px;
-    margin: 8px 0 16px;
-    flex-wrap: wrap;
-    align-items: center;
-  }
-  .reaction-form { margin: 0; }
-  .reaction-btn {
-    border: 1px solid var(--border);
-    background: var(--surface);
-    color: var(--heading);
-    border-radius: 8px;
-    width: 38px;
-    height: 38px;
-    padding: 0;
-    cursor: pointer;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-  }
-  .reaction-btn.active.like { background: rgba(34, 197, 94, 0.15); border-color: #22c55e; }
-  .reaction-btn.active.dislike { background: rgba(239, 68, 68, 0.15); border-color: #ef4444; }
-  .reaction-count { font-size: 0.86rem; color: var(--text); }
-  .chapter-list h3 {
-    margin: 0 0 12px;
-    font-size: 1.1rem;
-    color: var(--heading);
-  }
-  .chapter-list ul { list-style: none; padding: 0; margin: 0; }
-  .chapter-list li { margin-bottom: 8px; }
-  .chapter-link {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    color: var(--heading);
-    font-weight: 600;
-    font-size: 0.9rem;
-    padding: 10px 12px;
-    border-radius: 8px;
-    background: var(--tag-bg);
-  }
-  .lock-tag {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    min-width: 30px;
-    height: 24px;
-    font-size: 12px;
-    color: #ffffff;
-    background: #ef4444;
-    border-radius: 999px;
-    padding: 0 8px;
-    font-weight: 700;
-  }
-  .related-section { margin-top: 48px; }
-  @media (max-width: 768px) {
-    .story-detail-card { flex-direction: column; align-items: center; text-align: center; }
-    .story-cover img { width: 160px; height: 220px; }
-    .story-stats { justify-content: center; }
-  }
-</style>
-
-<div class="story-detail-wrapper">
-
-  <a href="{% url 'home' %}" class="back-btn" data-i18n="story.back">← Rudi Nyumbani</a>
-
-  {% include "partials/share_buttons.html" %}
-
-  <div class="story-detail-card">
-    <div class="story-cover">
+  <div class="story-hero">
+    {% if story.cover %}
+      <div class="story-hero__bg" style="background-image:url('{{ story.cover.url }}');"></div>
+    {% endif %}
+    <div class="story-hero__scrim"></div>
+    <div class="story-hero__cover">
       {% if story.cover %}
         <img src="{{ story.cover.url }}" alt="{{ story.title }}">
       {% else %}
-        <img src="{% static 'images/placeholder.png' %}" alt="No cover">
+        <div class="story-card__placeholder">📖</div>
       {% endif %}
     </div>
-
-    <div class="story-info">
-      <div class="story-category">{{ story.category.name|default:"Uncategorized" }}</div>
+    <div class="story-hero__info">
+      {% if story.category %}
+        <span class="badge {{ story.category.slug|genre_badge }}">{{ story.category.name }}</span>
+      {% endif %}
       <h1>{{ story.title }}</h1>
-
-      <div class="story-stats">
-        {% if story.author %}
-          <span>✍ {{ story.author.pen_name }}</span>
-        {% endif %}
+      <div class="story-hero__meta">
+        <span>✍ Qissa</span>
         <span>📖 {{ total_chapters }} Sura</span>
         <span>👁 {{ story.views }} mitazamo</span>
         <span>❤ {{ story.likes_count }}</span>
         <span>{% if story.is_completed %}✅ Imekamilika{% else %}🔄 Inaendelea{% endif %}</span>
       </div>
-
-      {% if story.price > 0 %}
-        <div class="story-price" id="storyPriceBadge" data-price="{{ story.price }}">Ruhusa Kamili: TZS {{ story.price }}</div>
-      {% else %}
-        <div class="story-price" id="storyPriceBadge" data-price="0">Bure</div>
-      {% endif %}
-
       <div class="reaction-row">
         {% if user.is_authenticated %}
-          <form method="post" action="{% url 'story_react' story.slug %}" class="reaction-form">
+          <form method="post" action="{% url 'story_react' story.slug %}" style="margin:0;">
             {% csrf_token %}
             <input type="hidden" name="reaction" value="like">
             <button class="reaction-btn like {% if current_reaction == 1 %}active{% endif %}" type="submit" aria-label="Like">👍</button>
           </form>
-          <form method="post" action="{% url 'story_react' story.slug %}" class="reaction-form">
+          <form method="post" action="{% url 'story_react' story.slug %}" style="margin:0;">
             {% csrf_token %}
             <input type="hidden" name="reaction" value="dislike">
             <button class="reaction-btn dislike {% if current_reaction == -1 %}active{% endif %}" type="submit" aria-label="Dislike">👎</button>
           </form>
         {% else %}
-          <a href="{% url 'login' %}" class="reaction-btn">Ingia kupiga kura</a>
+          <a href="{% url 'login' %}" class="btn btn-secondary btn-sm">Ingia kupiga kura</a>
         {% endif %}
         <span class="reaction-count">❤ {{ story.likes_count }} · 👎 {{ story.dislikes_count }}</span>
-      </div>
-
-      <p class="story-description">{{ story.description }}</p>
-      <div class="note" id="storyFreeNote" data-limit="{{ free_chapter_limit }}">Chapters 1-{{ free_chapter_limit }} ni bure. Kwa chapter zilizobaki ni zakulipia.</div>
-
-      <div class="chapter-list">
-        <h3 data-i18n="story.chapters">Sura</h3>
-        <ul>
-          {% for chapter in chapters %}
-            <li>
-              <a class="chapter-link" href="{% url 'chapter_reader' chapter.id %}">
-                <span><span data-i18n="reader.chapter">Sura</span> {{ chapter.order }} — {{ chapter.title }}</span>
-                {% if chapter.is_locked and not has_story_access %}
-                  <span class="lock-tag" aria-label="Imefungwa" title="Imefungwa">🔒</span>
-                {% endif %}
-              </a>
-            </li>
-          {% empty %}
-            <li data-i18n="story.noChapters">Hakuna sura bado.</li>
-          {% endfor %}
-        </ul>
       </div>
     </div>
   </div>
 
   {% include "partials/share_buttons.html" %}
 
+  <p class="story-description">{{ story.description }}</p>
+
+  <section class="page-section">
+    {% include "partials/section_header.html" with title="Sura" %}
+    <div class="chapter-list">
+      {% for chapter in chapters %}
+        <a class="chapter-row" href="{% url 'chapter_reader' chapter.id %}">
+          <div>
+            <div class="chapter-row__title">Sura {{ chapter.order }} — {{ chapter.title }}</div>
+            <div class="chapter-row__meta">{{ chapter.reading_time_minutes }} min</div>
+          </div>
+          <div class="chapter-row__right">
+            {% if chapter.is_locked %}
+              <span class="badge badge-premium">🔒 Premium</span>
+            {% else %}
+              <span class="badge badge-free">🟢 Bure</span>
+            {% endif %}
+          </div>
+        </a>
+      {% empty %}
+        <p class="empty-state">Hakuna sura bado.</p>
+      {% endfor %}
+    </div>
+  </section>
+
   {% if related_stories %}
-    <section class="related-section">
+    <section class="page-section">
       {% include "partials/section_header.html" with title="Hadithi Zinazohusiana" %}
-      <div class="story-grid">
+      <div class="grid">
         {% for related in related_stories %}
           {% include "pages/story_cards.html" with story=related %}
         {% endfor %}
@@ -227,25 +90,4 @@
   {% endif %}
 
 </div>
-
-<script>
-  (function () {
-    const storyPrice = document.getElementById("storyPriceBadge");
-    const freeNote = document.getElementById("storyFreeNote");
-    if (!storyPrice || !freeNote || !window.qissaT) return;
-
-    const renderStoryInterface = () => {
-      const price = Number(storyPrice.dataset.price || "0");
-      const limit = freeNote.dataset.limit || "4";
-      storyPrice.textContent = price > 0
-        ? window.qissaT("story.fullAccess", { price: price.toLocaleString() })
-        : window.qissaT("story.free");
-      freeNote.textContent = window.qissaT("story.freeNote", { n: limit });
-    };
-
-    renderStoryInterface();
-    document.addEventListener("qissa:languagechange", renderStoryInterface);
-  })();
-</script>
-
 {% endblock %}

@@ -13,15 +13,22 @@ class StoryCategoryAdmin(admin.ModelAdmin):
 @admin.register(Story)
 class StoryAdmin(admin.ModelAdmin):
     prepopulated_fields = {"slug": ("title",)}
-    list_display = ("title", "category", "views", "is_published", "created_at")
+    list_display = (
+        "title",
+        "category",
+        "views",
+        "is_published",
+        "is_featured",
+        "created_at",
+    )
     search_fields = ("title", "category__name")
-    list_filter = ("is_published", "category")
+    list_filter = ("is_published", "is_featured", "category")
 
 
 @admin.register(Chapter)
 class ChapterAdmin(admin.ModelAdmin):
-    list_display = ("title", "story", "order", "created_at")
-    list_filter = ("story",)
+    list_display = ("title", "story", "order", "is_locked", "created_at")
+    list_filter = ("story", "is_locked")
     search_fields = ("title", "story__title")
 
 

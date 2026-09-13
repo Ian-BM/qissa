@@ -1,254 +1,115 @@
 {% extends "base.html" %}
 {% load static %}
-{% load i18n %}
-
-{% block title %}Nyumbani — Qissa{% endblock %}
+{% load qissa_tags %}
 
 {% block content %}
 
-<style>
-  .hero {
-    padding: 4px 0 0;
-    max-width: 560px;
-  }
+<section class="hero">
+  <div class="shell">
+    <h1 class="hero-title">Simulizi Zinazokugusa Moyoni</h1>
+    <p class="hero-subtitle">Hadithi za mapenzi, drama, na maumivu ya kweli — zimeandikwa kwa ajili yako.</p>
+    <div class="hero-actions">
+      <a href="#simulizi-ndefu" class="btn btn-rose">Anza Kusoma Bure</a>
+      <a href="{% url 'premium' %}" class="btn btn-outline">Jiunge Premium</a>
+    </div>
+    <div class="hero-scroll">⌄</div>
+  </div>
+</section>
 
-  .hero-eyebrow {
-    display: inline-flex;
-    text-transform: uppercase;
-    letter-spacing: 0.12em;
-    font-size: 0.72rem;
-    color: #f59e0b;
-    font-weight: 700;
-    margin-bottom: 10px;
-  }
+<div class="shell">
 
-  .hero-title {
-    font-size: clamp(1.75rem, 3.5vw, 2.4rem);
-    line-height: 1.12;
-    margin: 0 0 12px;
-    color: var(--heading);
-  }
-
-  .hero-copy p {
-    margin: 0;
-    color: var(--text);
-    font-size: 0.96rem;
-    line-height: 1.65;
-  }
-
-  .hero-actions {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    margin-top: 16px;
-  }
-
-  .search-panel {
-    display: grid;
-    gap: 14px;
-  }
-
-  .category-section {
-    display: grid;
-    gap: 10px;
-  }
-
-  .category-row {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-  }
-
-  .category-chip {
-    display: inline-flex;
-    align-items: center;
-    border: 1px solid var(--border);
-    border-radius: 999px;
-    padding: 6px 12px;
-    font-size: 0.82rem;
-    color: var(--text);
-    background: var(--surface);
-    transition: border-color 0.2s ease, background 0.2s ease;
-  }
-
-  .category-chip.active,
-  .category-chip:hover {
-    border-color: var(--accent-primary);
-    background: var(--surface-soft);
-  }
-
-  .search-bar {
-    display: flex;
-    gap: 0;
-    max-width: 480px;
-    width: 100%;
-  }
-
-  .search-bar input {
-    flex: 1;
-    min-width: 0;
-    padding: 10px 12px;
-    border: 1px solid var(--border);
-    border-right: none;
-    border-radius: 10px 0 0 10px;
-    font-size: 0.9rem;
-    outline: none;
-    background: var(--surface);
-    color: var(--heading);
-  }
-
-  .search-bar input:focus {
-    border-color: var(--accent-primary);
-    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.12);
-  }
-
-  .search-bar button {
-    border: 1px solid var(--accent-primary);
-    background: var(--accent-primary);
-    color: white;
-    padding: 0 16px;
-    border-radius: 0 10px 10px 0;
-    cursor: pointer;
-    font-weight: 600;
-    font-size: 0.88rem;
-  }
-
-  .section-head {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 12px;
-    flex-wrap: wrap;
-    margin-bottom: 14px;
-  }
-
-  .pagination {
-    display: flex;
-    justify-content: center;
-    gap: 10px;
-    align-items: center;
-    flex-wrap: wrap;
-    margin-top: 20px;
-  }
-
-  .pagination a,
-  .pagination span {
-    padding: 8px 14px;
-    border-radius: 10px;
-    border: 1px solid var(--border);
-    background: var(--surface);
-    color: var(--heading);
-    font-size: 0.88rem;
-  }
-</style>
-
-<div class="homepage-compact">
-  <section class="hero reveal">
-    <div class="hero-copy">
-      <span class="hero-eyebrow">{% trans "Simulizi kwa kila msomaji" %}</span>
-      <h1 class="hero-title" data-i18n="home.heroTitle">Gundua hadithi bora za mfululizo kutoka Afrika Mashariki.</h1>
-      <p data-i18n="home.heroBody">Soma hadithi kali za mapenzi, drama na maisha halisi — popote ulipo.</p>
-      <div class="hero-actions">
-        <a href="#simulizi-fupi" class="btn btn-primary" data-i18n="home.browse">Anza kusoma</a>
-        <a href="{% url 'register' %}" class="btn btn-secondary" data-i18n="home.join">{% trans "Join Qissa" %}</a>
+  {% if featured %}
+  <section class="page-section">
+    <div class="featured-story">
+      <div class="featured-story__cover">
+        {% if featured.cover %}
+          <img src="{{ featured.cover.url }}" alt="{{ featured.title }}">
+        {% else %}
+          <div class="story-card__placeholder">📖</div>
+        {% endif %}
       </div>
-    </div>
-  </section>
-
-  <section class="search-panel reveal">
-    <form method="get" class="search-bar" role="search">
-      <input
-        type="text"
-        name="q"
-        placeholder="Tafuta kwa jina, mwandishi, au aina..."
-        data-i18n-placeholder="home.searchPlaceholder"
-        value="{{ query|default:'' }}"
-        aria-label="Tafuta hadithi"
-        data-i18n-aria-label="home.searchAria"
-      >
-      <button type="submit" data-i18n="home.searchBtn">{% trans "Search" %}</button>
-    </form>
-  </section>
-
-  {% if categories %}
-  <section class="category-section reveal" id="categories">
-    <h2 class="home-section-title" data-i18n="home.chooseCategory">Chagua Kategoria</h2>
-    <div class="category-row">
-      <a
-        href="{% if query %}?q={{ query }}{% else %}?{% endif %}"
-        class="category-chip {% if not selected_category_slug %}active{% endif %}"
-        data-i18n="home.all"
-      >Zote</a>
-      {% for category in categories %}
-        <a
-          href="?category={{ category.slug }}{% if query %}&q={{ query }}{% endif %}"
-          class="category-chip {% if selected_category_slug == category.slug %}active{% endif %}"
-        >{{ category.name }}</a>
-      {% endfor %}
-    </div>
-  </section>
-  {% endif %}
-
-  {% if latest_shorts %}
-  <section id="simulizi-fupi" class="page-section reveal">
-    <div class="section-head">
-      <h2 class="home-section-title" style="margin:0;" data-i18n="home.shortsTitle">Simulizi Fupi</h2>
-      <a href="{% url 'short_list' %}" class="btn btn-secondary btn-sm">View All</a>
-    </div>
-    <div class="story-grid">
-      {% for short in latest_shorts %}
-        {% include "shorts/_card.html" with short=short %}
-      {% endfor %}
-    </div>
-  </section>
-  {% endif %}
-
-  <section id="simulizi-ndefu" class="page-section reveal">
-    <div class="section-head">
       <div>
-        <h2 class="home-section-title" style="margin:0;" data-i18n="home.longTitle">Simulizi Ndefu</h2>
-        <p class="home-section-sub" data-i18n="home.longSubtitle">Hadithi za mfululizo za kusoma kwa utulivu.</p>
+        {% if featured.category %}
+          <span class="badge {{ featured.category.slug|genre_badge }}">{{ featured.category.name }}</span>
+        {% endif %}
+        <h2 class="featured-story__title">{{ featured.title }}</h2>
+        <p class="featured-story__teaser">{{ featured.description|truncatechars:180 }}</p>
+        <div class="featured-story__stats">
+          <span>👁 {{ featured.views }}</span>
+          <span>❤ {{ featured.likes_count|default:0 }}</span>
+          <span>📖 {{ featured.chapter_count|default:featured.chapters.count }} Sura</span>
+        </div>
+        <a href="{% url 'story_detail' featured.slug %}" class="btn btn-rose">Soma Sura ya Kwanza Bure →</a>
       </div>
-      <a href="{% url 'stories_list' %}" class="btn btn-secondary btn-sm">View All</a>
     </div>
-    <div class="story-grid">
+  </section>
+  {% endif %}
+
+  <section class="page-section" id="simulizi-ndefu">
+    {% url 'stories_list' as stories_list_url %}
+    {% include "partials/section_header.html" with title="Simulizi Ndefu" subtitle="Hadithi za mfululizo za kusoma kwa utulivu." view_all_url=stories_list_url %}
+
+    <form method="get" class="search-bar" style="margin-bottom:24px;" role="search">
+      <input type="text" name="q" value="{{ query|default:'' }}" placeholder="Tafuta kwa jina au maelezo...">
+      <button type="submit">Tafuta</button>
+    </form>
+
+    {% if categories %}
+      <div class="chip-row" id="kategoria" style="margin-bottom:24px;">
+        <a href="{% if query %}?q={{ query }}{% else %}?{% endif %}" class="chip {% if not selected_category_slug %}active{% endif %}">Zote</a>
+        {% for category in categories %}
+          <a href="?category={{ category.slug }}{% if query %}&q={{ query }}{% endif %}" class="chip {% if selected_category_slug == category.slug %}active{% endif %}">{{ category.name }}</a>
+        {% endfor %}
+      </div>
+    {% endif %}
+
+    <div class="grid">
       {% for story in stories %}
         {% include "pages/story_cards.html" with story=story %}
       {% empty %}
-        <p data-i18n="home.empty">Hakuna hadithi zinazopatikana bado. Tafadhali angalia tena hivi karibuni.</p>
+        <p class="empty-state">Hakuna hadithi zinazopatikana bado. Tafadhali angalia tena hivi karibuni.</p>
       {% endfor %}
     </div>
 
     {% if page_obj.has_other_pages %}
       <div class="pagination">
         {% if page_obj.has_previous %}
-          <a href="?page={{ page_obj.previous_page_number }}{% if query %}&q={{ query }}{% endif %}{% if selected_category_slug %}&category={{ selected_category_slug }}{% endif %}" data-i18n="home.prev">Nyuma</a>
+          <a href="?page={{ page_obj.previous_page_number }}{% if query %}&q={{ query }}{% endif %}{% if selected_category_slug %}&category={{ selected_category_slug }}{% endif %}">← Nyuma</a>
         {% endif %}
-        <span id="homePageCounter" data-current="{{ page_obj.number }}" data-total="{{ page_obj.paginator.num_pages }}">
-          Ukurasa {{ page_obj.number }} wa {{ page_obj.paginator.num_pages }}
-        </span>
+        <span>Ukurasa {{ page_obj.number }} wa {{ page_obj.paginator.num_pages }}</span>
         {% if page_obj.has_next %}
-          <a href="?page={{ page_obj.next_page_number }}{% if query %}&q={{ query }}{% endif %}{% if selected_category_slug %}&category={{ selected_category_slug }}{% endif %}" data-i18n="home.next">Mbele</a>
+          <a href="?page={{ page_obj.next_page_number }}{% if query %}&q={{ query }}{% endif %}{% if selected_category_slug %}&category={{ selected_category_slug }}{% endif %}">Mbele →</a>
         {% endif %}
       </div>
     {% endif %}
   </section>
+
+  {% if latest_shorts %}
+  <section class="page-section" id="simulizi-fupi">
+    {% include "partials/section_header.html" with title="Simulizi Fupi" %}
+    <div class="grid grid-shorts">
+      {% for short in latest_shorts %}
+        {% include "shorts/_card.html" with short=short %}
+      {% endfor %}
+    </div>
+    <div class="text-center" style="margin-top:20px;">
+      <a href="{% url 'short_list' %}" class="btn btn-secondary btn-sm">Ona Zote →</a>
+    </div>
+  </section>
+  {% endif %}
+
+  <section class="page-section">
+    <div class="premium-banner">
+      <div>
+        <h2>Fungua Hadithi Zote</h2>
+        <p>Jiunge Qissa Premium kwa TSh 5,000/mwezi tu. Soma bila kikomo. Ghairi wakati wowote.</p>
+      </div>
+      <div class="premium-banner__price">
+        <span class="amount">TSh 5,000/mwezi</span>
+        <a href="{% url 'premium' %}" class="btn btn-gold">Jiunge Sasa</a>
+      </div>
+    </div>
+  </section>
+
 </div>
-
-<script>
-  (function () {
-    const pageCounter = document.getElementById("homePageCounter");
-    if (!pageCounter) return;
-    const renderPageCounter = () => {
-      if (!window.qissaT) return;
-      pageCounter.textContent = window.qissaT("home.page", {
-        current: pageCounter.dataset.current,
-        total: pageCounter.dataset.total
-      });
-    };
-    renderPageCounter();
-    document.addEventListener("qissa:languagechange", renderPageCounter);
-  })();
-</script>
-
 {% endblock %}

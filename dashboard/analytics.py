@@ -1,7 +1,9 @@
+from datetime import timedelta
 from decimal import Decimal
 
 from django.db.models import Count, Q, Sum
 from django.db.models.functions import TruncDate
+from django.utils import timezone
 
 from shorts.models import ShortStory
 from stories.models import ChapterRead, Purchase, Story, StoryCategory, StoryReaction
@@ -23,6 +25,23 @@ def get_platform_stats():
         "total_revenue": total_revenue,
         "total_purchases": purchases.count(),
         "draft_stories": stories.filter(is_published=False).count(),
+    }
+
+
+def get_premium_stats():
+    from accounts.models import User
+
+    today = timezone.now().date()
+    week_from_now = today + timedelta(days=7)
+
+    return {
+        "active_premium": User.objects.filter(
+            is_premium=True, premium_end__gte=today
+        ).count(),
+        "expiring_soon": User.objects.filter(
+            is_premium=True, premium_end__gte=today, premium_end__lte=week_from_now
+        ).order_by("premium_end"),
+        "total_users": User.objects.count(),
     }
 
 

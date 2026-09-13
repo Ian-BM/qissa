@@ -1,208 +1,61 @@
 {% extends "base.html" %}
 {% load static %}
 
+{% block title %}Sura {{ chapter.order }}: {{ chapter.title }} — {{ chapter.story.title }}{% endblock %}
+
 {% block content %}
-
-<style>
-  .reader-page {
-    max-width: 760px;
-    margin: 0 auto;
-    padding: 0 4px;
-  }
-
-  .reader-nav-row {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: space-between;
-    gap: 12px;
-    margin: 0 0 20px;
-  }
-
-  .reader-nav-row a {
-    color: var(--heading);
-    font-weight: 600;
-    font-size: 0.88rem;
-    text-decoration: none;
-  }
-
-  .reader-header {
-    display: flex;
-    align-items: flex-start;
-    gap: 12px;
-    margin-bottom: 24px;
-  }
-
-  .story-title {
-    flex: 1;
-    text-align: center;
-    font-size: 1.1rem;
-    font-weight: 700;
-    color: var(--heading);
-    line-height: 1.3;
-  }
-
-  .story-cover-thumb {
-    width: 72px;
-    height: 100px;
-    border-radius: 8px;
-    object-fit: cover;
-    margin: 0 auto 8px;
-    border: 1px solid var(--border);
-  }
-
-  .chapter-heading {
-    text-align: center;
-    margin: 0 0 24px;
-  }
-
-  .chapter-heading h2 {
-    margin: 0 0 6px;
-    font-size: clamp(1.2rem, 2.5vw, 1.5rem);
-    color: var(--heading);
-  }
-
-  .chapter-heading p {
-    margin: 0;
-    color: var(--text);
-    font-size: 0.9rem;
-  }
-
-  .chapter-nav {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 8px;
-    margin: 0 0 28px;
-  }
-
-  .chapter-nav a {
-    width: 34px;
-    height: 34px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 0.84rem;
-    border-radius: 8px;
-    text-decoration: none;
-    background: var(--tag-bg);
-    color: var(--heading);
-    font-weight: 600;
-  }
-
-  .chapter-nav a.active {
-    background: var(--accent-primary);
-    color: white;
-  }
-
-  .reader-content {
-    margin-bottom: 40px;
-  }
-
-  .chapter-footer-nav {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-    gap: 12px;
-    margin: 32px 0 0;
-    padding-top: 20px;
-    border-top: 1px solid var(--border);
-  }
-
-  .chapter-footer-nav a {
-    color: var(--heading);
-    font-weight: 600;
-    font-size: 0.9rem;
-    text-decoration: none;
-  }
-
-  .chapter-footer-nav .disabled {
-    color: var(--text);
-    opacity: 0.5;
-  }
-
-  .more-stories {
-    margin-top: 48px;
-  }
-</style>
-
-<div class="reader-page">
-
-  <div class="reader-nav-row">
+<div class="reader-shell">
+  <div class="reader-topbar">
     <a href="{% url 'story_detail' chapter.story.slug %}">← Rudi kwenye Hadithi</a>
     <a href="{% url 'home' %}">Nyumbani</a>
   </div>
 
-  <div class="reader-header">
-    <div class="story-title">
-      {% if chapter.story.cover %}
-        <img class="story-cover-thumb" src="{{ chapter.story.cover.url }}" alt="{{ chapter.story.title }}">
-      {% else %}
-        <img class="story-cover-thumb" src="{% static 'images/placeholder.png' %}" alt="{{ chapter.story.title }}">
-      {% endif %}
-      {{ chapter.story.title }}
-    </div>
+  <div class="reader-meta">
+    <div class="reader-meta__story">{{ chapter.story.title }}</div>
+    <h1 class="reader-meta__chapter">Sura {{ chapter.order }}: {{ chapter.title }}</h1>
+    <div class="reader-meta__time">{{ chapter.reading_time_minutes }} min · Sura {{ chapter.order }}/{{ chapters.count }}</div>
   </div>
 
-  <div class="chapter-heading">
-    <h2><span data-i18n="reader.chapter">Sura</span> {{ chapter.order }}: {{ chapter.title }}</h2>
-  </div>
-
-  <div class="chapter-nav">
-    {% if prev_chapter %}
-      <a href="{% url 'chapter_reader' prev_chapter.id %}" aria-label="Sura {{ prev_chapter.order }}">
-        {{ prev_chapter.order }}
-      </a>
-    {% endif %}
-    <a class="active">{{ chapter.order }}</a>
-    {% if next_chapter %}
-      <a href="{% url 'chapter_reader' next_chapter.id %}" aria-label="Sura {{ next_chapter.order }}">
-        {{ next_chapter.order }}
-      </a>
-    {% endif %}
-  </div>
-
-  <div class="reader-content reading-prose">
+  <div class="chapter-content">
     {{ chapter.content|linebreaks }}
   </div>
 
-  <div class="chapter-footer-nav">
+  {% if next_chapter_locked %}
+    <div class="locked-next">
+      <p>🔒 Sura inayofuata imefungwa</p>
+      <a href="{% url 'payment_page' chapter.story.id %}" class="btn btn-gold">Jiunge Premium Kuendelea Kusoma</a>
+    </div>
+  {% endif %}
+
+  <div class="reader-bottom-nav">
     {% if prev_chapter %}
       <a href="{% url 'chapter_reader' prev_chapter.id %}">← Sura {{ prev_chapter.order }}</a>
     {% else %}
-      <span class="disabled">← Hakuna sura iliyotangulia</span>
+      <span class="disabled">← Sura iliyopita</span>
     {% endif %}
-    <a href="{% url 'story_detail' chapter.story.slug %}">Rudi kwenye Hadithi</a>
+    <span class="reader-progress">Sura {{ chapter.order }}/{{ chapters.count }}</span>
     {% if next_chapter %}
       <a href="{% url 'chapter_reader' next_chapter.id %}">Sura {{ next_chapter.order }} →</a>
     {% else %}
-      <span class="disabled">Hakuna sura inayofuata →</span>
+      <span class="disabled">Sura inayofuata →</span>
     {% endif %}
   </div>
 
-  <div class="chapter-nav">
-    {% for story_chapter in chapters %}
-      <a
-        href="{% url 'chapter_reader' story_chapter.id %}"
-        class="{% if story_chapter.id == chapter.id %}active{% endif %}"
-        aria-label="Sura {{ story_chapter.order }}"
-      >
-        {{ story_chapter.order }}
-      </a>
-    {% endfor %}
+  <div class="share-row" style="justify-content:center;">
+    <a class="share-btn whatsapp" href="https://wa.me/?text={{ share_text|urlencode }}" target="_blank" rel="noopener">
+      💬 Share Sura Hii
+    </a>
   </div>
 
-  <div class="more-stories">
+  <div class="more-stories page-section">
     {% include "partials/section_header.html" with title="Hadithi zaidi" %}
-    <div class="story-grid">
+    <div class="grid">
       {% for story in related|slice:":4" %}
-        {% include "pages/story_cards.html" %}
+        {% include "pages/story_cards.html" with story=story %}
       {% empty %}
-        <p>Hakuna hadithi nyingine kwenye kategoria hii kwa sasa.</p>
+        <p class="empty-state">Hakuna hadithi nyingine kwenye kategoria hii kwa sasa.</p>
       {% endfor %}
     </div>
   </div>
-
 </div>
-
-{% endblock content %}
+{% endblock %}

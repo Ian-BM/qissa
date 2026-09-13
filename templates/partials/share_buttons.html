@@ -1,30 +1,3 @@
-<style>
-  .share-row {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    margin: 12px 0;
-  }
-  .share-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    padding: 10px 14px;
-    border-radius: 999px;
-    border: 1px solid var(--border);
-    background: var(--surface);
-    color: var(--heading);
-    font-weight: 600;
-    font-size: 0.9rem;
-    cursor: pointer;
-  }
-  .share-btn.whatsapp {
-    background: #25d366;
-    color: #fff;
-    border-color: #25d366;
-  }
-</style>
-
 <div class="share-row" data-share-url="{{ story_url }}">
   <a
     class="share-btn whatsapp"
@@ -32,26 +5,9 @@
     target="_blank"
     rel="noopener"
   >
-    Share on WhatsApp
+    💬 Share kwenye WhatsApp
   </a>
-  <button type="button" class="share-btn copy-link-btn" data-url="{{ story_url }}">
-    Copy Link
+  <button type="button" class="share-btn" data-copy="{{ story_url }}">
+    🔗 Nakili Kiungo
   </button>
 </div>
-
-<script>
-  (function () {
-    document.querySelectorAll(".copy-link-btn").forEach((btn) => {
-      btn.addEventListener("click", async () => {
-        const url = btn.dataset.url;
-        try {
-          await navigator.clipboard.writeText(url);
-          btn.textContent = "Link Copied!";
-          setTimeout(() => { btn.textContent = "Copy Link"; }, 1800);
-        } catch (e) {
-          window.prompt("Copy this link:", url);
-        }
-      });
-    });
-  })();
-</script>

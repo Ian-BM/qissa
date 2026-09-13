@@ -61,6 +61,10 @@ class Story(models.Model):
         default=False,
         help_text="Mark as completed when the series has ended.",
     )
+    is_featured = models.BooleanField(
+        default=False,
+        help_text="Show as the hero story on the homepage.",
+    )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -109,6 +113,11 @@ class Chapter(models.Model):
 
     def __str__(self):
         return f"{self.story.title} — Chapter {self.order}: {self.title}"
+
+    @property
+    def reading_time_minutes(self):
+        words = len(re.findall(r"\w+", self.content or ""))
+        return max(1, math.ceil(words / 200))
 
 
 class ChapterRead(models.Model):

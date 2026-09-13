@@ -41,6 +41,12 @@ urlpatterns = [
         views.chapter_reorder,
         name="chapter_reorder",
     ),
+    path("premium/", views.premium_activate, name="premium_activate"),
+    path(
+        "premium/<int:user_id>/deactivate/",
+        views.premium_deactivate,
+        name="premium_deactivate",
+    ),
     path("monetization/", views.monetization_overview, name="dashboard_monetization"),
     path("performance/", views.performance_overview, name="dashboard_performance"),
     path("shorts/", views.shorts_overview, name="dashboard_shorts"),

@@ -1,10 +1,15 @@
+from datetime import timedelta
+
 from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect, render
+from django.utils import timezone
 from django.views.decorators.http import require_http_methods
 
 from accounts.models import User
 from accounts.phone import PhoneValidationError, phone_lookup_variants, validate_phone
+from shorts.models import ShortStory
+from stories.models import Story, StoryReaction
 
 
 def _auth_form_context(**extra):
@@ -103,3 +108,39 @@ def login_view(request):
 def logout_view(request):
     logout(request)
     return redirect("/login/")
+
+
+@login_required
+def dashboard_view(request):
+    user = request.user
+    recent_cutoff = timezone.now() - timedelta(days=7)
+
+    liked_story_ids = StoryReaction.objects.filter(
+        user=user, value=StoryReaction.LIKE
+    ).values_list("story_id", flat=True)
+    liked_stories = Story.objects.filter(id__in=liked_story_ids, is_published=True)
+
+    liked_shorts = ShortStory.objects.filter(
+        story_likes__user=user, published=True
+    ).distinct()
+
+    recent_stories = Story.objects.filter(
+        is_published=True, created_at__gte=recent_cutoff
+    ).order_by("-created_at")[:6]
+
+    renew_soon = bool(
+        user.is_subscription_active()
+        and user.premium_end
+        and user.premium_end - timezone.now().date() <= timedelta(days=7)
+    )
+
+    return render(
+        request,
+        "accounts/dashboard.html",
+        {
+            "liked_stories": liked_stories,
+            "liked_shorts": liked_shorts,
+            "recent_stories": recent_stories,
+            "renew_soon": renew_soon,
+        },
+    )

@@ -36,6 +36,19 @@
 
 <div class="dash-grid-2">
   <div class="dash-card dash-stat-card">
+    <span class="dash-stat-label">💎 Premium Subscribers</span>
+    <span class="dash-stat-value">{{ premium_stats.active_premium }}</span>
+    <span class="dash-stat-sub">of {{ premium_stats.total_users }} users</span>
+  </div>
+  <div class="dash-card dash-stat-card">
+    <span class="dash-stat-label">⏳ Expiring This Week</span>
+    <span class="dash-stat-value">{{ premium_stats.expiring_soon.count }}</span>
+    <a href="{% url 'premium_activate' %}" class="dash-stat-sub">Manage subscriptions →</a>
+  </div>
+</div>
+
+<div class="dash-grid-2">
+  <div class="dash-card dash-stat-card">
     <span class="dash-stat-label">🔥 Best Performing Story</span>
     <span class="dash-stat-value" style="font-size:1.1rem;">{{ leaders.best_views_story.title|default:"—" }}</span>
     <span class="dash-stat-sub">{% if leaders.best_views_story %}{{ leaders.best_views_story.views }} views{% else %}No data yet{% endif %}</span>

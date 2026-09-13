@@ -1,8 +1,8 @@
-{% load static %}
-{# Unified card for long-form stories and shorts #}
+{% load qissa_tags %}
 {% if short %}
-<a href="{% url 'short_detail' short.slug %}" class="story-card">
+<a href="{% url 'short_detail' short.slug %}" class="story-card short-card">
   <div class="story-card__cover">
+    <span class="short-card__read-badge">⚡ {{ short.read_time }} Min</span>
     {% if short.cover_image %}
       <img src="{{ short.cover_image.url }}" alt="{{ short.title }}" loading="lazy">
     {% else %}
@@ -11,9 +11,9 @@
   </div>
   <div class="story-card__body">
     <h3 class="story-card__title">{{ short.title }}</h3>
+    <p class="story-card__teaser">{{ short.excerpt|truncatechars:80 }}</p>
     <div class="story-card__meta">
-      <span>⚡ {{ short.read_time }} Min</span>
-      <span>❤️ {{ short.likes }}</span>
+      <span>❤ {{ short.likes }}</span>
       <span>👁 {{ short.views }}</span>
     </div>
   </div>
@@ -21,6 +21,12 @@
 {% elif story %}
 <a href="{% url 'story_detail' story.slug %}" class="story-card">
   <div class="story-card__cover">
+    {% if story.category %}
+      <span class="badge {{ story.category.slug|genre_badge }} story-card__badge">{{ story.category.name }}</span>
+    {% endif %}
+    {% if story.chapter_count > 4 %}
+      <span class="story-card__lock">🔒</span>
+    {% endif %}
     {% if story.cover %}
       <img src="{{ story.cover.url }}" alt="{{ story.title }}" loading="lazy">
     {% else %}
@@ -29,14 +35,11 @@
   </div>
   <div class="story-card__body">
     <h3 class="story-card__title">{{ story.title }}</h3>
+    <p class="story-card__teaser">{{ story.description|truncatechars:80 }}</p>
     <div class="story-card__meta">
-      <span>📖 {% if story.chapter_count is not None %}{{ story.chapter_count }}{% else %}{{ story.chapters.count }}{% endif %} Sura</span>
+      <span>📖 {{ story.chapter_count|default:story.chapters.count }} Sura</span>
       <span>👁 {{ story.views }}</span>
-      <span>❤️ {{ story.likes_count|default:0 }}</span>
     </div>
-    {% if show_category and story.category %}
-    <div class="story-card__category">{{ story.category.name }}</div>
-    {% endif %}
   </div>
 </a>
 {% endif %}

@@ -37,6 +37,14 @@ def home(request):
     if category_slug:
         stories = stories.filter(category__slug=category_slug)
 
+    featured = (
+        _published_stories()
+        .filter(is_featured=True)
+        .order_by("-created_at")
+        .first()
+        or _published_stories().order_by("-created_at").first()
+    )
+
     paginator = Paginator(stories, 30)
     page_obj = paginator.get_page(request.GET.get("page"))
 
@@ -47,6 +55,7 @@ def home(request):
         request,
         "pages/home.html",
         {
+            "featured": featured,
             "stories": page_obj,
             "page_obj": page_obj,
             "query": query,
@@ -55,6 +64,10 @@ def home(request):
             "latest_shorts": latest_shorts,
         },
     )
+
+
+def premium(request):
+    return render(request, "payment/premium.html")
 
 
 def stories_list(request):

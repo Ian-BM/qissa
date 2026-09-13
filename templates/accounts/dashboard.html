@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Akaunti Yangu — Qissa{% endblock %}
+
+{% block content %}
+<div class="shell" style="padding-top:32px;padding-bottom:60px;">
+
+  <h1 class="section-title" style="margin-bottom:24px;">Habari, {{ user.name|default:user.phone }}</h1>
+
+  <section class="page-section" style="margin-top:0;">
+    {% if user.is_subscription_active %}
+      <div class="premium-banner">
+        <div>
+          <span class="badge badge-free" style="margin-bottom:10px;">✅ Premium</span>
+          <h2 style="margin-top:8px;">Premium Hadi {{ user.premium_end|date:"d M Y" }}</h2>
+          <p>Unafurahia sura zote na simulizi zote bila kikomo.</p>
+        </div>
+        {% if renew_soon %}
+          <a href="{% url 'premium' %}" class="btn btn-gold">Renew</a>
+        {% endif %}
+      </div>
+    {% else %}
+      <div class="premium-banner">
+        <div>
+          <span class="badge badge-premium" style="margin-bottom:10px;">Bure</span>
+          <h2 style="margin-top:8px;">Bado huna Premium</h2>
+          <p>Fungua sura zote za hadithi zote kwa TSh 5,000/mwezi tu.</p>
+        </div>
+        <a href="{% url 'premium' %}" class="btn btn-gold">Pata Premium →</a>
+      </div>
+    {% endif %}
+  </section>
+
+  {% if user.last_read_story %}
+  <section class="page-section">
+    {% include "partials/section_header.html" with title="Unaendelea Kusoma" %}
+    <div class="grid">
+      {% include "pages/story_cards.html" with story=user.last_read_story %}
+    </div>
+    {% if user.last_read_chapter %}
+      <div style="margin-top:14px;">
+        <a href="{% url 'chapter_reader' user.last_read_chapter.id %}" class="btn btn-rose">Endelea Kusoma →</a>
+      </div>
+    {% endif %}
+  </section>
+  {% endif %}
+
+  {% if liked_stories or liked_shorts %}
+  <section class="page-section">
+    {% include "partials/section_header.html" with title="Hadithi Ulizopenda" %}
+    <div class="grid">
+      {% for story in liked_stories %}
+        {% include "pages/story_cards.html" with story=story %}
+      {% endfor %}
+      {% for short in liked_shorts %}
+        {% include "shorts/_card.html" with short=short %}
+      {% endfor %}
+    </div>
+  </section>
+  {% endif %}
+
+  {% if recent_stories %}
+  <section class="page-section">
+    {% include "partials/section_header.html" with title="Zilizoongezwa Hivi Karibuni" %}
+    <div class="grid">
+      {% for story in recent_stories %}
+        {% include "pages/story_cards.html" with story=story %}
+      {% endfor %}
+    </div>
+  </section>
+  {% endif %}
+
+</div>
+{% endblock %}
