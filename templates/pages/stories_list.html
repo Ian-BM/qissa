@@ -39,7 +39,7 @@
   {% endif %}
 
   {% if stories %}
-    <div class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-4 md:gap-5">
+    <div class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-3 md:gap-4">
       {% for story in stories %}
         {% include "pages/story_cards.html" with story=story %}
       {% endfor %}

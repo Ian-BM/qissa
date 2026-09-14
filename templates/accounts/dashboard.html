@@ -39,7 +39,7 @@
   {% if user.last_read_story %}
   <div class="mb-8">
     <h2 class="text-base font-bold text-gray-900 dark:text-white mb-4">Unaendelea Kusoma</h2>
-    <div class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-4 md:gap-5 mb-4">
+    <div class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-3 md:gap-4 mb-4">
       {% include "pages/story_cards.html" with story=user.last_read_story %}
     </div>
     {% if user.last_read_chapter %}
@@ -54,7 +54,7 @@
   {% if liked_stories or liked_shorts %}
   <div class="mb-8">
     <h2 class="text-base font-bold text-gray-900 dark:text-white mb-4">Hadithi Ulizopenda</h2>
-    <div class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-4 md:gap-5">
+    <div class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-3 md:gap-4">
       {% for story in liked_stories %}
         {% include "pages/story_cards.html" with story=story %}
       {% endfor %}
@@ -68,7 +68,7 @@
   {% if recent_stories %}
   <div class="mb-8">
     <h2 class="text-base font-bold text-gray-900 dark:text-white mb-4">Zilizoongezwa Hivi Karibuni</h2>
-    <div class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-4 md:gap-5">
+    <div class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-3 md:gap-4">
       {% for story in recent_stories %}
         {% include "pages/story_cards.html" with story=story %}
       {% endfor %}
