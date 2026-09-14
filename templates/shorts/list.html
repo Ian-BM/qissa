@@ -4,51 +4,81 @@
 {% block title %}Simulizi Fupi — Qissa{% endblock %}
 
 {% block content %}
-<div class="shell" style="padding-top:32px;">
-  <section class="page-section" style="margin-top:0;">
-    <h1 class="section-title">⚡ Simulizi Fupi</h1>
-    <p class="section-subtitle" style="margin-bottom:24px;">Simulizi fupi za hisia — soma ndani ya dakika 3–5 popote ulipo.</p>
+<div class="max-w-7xl mx-auto px-4 sm:px-6 py-8">
 
-    <form method="get" class="search-bar" style="margin-bottom:20px;" role="search">
-      <input type="text" name="q" value="{{ query }}" placeholder="Tafuta simulizi fupi...">
-      {% if selected_category %}<input type="hidden" name="category" value="{{ selected_category }}">{% endif %}
-      {% if sort %}<input type="hidden" name="sort" value="{{ sort }}">{% endif %}
-      <button type="submit">Tafuta</button>
-    </form>
+  <div class="mb-6">
+    <h1 class="text-xl font-bold text-gray-900 dark:text-white">Simulizi Fupi</h1>
+    <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Simulizi fupi za hisia — soma ndani ya dakika 3–5 popote ulipo. Zote bure.</p>
+  </div>
 
-    <div class="chip-row" style="margin-bottom:12px;">
-      {% for value, label, emoji in category_filters %}
-        <a
-          href="?{% if query %}q={{ query }}&{% endif %}{% if sort %}sort={{ sort }}&{% endif %}{% if value %}category={{ value }}{% endif %}"
-          class="chip {% if selected_category == value %}active{% endif %}"
-        >{% if emoji %}{{ emoji }} {% endif %}{{ label }}</a>
-      {% endfor %}
-    </div>
+  <form method="get" class="flex gap-0 max-w-md mb-5">
+    <input type="text" name="q" value="{{ query }}" placeholder="Tafuta simulizi fupi..."
+      class="flex-1 min-w-0 px-3.5 py-2.5 border border-gray-300 dark:border-gray-600 border-r-0 rounded-l-lg text-sm bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white outline-none focus:border-rose-500">
+    {% if selected_category %}<input type="hidden" name="category" value="{{ selected_category }}">{% endif %}
+    {% if sort %}<input type="hidden" name="sort" value="{{ sort }}">{% endif %}
+    <button type="submit" class="px-4 py-2.5 bg-gray-900 dark:bg-white text-white dark:text-gray-900 rounded-r-lg text-sm font-medium">Tafuta</button>
+  </form>
 
-    <div class="chip-row" style="margin-bottom:28px;">
-      <a href="?{% if query %}q={{ query }}&{% endif %}{% if selected_category %}category={{ selected_category }}&{% endif %}sort=newest" class="chip {% if sort != 'trending' %}active{% endif %}">Mpya</a>
-      <a href="?{% if query %}q={{ query }}&{% endif %}{% if selected_category %}category={{ selected_category }}&{% endif %}sort=trending" class="chip {% if sort == 'trending' %}active{% endif %}">🔥 Inayovuma</a>
-    </div>
+  <div class="flex flex-wrap gap-2 mb-3">
+    {% for value, label, emoji in category_filters %}
+      <a href="?{% if query %}q={{ query }}&{% endif %}{% if sort %}sort={{ sort }}&{% endif %}{% if value %}category={{ value }}{% endif %}"
+        class="px-4 py-1.5 rounded-full text-sm font-medium transition-colors
+        {% if selected_category == value %}bg-rose-600 text-white
+        {% else %}border border-gray-200 dark:border-gray-600 text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 hover:border-gray-400{% endif %}">
+        {{ label }}
+      </a>
+    {% endfor %}
+  </div>
 
-    <div class="grid grid-shorts">
+  <div class="flex gap-2 mb-8">
+    <a href="?{% if query %}q={{ query }}&{% endif %}{% if selected_category %}category={{ selected_category }}&{% endif %}sort=newest"
+      class="px-4 py-1.5 rounded-full text-sm font-medium transition-colors
+      {% if sort != 'trending' %}bg-gray-900 dark:bg-white text-white dark:text-gray-900
+      {% else %}border border-gray-200 dark:border-gray-600 text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800{% endif %}">
+      Mpya
+    </a>
+    <a href="?{% if query %}q={{ query }}&{% endif %}{% if selected_category %}category={{ selected_category }}&{% endif %}sort=trending"
+      class="px-4 py-1.5 rounded-full text-sm font-medium transition-colors
+      {% if sort == 'trending' %}bg-gray-900 dark:bg-white text-white dark:text-gray-900
+      {% else %}border border-gray-200 dark:border-gray-600 text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800{% endif %}">
+      Inayovuma
+    </a>
+  </div>
+
+  {% if shorts %}
+    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 md:gap-5">
       {% for short in shorts %}
         {% include "shorts/_card.html" with short=short %}
-      {% empty %}
-        <p class="empty-state">Hakuna simulizi fupi zinazopatikana bado.</p>
       {% endfor %}
     </div>
 
     {% if page_obj.has_other_pages %}
-      <div class="pagination">
+      <div class="flex items-center justify-center gap-3 mt-10 pt-8 border-t border-gray-100 dark:border-gray-700">
         {% if page_obj.has_previous %}
-          <a href="?page={{ page_obj.previous_page_number }}{% if query %}&q={{ query }}{% endif %}{% if selected_category %}&category={{ selected_category }}{% endif %}{% if sort %}&sort={{ sort }}{% endif %}">← Nyuma</a>
+          <a href="?page={{ page_obj.previous_page_number }}{% if query %}&q={{ query }}{% endif %}{% if selected_category %}&category={{ selected_category }}{% endif %}{% if sort %}&sort={{ sort }}{% endif %}"
+            class="px-4 py-2 border border-gray-200 dark:border-gray-600 rounded-lg text-sm text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+            Iliyopita
+          </a>
         {% endif %}
-        <span>Ukurasa {{ page_obj.number }} wa {{ page_obj.paginator.num_pages }}</span>
+        <span class="px-4 py-2 border border-gray-200 dark:border-gray-600 rounded-lg text-sm font-semibold bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white">
+          Ukurasa {{ page_obj.number }} wa {{ page_obj.paginator.num_pages }}
+        </span>
         {% if page_obj.has_next %}
-          <a href="?page={{ page_obj.next_page_number }}{% if query %}&q={{ query }}{% endif %}{% if selected_category %}&category={{ selected_category }}{% endif %}{% if sort %}&sort={{ sort }}{% endif %}">Mbele →</a>
+          <a href="?page={{ page_obj.next_page_number }}{% if query %}&q={{ query }}{% endif %}{% if selected_category %}&category={{ selected_category }}{% endif %}{% if sort %}&sort={{ sort }}{% endif %}"
+            class="px-4 py-2 border border-gray-200 dark:border-gray-600 rounded-lg text-sm text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+            Inayofuata
+          </a>
         {% endif %}
       </div>
     {% endif %}
-  </section>
+  {% else %}
+    <div class="text-center py-20">
+      <svg class="w-12 h-12 text-gray-300 dark:text-gray-600 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+      </svg>
+      <p class="text-sm text-gray-500 dark:text-gray-400">Hakuna simulizi fupi zinazopatikana bado.</p>
+    </div>
+  {% endif %}
+
 </div>
 {% endblock %}

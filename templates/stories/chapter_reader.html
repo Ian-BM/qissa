@@ -1,61 +1,176 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}Sura {{ chapter.order }}: {{ chapter.title }} — {{ chapter.story.title }}{% endblock %}
+{% block title %}{{ chapter.story.title }} — Sura {{ chapter.order }} — Qissa{% endblock %}
 
 {% block content %}
-<div class="reader-shell">
-  <div class="reader-topbar">
-    <a href="{% url 'story_detail' chapter.story.slug %}">← Rudi kwenye Hadithi</a>
-    <a href="{% url 'home' %}">Nyumbani</a>
-  </div>
+<div class="max-w-4xl mx-auto px-4 sm:px-6 py-6">
 
-  <div class="reader-meta">
-    <div class="reader-meta__story">{{ chapter.story.title }}</div>
-    <h1 class="reader-meta__chapter">Sura {{ chapter.order }}: {{ chapter.title }}</h1>
-    <div class="reader-meta__time">{{ chapter.reading_time_minutes }} min · Sura {{ chapter.order }}/{{ chapters.count }}</div>
-  </div>
+  <a href="{% url 'home' %}"
+    class="inline-flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 px-4 py-2 rounded-lg mb-8 transition-colors">
+    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+    </svg>
+    Rudi Nyumbani
+  </a>
 
-  <div class="chapter-content">
-    {{ chapter.content|linebreaks }}
-  </div>
+  <h1 class="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white text-center uppercase mb-8">
+    {{ chapter.story.title }}
+  </h1>
 
-  {% if next_chapter_locked %}
-    <div class="locked-next">
-      <p>🔒 Sura inayofuata imefungwa</p>
-      <a href="{% url 'payment_page' chapter.story.id %}" class="btn btn-gold">Jiunge Premium Kuendelea Kusoma</a>
+  <div class="mb-8">
+    <p class="text-sm font-semibold text-gray-700 dark:text-gray-300 text-center mb-4">Sura</p>
+    <div class="flex flex-wrap justify-center gap-2">
+      {% for story_chapter in chapters %}
+        {% if not story_chapter.is_locked or has_story_access %}
+          <a href="{% url 'chapter_reader' story_chapter.id %}"
+            class="w-10 h-10 flex items-center justify-center rounded-lg text-sm font-semibold transition-colors
+            {% if story_chapter.id == chapter.id %}
+              bg-rose-600 text-white
+            {% else %}
+              bg-gray-900 dark:bg-gray-100 text-white dark:text-gray-900 hover:bg-gray-700 dark:hover:bg-gray-300
+            {% endif %}">
+            {{ story_chapter.order }}
+          </a>
+        {% else %}
+          <button type="button" onclick="showPaywall()"
+            class="w-10 h-10 flex items-center justify-center rounded-lg text-sm font-medium relative
+            bg-gray-100 dark:bg-gray-700 text-gray-400 dark:text-gray-500 cursor-pointer hover:bg-amber-50 dark:hover:bg-amber-900/20 transition-colors">
+            {{ story_chapter.order }}
+            <span class="absolute -top-1 -right-1 w-3.5 h-3.5 bg-amber-500 rounded-full flex items-center justify-center">
+              <svg class="w-2 h-2 text-white" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"/>
+              </svg>
+            </span>
+          </button>
+        {% endif %}
+      {% endfor %}
     </div>
-  {% endif %}
 
-  <div class="reader-bottom-nav">
-    {% if prev_chapter %}
-      <a href="{% url 'chapter_reader' prev_chapter.id %}">← Sura {{ prev_chapter.order }}</a>
-    {% else %}
-      <span class="disabled">← Sura iliyopita</span>
-    {% endif %}
-    <span class="reader-progress">Sura {{ chapter.order }}/{{ chapters.count }}</span>
-    {% if next_chapter %}
-      <a href="{% url 'chapter_reader' next_chapter.id %}">Sura {{ next_chapter.order }} →</a>
-    {% else %}
-      <span class="disabled">Sura inayofuata →</span>
+    {% if not has_story_access %}
+      <p class="text-xs text-center text-gray-400 dark:text-gray-500 mt-3">
+        Sura zilizofungwa zinahitaji
+        <a href="{% url 'premium' %}" class="text-amber-500 hover:text-amber-600 font-medium">Premium</a>
+      </p>
     {% endif %}
   </div>
 
-  <div class="share-row" style="justify-content:center;">
-    <a class="share-btn whatsapp" href="https://wa.me/?text={{ share_text|urlencode }}" target="_blank" rel="noopener">
-      💬 Share Sura Hii
+  <div class="border border-gray-200 dark:border-gray-700 rounded-xl p-6 md:p-8 bg-white dark:bg-gray-800">
+    <h2 class="text-base font-bold text-gray-900 dark:text-white mb-6">
+      Sura {{ chapter.order }} — {{ chapter.title }}
+    </h2>
+    <div class="chapter-body text-gray-800 dark:text-gray-200">
+      {{ chapter.content|linebreaks }}
+    </div>
+
+    <div class="flex items-center justify-between mt-10 pt-6 border-t border-gray-100 dark:border-gray-700">
+      {% if prev_chapter %}
+        <a href="{% url 'chapter_reader' prev_chapter.id %}"
+          class="flex items-center gap-2 text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-rose-600 dark:hover:text-rose-400 transition-colors">
+          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+          </svg>
+          Iliyopita
+        </a>
+      {% else %}
+        <div></div>
+      {% endif %}
+
+      {% if next_chapter %}
+        {% if next_chapter_locked %}
+          <button type="button" onclick="showPaywall()"
+            class="flex items-center gap-2 text-sm font-medium bg-amber-500 hover:bg-amber-400 text-white px-4 py-2 rounded-lg transition-colors">
+            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"/>
+            </svg>
+            Fungua Sura Inayofuata
+          </button>
+        {% else %}
+          <a href="{% url 'chapter_reader' next_chapter.id %}"
+            class="flex items-center gap-2 text-sm font-medium bg-gray-900 dark:bg-white hover:bg-gray-700 dark:hover:bg-gray-100 text-white dark:text-gray-900 px-4 py-2 rounded-lg transition-colors">
+            Inayofuata
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/>
+            </svg>
+          </a>
+        {% endif %}
+      {% else %}
+        <div class="text-sm text-gray-400 dark:text-gray-500">Mwisho wa hadithi</div>
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="flex justify-center mt-6">
+    <a href="https://wa.me/?text={{ share_text|urlencode }}" target="_blank"
+      class="inline-flex items-center gap-2 text-sm font-medium text-gray-500 dark:text-gray-400 hover:text-green-500 transition-colors">
+      <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+        <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347"/>
+      </svg>
+      Share Sura Hii
     </a>
   </div>
 
-  <div class="more-stories page-section">
-    {% include "partials/section_header.html" with title="Hadithi zaidi" %}
-    <div class="grid">
-      {% for story in related|slice:":4" %}
-        {% include "pages/story_cards.html" with story=story %}
-      {% empty %}
-        <p class="empty-state">Hakuna hadithi nyingine kwenye kategoria hii kwa sasa.</p>
-      {% endfor %}
+  {% if related %}
+    <div class="mt-16 pt-8 border-t border-gray-100 dark:border-gray-800">
+      <h2 class="text-base font-bold text-gray-900 dark:text-white mb-5">Hadithi Zaidi</h2>
+      <div class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-4 md:gap-5">
+        {% for story in related|slice:":6" %}
+          {% include "pages/story_cards.html" with story=story %}
+        {% endfor %}
+      </div>
     </div>
+  {% endif %}
+
+</div>
+
+<!-- Paywall Modal -->
+<div id="paywall-modal" class="fixed inset-0 z-50 hidden">
+  <div class="absolute inset-0 bg-black/50" onclick="hidePaywall()"></div>
+  <div class="absolute inset-x-4 bottom-0 sm:inset-auto sm:top-1/2 sm:left-1/2 sm:-translate-x-1/2 sm:-translate-y-1/2 bg-white dark:bg-gray-800 rounded-t-2xl sm:rounded-2xl p-6 sm:p-8 sm:w-full sm:max-w-md">
+
+    <div class="text-center mb-6">
+      <div class="w-12 h-12 bg-amber-100 dark:bg-amber-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
+        <svg class="w-6 h-6 text-amber-600" fill="currentColor" viewBox="0 0 20 20">
+          <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"/>
+        </svg>
+      </div>
+      <h2 class="text-lg font-bold text-gray-900 dark:text-white mb-1">Sura hii ni ya Premium</h2>
+      <p class="text-sm text-gray-500 dark:text-gray-400">Jiunge kwa TSh 5,000/mwezi uendelee kusoma</p>
+    </div>
+
+    <div class="text-center mb-6">
+      <div class="text-3xl font-bold text-gray-900 dark:text-white">TSh 5,000</div>
+      <div class="text-sm text-gray-400 dark:text-gray-500">kwa mwezi</div>
+    </div>
+
+    <div class="bg-gray-50 dark:bg-gray-700/50 rounded-xl p-4 space-y-3 mb-5">
+      <div class="flex gap-3 text-sm">
+        <span class="w-5 h-5 bg-rose-600 text-white rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 mt-0.5">1</span>
+        <span class="text-gray-700 dark:text-gray-200">Tuma <strong class="text-gray-900 dark:text-white">TSh 5,000</strong> kwa M-Pesa:
+          <button type="button" onclick="copyPhone('phone-paywall')" id="phone-paywall" data-phone="0621932919" class="font-bold text-rose-600 hover:underline">0621 932 919</button>
+        </span>
+      </div>
+      <div class="flex gap-3 text-sm">
+        <span class="w-5 h-5 bg-rose-600 text-white rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 mt-0.5">2</span>
+        <span class="text-gray-700 dark:text-gray-200">Piga picha ya uthibitisho</span>
+      </div>
+      <div class="flex gap-3 text-sm">
+        <span class="w-5 h-5 bg-rose-600 text-white rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 mt-0.5">3</span>
+        <span class="text-gray-700 dark:text-gray-200">Tuma WhatsApp — akaunti inafunguliwa <strong class="text-gray-900 dark:text-white">dakika 5</strong></span>
+      </div>
+    </div>
+
+    <a href="https://wa.me/255621932919?text=Habari%2C%20nimelipa%20TSh%205%2C000%20kwa%20Qissa%20Premium." target="_blank"
+      class="flex items-center justify-center gap-2 w-full bg-green-500 hover:bg-green-600 text-white font-semibold py-3 rounded-xl transition-colors text-sm mb-3">
+      <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+        <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347"/>
+      </svg>
+      Tuma Screenshot WhatsApp
+    </a>
+    <button type="button" onclick="hidePaywall()" class="w-full text-sm text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 py-2 transition-colors">
+      Funga
+    </button>
   </div>
 </div>
+
 {% endblock %}

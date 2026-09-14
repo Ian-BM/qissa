@@ -4,59 +4,81 @@
 {% block title %}{{ short.title }} — Qissa{% endblock %}
 
 {% block content %}
-<div class="reader-shell">
-  <div class="reader-topbar">
-    <a href="{% url 'short_list' %}">← Rudi kwa Simulizi Fupi</a>
-    <a href="{% url 'home' %}">Nyumbani</a>
+<div class="max-w-2xl mx-auto px-4 sm:px-6 py-6">
+
+  <a href="{% url 'short_list' %}"
+    class="inline-flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 px-4 py-2 rounded-lg mb-8 transition-colors">
+    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+    </svg>
+    Rudi kwa Simulizi Fupi
+  </a>
+
+  {% if short.cover_image %}
+    <div class="rounded-xl overflow-hidden mb-6 max-h-72">
+      <img src="{{ short.cover_image.url }}" alt="{{ short.title }}" class="w-full object-cover max-h-72">
+    </div>
+  {% endif %}
+
+  <h1 class="text-2xl font-bold text-gray-900 dark:text-white mb-3">{{ short.title }}</h1>
+  <div class="flex items-center gap-3 text-xs text-gray-400 dark:text-gray-500 mb-8">
+    <span>{{ short.read_time }} Min</span>
+    <span>&middot;</span>
+    <span>{{ short.views }} views</span>
+    <span>&middot;</span>
+    <span>{{ short.likes }} likes</span>
   </div>
 
-  {% include "shorts/_share.html" %}
+  <div class="chapter-body text-gray-800 dark:text-gray-200">{{ short.content|linebreaks }}</div>
 
-  <header style="margin: 20px 0 8px;">
-    {% if short.cover_image %}
-      <div style="border-radius:var(--radius-lg);overflow:hidden;max-height:280px;margin-bottom:20px;">
-        <img src="{{ short.cover_image.url }}" alt="{{ short.title }}" style="width:100%;object-fit:cover;max-height:280px;">
-      </div>
-    {% endif %}
-    <span class="badge badge-default">{{ short.category_emoji }} {{ short.category_label }}</span>
-    <h1 style="margin:12px 0;color:#fff;font-size:clamp(1.5rem,4vw,2rem);line-height:1.25;">{{ short.title }}</h1>
-    <div class="reader-meta__time">⚡ {{ short.read_time }} Min · 👁 {{ short.views }} · ❤ {{ short.likes }}</div>
-  </header>
-
-  <div class="chapter-content">{{ short.content|linebreaks }}</div>
-
-  <div class="locked-next">
-    <p>Ulipenda hadithi hii?</p>
-    <div style="display:flex;flex-wrap:wrap;gap:10px;justify-content:center;">
-      <form method="post" action="{% url 'short_like' short.slug %}" style="margin:0;">
+  <div class="border border-gray-200 dark:border-gray-700 rounded-xl p-6 mt-10 text-center">
+    <p class="text-sm font-semibold text-gray-900 dark:text-white mb-4">Ulipenda hadithi hii?</p>
+    <div class="flex flex-wrap justify-center gap-3">
+      <form method="post" action="{% url 'short_like' short.slug %}" class="inline">
         {% csrf_token %}
-        <button type="submit" class="btn {% if user_has_liked %}btn-rose{% else %}btn-secondary{% endif %}">❤ {% if user_has_liked %}Umependa{% else %}Penda{% endif %}</button>
+        <button type="submit"
+          class="inline-flex items-center gap-1.5 text-sm font-medium px-4 py-2 rounded-lg border transition-colors
+          {% if user_has_liked %}border-rose-600 text-rose-600 bg-rose-50 dark:bg-rose-900/20{% else %}border-gray-200 dark:border-gray-600 text-gray-500 dark:text-gray-400 hover:border-gray-400{% endif %}">
+          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905 0 .714-.211 1.412-.608 2.006L7 11v9m7-10h-2M7 20H5a2 2 0 01-2-2v-6a2 2 0 012-2h2.5"/>
+          </svg>
+          {% if user_has_liked %}Umependa{% else %}Penda{% endif %}
+        </button>
       </form>
-      <a href="{% url 'stories_list' %}" class="btn btn-secondary">Soma Simulizi Ndefu</a>
+      <a href="https://wa.me/?text={{ share_text|urlencode }}" target="_blank"
+        class="inline-flex items-center gap-1.5 text-sm font-medium px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-600 text-gray-500 dark:text-gray-400 hover:border-green-400 hover:text-green-500 transition-colors">
+        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+          <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347"/>
+        </svg>
+        Share
+      </a>
+      <a href="{% url 'stories_list' %}"
+        class="inline-flex items-center gap-1.5 text-sm font-medium px-4 py-2 rounded-lg bg-gray-900 dark:bg-white text-white dark:text-gray-900 hover:bg-gray-700 dark:hover:bg-gray-100 transition-colors">
+        Soma Simulizi Ndefu
+      </a>
     </div>
   </div>
 
-  <section class="page-section">
-    <div class="premium-banner">
+  <div class="mt-8">
+    <div class="bg-gradient-to-r from-rose-50 to-amber-50 dark:from-rose-900/20 dark:to-amber-900/10 border border-rose-100 dark:border-rose-800/30 rounded-xl p-5 flex items-center justify-between gap-4 flex-wrap">
       <div>
-        <h2>Fungua Hadithi Zote</h2>
-        <p>Jiunge Qissa Premium kwa TSh 5,000/mwezi tu na usome sura zote za hadithi zote bila kikomo.</p>
+        <p class="text-sm font-bold text-gray-900 dark:text-white">Fungua hadithi zote</p>
+        <p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">TSh 5,000/mwezi tu.</p>
       </div>
-      <div class="premium-banner__price">
-        <a href="{% url 'premium' %}" class="btn btn-gold">Jiunge Sasa</a>
-      </div>
+      <a href="{% url 'premium' %}" class="text-sm font-semibold bg-rose-600 hover:bg-rose-700 text-white px-4 py-2 rounded-lg transition-colors">Jiunge Premium</a>
     </div>
-  </section>
+  </div>
 
   {% if related_shorts %}
-    <section class="page-section">
-      {% include "partials/section_header.html" with title="Endelea Kusoma" subtitle="Unaweza pia kupenda" %}
-      <div class="grid grid-shorts">
+    <div class="mt-12 pt-8 border-t border-gray-100 dark:border-gray-800">
+      <h2 class="text-base font-bold text-gray-900 dark:text-white mb-5">Endelea Kusoma</h2>
+      <div class="grid grid-cols-2 sm:grid-cols-3 gap-4 md:gap-5">
         {% for related in related_shorts %}
           {% include "shorts/_card.html" with short=related %}
         {% endfor %}
       </div>
-    </section>
+    </div>
   {% endif %}
+
 </div>
 {% endblock %}

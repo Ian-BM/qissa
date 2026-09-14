@@ -127,10 +127,12 @@ def chapter_reader(request, id):
         .first()
     )
     chapters = Chapter.objects.filter(story=story).order_by("order")
+    has_story_access = request.user.is_authenticated and (
+        request.user.is_subscription_active()
+        or StoryAccess.objects.filter(user=request.user, story=story).exists()
+    )
     next_chapter_locked = bool(
-        next_chapter
-        and next_chapter.is_locked
-        and not user_has_chapter_access(request.user, next_chapter)
+        next_chapter and next_chapter.is_locked and not has_story_access
     )
 
     related = Story.objects.filter(

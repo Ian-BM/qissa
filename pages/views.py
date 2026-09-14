@@ -19,36 +19,32 @@ def _published_stories():
     )
 
 
+GENRE_SLUGS = {"mapenzi", "drama", "kusisimua", "mzimu", "kampasi"}
+
+
 def home(request):
-    query = request.GET.get("q", "").strip()
-    category_slug = request.GET.get("category", "").strip()
+    current_filter = request.GET.get("filter", "mpya").strip()
 
-    stories = _published_stories().order_by("-created_at")
+    stories = _published_stories()
 
-    if query:
-        stories = stories.filter(
-            Q(title__icontains=query)
-            | Q(description__icontains=query)
-            | Q(category__name__icontains=query)
-            | Q(chapters__title__icontains=query)
-            | Q(chapters__content__icontains=query)
-        ).distinct()
-
-    if category_slug:
-        stories = stories.filter(category__slug=category_slug)
+    if current_filter == "maarufu":
+        stories = stories.order_by("-views")
+    elif current_filter in GENRE_SLUGS:
+        stories = stories.filter(category__slug=current_filter).order_by("-created_at")
+    else:
+        current_filter = "mpya"
+        stories = stories.order_by("-created_at")
 
     featured = (
         _published_stories()
         .filter(is_featured=True)
         .order_by("-created_at")
         .first()
-        or _published_stories().order_by("-created_at").first()
     )
 
     paginator = Paginator(stories, 30)
     page_obj = paginator.get_page(request.GET.get("page"))
 
-    categories = StoryCategory.objects.filter(stories__is_published=True).distinct()
     latest_shorts = ShortStory.objects.filter(published=True).order_by("-created_at")[:12]
 
     return render(
@@ -57,10 +53,7 @@ def home(request):
         {
             "featured": featured,
             "stories": page_obj,
-            "page_obj": page_obj,
-            "query": query,
-            "categories": categories,
-            "selected_category_slug": category_slug,
+            "current_filter": current_filter,
             "latest_shorts": latest_shorts,
         },
     )

@@ -93,6 +93,10 @@ class Story(models.Model):
         )
         return max(1, math.ceil(words / 200))
 
+    @property
+    def has_locked_chapters(self):
+        return any(chapter.is_locked for chapter in self.chapters.all())
+
 
 class Chapter(models.Model):
     story = models.ForeignKey(

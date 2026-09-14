@@ -1,24 +1,56 @@
 {% extends "base.html" %}
+{% load static %}
 
 {% block title %}Jisajili — Qissa{% endblock %}
 
+{% block extra_head %}
+<style>
+input[type="text"], input[type="tel"] { width: 100%; padding: 0.625rem 0.875rem; background: rgb(249 250 251); border: 1px solid rgb(209 213 219); border-radius: 0.5rem; font-size: 0.875rem; color: rgb(17 24 39); outline: none; transition: all 0.15s; }
+input[type="text"]:focus, input[type="tel"]:focus { border-color: rgb(244 63 94); box-shadow: 0 0 0 2px rgba(244,63,94,0.15); }
+.dark input[type="text"], .dark input[type="tel"] { background: rgb(55 65 81); border-color: rgb(75 85 99); color: rgb(243 244 246); }
+</style>
+{% endblock %}
+
 {% block content %}
-<div class="auth-shell">
-  <div class="auth-card">
-    <span class="brand"><span class="brand-dot"></span>Qissa</span>
-    <h1>Jiunge na Qissa</h1>
-
-    {% if error %}<div class="error">{{ error }}</div>{% endif %}
-
-    <form method="post">
-      {% csrf_token %}
-      <input type="text" name="name" placeholder="Jina kamili" value="{{ name }}" required>
-      <input type="tel" name="phone" placeholder="Namba ya simu" value="{{ phone }}" required inputmode="numeric" pattern="^0\d{8,12}$">
-      <button type="submit" class="btn btn-rose btn-block">Jisajili</button>
-    </form>
-
-    <span class="switch-link">Una akaunti? <a href="{% url 'login' %}">Ingia</a></span>
-    <p class="auth-note">Akaunti ya bure. Malipo ya Premium peke yake.</p>
+<div class="min-h-screen flex items-center justify-center px-4 py-12">
+  <div class="w-full max-w-sm">
+    <div class="text-center mb-8">
+      <a href="{% url 'home' %}" class="inline-block">
+        <span class="font-serif italic text-2xl font-bold text-gray-900 dark:text-white relative inline-block">
+          Qissa
+          <span class="absolute -top-1 -right-2 w-2 h-2 bg-rose-600 rounded-full"></span>
+        </span>
+      </a>
+      <h1 class="text-xl font-bold text-gray-900 dark:text-white mt-5 mb-1">Jiunge na Qissa</h1>
+      <p class="text-sm text-gray-500 dark:text-gray-400">Akaunti ya bure. Sura 4 za kila hadithi bila malipo.</p>
+    </div>
+    <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl p-6 shadow-sm">
+      <form method="post" class="space-y-4">
+        {% csrf_token %}
+        <div>
+          <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Jina lako</label>
+          <input type="text" name="name" required placeholder="Jina kamili" value="{{ name }}">
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Namba ya simu</label>
+          <input type="tel" name="phone" required placeholder="0712 345 678" value="{{ phone }}"
+            inputmode="numeric" pattern="^0\d{8,12}$">
+        </div>
+        {% if error %}
+          <div class="px-3.5 py-2.5 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg text-sm text-red-600 dark:text-red-400">
+            {{ error }}
+          </div>
+        {% endif %}
+        <button type="submit"
+          class="w-full bg-rose-600 hover:bg-rose-700 text-white font-semibold py-2.5 rounded-lg transition-colors text-sm">
+          Jisajili Bure
+        </button>
+      </form>
+    </div>
+    <p class="text-center text-sm text-gray-500 dark:text-gray-400 mt-5">
+      Una akaunti tayari?
+      <a href="{% url 'login' %}" class="text-rose-600 dark:text-rose-400 font-medium hover:underline">Ingia hapa</a>
+    </p>
   </div>
 </div>
 {% endblock %}

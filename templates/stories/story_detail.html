@@ -1,93 +1,127 @@
 {% extends "base.html" %}
 {% load static %}
-{% load qissa_tags %}
 
 {% block title %}{{ story.title }} — Qissa{% endblock %}
 
 {% block content %}
-<div class="shell" style="padding-top:24px;">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 py-6">
 
-  <div class="story-hero">
-    {% if story.cover %}
-      <div class="story-hero__bg" style="background-image:url('{{ story.cover.url }}');"></div>
-    {% endif %}
-    <div class="story-hero__scrim"></div>
-    <div class="story-hero__cover">
+  <a href="{% url 'home' %}"
+    class="inline-flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 px-4 py-2 rounded-lg mb-8 transition-colors">
+    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+    </svg>
+    Rudi Nyumbani
+  </a>
+
+  <div class="flex flex-col md:flex-row gap-10 md:gap-16">
+
+    <div class="flex-shrink-0 w-full md:w-72">
       {% if story.cover %}
-        <img src="{{ story.cover.url }}" alt="{{ story.title }}">
+        <img src="{{ story.cover.url }}" alt="{{ story.title }}"
+          class="w-full md:w-72 story-cover object-cover rounded-xl shadow-sm">
       {% else %}
-        <div class="story-card__placeholder">📖</div>
+        <div class="w-full md:w-72 story-cover rounded-xl flex items-end justify-center pb-6 px-4 shadow-sm"
+          style="background: linear-gradient(135deg, #1e3a5f 0%, #4a1942 100%);">
+          <p class="text-white text-xl font-bold text-center uppercase leading-tight">{{ story.title }}</p>
+        </div>
       {% endif %}
     </div>
-    <div class="story-hero__info">
-      {% if story.category %}
-        <span class="badge {{ story.category.slug|genre_badge }}">{{ story.category.name }}</span>
+
+    <div class="flex-1 pt-2">
+      <h1 class="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white mb-6">
+        {{ story.title }}
+      </h1>
+
+      {% if story.description %}
+        <p class="text-gray-600 dark:text-gray-300 text-sm leading-relaxed mb-6 max-w-lg">
+          {{ story.description }}
+        </p>
       {% endif %}
-      <h1>{{ story.title }}</h1>
-      <div class="story-hero__meta">
-        <span>✍ Qissa</span>
-        <span>📖 {{ total_chapters }} Sura</span>
-        <span>👁 {{ story.views }} mitazamo</span>
-        <span>❤ {{ story.likes_count }}</span>
-        <span>{% if story.is_completed %}✅ Imekamilika{% else %}🔄 Inaendelea{% endif %}</span>
+
+      <div class="flex items-center gap-4 text-xs text-gray-400 dark:text-gray-500 mb-6">
+        <span>{{ total_chapters }} Sura</span>
+        <span>&middot;</span>
+        <span>{{ story.views|default:0 }} Wasomaji</span>
+        <span>&middot;</span>
+        <span class="{% if story.is_completed %}text-green-600 dark:text-green-400{% else %}text-rose-500{% endif %} font-medium">
+          {% if story.is_completed %}Imekamilika{% else %}Inaendelea{% endif %}
+        </span>
       </div>
-      <div class="reaction-row">
+
+      {% with chapters.first as first_chapter %}
+        {% if first_chapter %}
+          <a href="{% url 'chapter_reader' first_chapter.id %}"
+            class="inline-block bg-gray-900 dark:bg-white hover:bg-gray-700 dark:hover:bg-gray-100 text-white dark:text-gray-900 font-semibold px-6 py-2.5 rounded-lg transition-colors text-sm">
+            Soma Hadithi
+          </a>
+        {% endif %}
+      {% endwith %}
+
+      {% if story.has_locked_chapters %}
+        <p class="mt-4 text-xs text-amber-600 dark:text-amber-400 flex items-center gap-1.5">
+          <svg class="w-3.5 h-3.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"/>
+          </svg>
+          Sura {{ free_chapter_limit|add:1 }} na zaidi zinahitaji Premium
+        </p>
+      {% endif %}
+
+      <div class="flex items-center gap-4 mt-6">
         {% if user.is_authenticated %}
-          <form method="post" action="{% url 'story_react' story.slug %}" style="margin:0;">
+          <form method="post" action="{% url 'story_react' story.slug %}" class="inline">
             {% csrf_token %}
             <input type="hidden" name="reaction" value="like">
-            <button class="reaction-btn like {% if current_reaction == 1 %}active{% endif %}" type="submit" aria-label="Like">👍</button>
+            <button type="submit"
+              class="inline-flex items-center gap-1.5 text-sm font-medium px-3 py-1.5 rounded-lg border transition-colors
+              {% if current_reaction == 1 %}border-rose-600 text-rose-600 bg-rose-50 dark:bg-rose-900/20{% else %}border-gray-200 dark:border-gray-600 text-gray-500 dark:text-gray-400 hover:border-gray-400{% endif %}">
+              <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905 0 .714-.211 1.412-.608 2.006L7 11v9m7-10h-2M7 20H5a2 2 0 01-2-2v-6a2 2 0 012-2h2.5"/>
+              </svg>
+              {{ story.likes_count|default:0 }}
+            </button>
           </form>
-          <form method="post" action="{% url 'story_react' story.slug %}" style="margin:0;">
-            {% csrf_token %}
-            <input type="hidden" name="reaction" value="dislike">
-            <button class="reaction-btn dislike {% if current_reaction == -1 %}active{% endif %}" type="submit" aria-label="Dislike">👎</button>
-          </form>
-        {% else %}
-          <a href="{% url 'login' %}" class="btn btn-secondary btn-sm">Ingia kupiga kura</a>
         {% endif %}
-        <span class="reaction-count">❤ {{ story.likes_count }} · 👎 {{ story.dislikes_count }}</span>
+        <button type="button" class="inline-flex items-center gap-1.5 text-sm font-medium px-3 py-1.5 rounded-lg border border-gray-200 dark:border-gray-600 text-gray-500 dark:text-gray-400 hover:border-gray-400 transition-colors"
+          data-copy="{{ story_url }}" onclick="copyLink(this)">
+          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 010 5.656l-4 4a4 4 0 01-5.656-5.656l1.5-1.5m10.828-2.828l1.5-1.5a4 4 0 00-5.656-5.656l-4 4a4 4 0 000 5.656"/>
+          </svg>
+          Share
+        </button>
+        <a href="https://wa.me/?text={{ whatsapp_text|urlencode }}" target="_blank"
+          class="inline-flex items-center gap-1.5 text-sm font-medium px-3 py-1.5 rounded-lg border border-gray-200 dark:border-gray-600 text-gray-500 dark:text-gray-400 hover:border-green-400 hover:text-green-500 transition-colors">
+          <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347"/>
+          </svg>
+          WhatsApp
+        </a>
       </div>
     </div>
   </div>
 
-  {% include "partials/share_buttons.html" %}
-
-  <p class="story-description">{{ story.description }}</p>
-
-  <section class="page-section">
-    {% include "partials/section_header.html" with title="Sura" %}
-    <div class="chapter-list">
-      {% for chapter in chapters %}
-        <a class="chapter-row" href="{% url 'chapter_reader' chapter.id %}">
-          <div>
-            <div class="chapter-row__title">Sura {{ chapter.order }} — {{ chapter.title }}</div>
-            <div class="chapter-row__meta">{{ chapter.reading_time_minutes }} min</div>
-          </div>
-          <div class="chapter-row__right">
-            {% if chapter.is_locked %}
-              <span class="badge badge-premium">🔒 Premium</span>
-            {% else %}
-              <span class="badge badge-free">🟢 Bure</span>
-            {% endif %}
-          </div>
-        </a>
-      {% empty %}
-        <p class="empty-state">Hakuna sura bado.</p>
-      {% endfor %}
-    </div>
-  </section>
-
   {% if related_stories %}
-    <section class="page-section">
-      {% include "partials/section_header.html" with title="Hadithi Zinazohusiana" %}
-      <div class="grid">
+    <div class="mt-16 pt-8 border-t border-gray-100 dark:border-gray-800">
+      <h2 class="text-base font-bold text-gray-900 dark:text-white mb-5">Hadithi Zinazohusiana</h2>
+      <div class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-4 md:gap-5">
         {% for related in related_stories %}
           {% include "pages/story_cards.html" with story=related %}
         {% endfor %}
       </div>
-    </section>
+    </div>
   {% endif %}
 
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function copyLink(btn) {
+  const url = btn.dataset.copy;
+  navigator.clipboard.writeText(url).catch(() => {});
+  const original = btn.innerHTML;
+  btn.textContent = "Imenakiliwa!";
+  setTimeout(() => { btn.innerHTML = original; }, 2000);
+}
+</script>
 {% endblock %}

@@ -4,44 +4,75 @@
 {% block title %}Simulizi Ndefu — Qissa{% endblock %}
 
 {% block content %}
-<div class="shell" style="padding-top:32px;">
-  <section class="page-section" style="margin-top:0;">
-    <h1 class="section-title">Simulizi Ndefu</h1>
-    <p class="section-subtitle" style="margin-bottom:24px;">Hadithi za mfululizo — angalia idadi ya sura, mitazamo, na kategoria.</p>
+<div class="max-w-7xl mx-auto px-4 sm:px-6 py-8">
 
-    <form method="get" class="search-bar" style="margin-bottom:20px;" role="search">
-      <input type="text" name="q" value="{{ query|default:'' }}" placeholder="Tafuta hadithi...">
-      <button type="submit">Tafuta</button>
-    </form>
+  <div class="mb-6">
+    <h1 class="text-xl font-bold text-gray-900 dark:text-white">Simulizi Ndefu</h1>
+    <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">
+      Hadithi za mfululizo wa sura. Sura 1 hadi 4 bure, sura 5 na zaidi zinahitaji Premium.
+    </p>
+  </div>
 
-    {% if categories %}
-    <div class="chip-row" style="margin-bottom:28px;">
-      <a href="{% if query %}?q={{ query }}{% else %}?{% endif %}" class="chip {% if not selected_category_slug %}active{% endif %}">Zote</a>
+  <form method="get" class="flex gap-0 max-w-md mb-5">
+    <input type="text" name="q" value="{{ query|default:'' }}" placeholder="Tafuta hadithi..."
+      class="flex-1 min-w-0 px-3.5 py-2.5 border border-gray-300 dark:border-gray-600 border-r-0 rounded-l-lg text-sm bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white outline-none focus:border-rose-500">
+    <button type="submit" class="px-4 py-2.5 bg-gray-900 dark:bg-white text-white dark:text-gray-900 rounded-r-lg text-sm font-medium">Tafuta</button>
+  </form>
+
+  {% if categories %}
+    <div class="flex flex-wrap gap-2 mb-8">
+      <a href="{% if query %}?q={{ query }}{% else %}?{% endif %}"
+        class="px-4 py-1.5 rounded-full text-sm font-medium transition-colors
+        {% if not selected_category_slug %}bg-gray-900 dark:bg-white text-white dark:text-gray-900
+        {% else %}border border-gray-200 dark:border-gray-600 text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 hover:border-gray-400{% endif %}">
+        Zote
+      </a>
       {% for category in categories %}
-        <a href="?category={{ category.slug }}{% if query %}&q={{ query }}{% endif %}" class="chip {% if selected_category_slug == category.slug %}active{% endif %}">{{ category.name }}</a>
+        <a href="?category={{ category.slug }}{% if query %}&q={{ query }}{% endif %}"
+          class="px-4 py-1.5 rounded-full text-sm font-medium transition-colors
+          {% if selected_category_slug == category.slug %}bg-rose-600 text-white
+          {% else %}border border-gray-200 dark:border-gray-600 text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 hover:border-gray-400{% endif %}">
+          {{ category.name }}
+        </a>
       {% endfor %}
     </div>
-    {% endif %}
+  {% endif %}
 
-    <div class="grid">
+  {% if stories %}
+    <div class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-4 md:gap-5">
       {% for story in stories %}
-        {% include "pages/story_cards.html" with story=story show_category=True %}
-      {% empty %}
-        <p class="empty-state">Hakuna hadithi zinazopatikana bado.</p>
+        {% include "pages/story_cards.html" with story=story %}
       {% endfor %}
     </div>
 
-    {% if page_obj.has_other_pages %}
-      <div class="pagination">
-        {% if page_obj.has_previous %}
-          <a href="?page={{ page_obj.previous_page_number }}{% if query %}&q={{ query }}{% endif %}{% if selected_category_slug %}&category={{ selected_category_slug }}{% endif %}">← Nyuma</a>
+    {% if stories.has_other_pages %}
+      <div class="flex items-center justify-center gap-3 mt-10 pt-8 border-t border-gray-100 dark:border-gray-700">
+        {% if stories.has_previous %}
+          <a href="?page={{ stories.previous_page_number }}{% if query %}&q={{ query }}{% endif %}{% if selected_category_slug %}&category={{ selected_category_slug }}{% endif %}"
+            class="px-4 py-2 border border-gray-200 dark:border-gray-600 rounded-lg text-sm text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+            Iliyopita
+          </a>
         {% endif %}
-        <span>Ukurasa {{ page_obj.number }} wa {{ page_obj.paginator.num_pages }}</span>
-        {% if page_obj.has_next %}
-          <a href="?page={{ page_obj.next_page_number }}{% if query %}&q={{ query }}{% endif %}{% if selected_category_slug %}&category={{ selected_category_slug }}{% endif %}">Mbele →</a>
+        <span class="px-4 py-2 border border-gray-200 dark:border-gray-600 rounded-lg text-sm font-semibold text-gray-900 dark:text-white bg-gray-50 dark:bg-gray-800">
+          Ukurasa {{ stories.number }} wa {{ stories.paginator.num_pages }}
+        </span>
+        {% if stories.has_next %}
+          <a href="?page={{ stories.next_page_number }}{% if query %}&q={{ query }}{% endif %}{% if selected_category_slug %}&category={{ selected_category_slug }}{% endif %}"
+            class="px-4 py-2 border border-gray-200 dark:border-gray-600 rounded-lg text-sm text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+            Inayofuata
+          </a>
         {% endif %}
       </div>
     {% endif %}
-  </section>
+
+  {% else %}
+    <div class="text-center py-20">
+      <svg class="w-12 h-12 text-gray-300 dark:text-gray-600 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+      </svg>
+      <p class="text-sm text-gray-500 dark:text-gray-400">Hadithi zinaandaliwa. Rudi hivi karibuni.</p>
+    </div>
+  {% endif %}
+
 </div>
 {% endblock %}

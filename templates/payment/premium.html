@@ -4,81 +4,144 @@
 {% block title %}Qissa Premium — Soma Bila Kikomo{% endblock %}
 
 {% block content %}
-<div class="shell" style="padding-top:48px;padding-bottom:60px;max-width:640px;">
+<div class="max-w-lg mx-auto px-4 sm:px-6 py-12">
 
-  <div class="paywall-head">
-    <h1 style="font-size:2rem;">Soma Bila Kikomo</h1>
-    <p>Jiunge Qissa Premium leo</p>
+  <div class="text-center mb-8">
+    <h1 class="text-2xl font-bold text-gray-900 dark:text-white mb-2">Qissa Premium</h1>
+    <p class="text-sm text-gray-500 dark:text-gray-400">Soma hadithi zote bila kikomo</p>
   </div>
 
-  <div class="price-block">
-    <span class="amount">TSh 5,000</span>
-    <span class="period">/mwezi</span>
-    <div style="margin-top:20px;">
-      <a href="https://wa.me/255621932919?text={{ whatsapp_message|default:'Habari, nataka kujiunga na Qissa Premium.'|urlencode }}" target="_blank" rel="noopener" class="btn btn-gold">Jiunge Sasa</a>
+  <div class="bg-white dark:bg-gray-800 border-2 border-rose-200 dark:border-rose-800 rounded-2xl overflow-hidden">
+
+    <div class="bg-rose-50 dark:bg-rose-900/20 border-b border-rose-100 dark:border-rose-800/30 px-6 py-6 text-center">
+      <div class="text-4xl font-bold text-gray-900 dark:text-white">TSh 5,000</div>
+      <div class="text-sm text-gray-400 dark:text-gray-500 mt-1">kwa mwezi</div>
     </div>
-  </div>
 
-  <section class="page-section">
-    {% include "partials/section_header.html" with title="Unapata Nini" %}
-    <ul class="benefit-list" style="max-width:100%;">
-      <li>📚 Sura zote za hadithi zote</li>
-      <li>⚡ Simulizi fupi zote</li>
-      <li>🔔 Hadithi mpya kabla ya wengine</li>
-      <li>❤ Support mwandishi moja kwa moja</li>
-      <li>🚫 Ghairi wakati wowote — bila adhabu</li>
-    </ul>
-  </section>
+    <div class="p-6">
+      <ul class="space-y-3 mb-6">
+        <li class="flex items-start gap-3">
+          <svg class="w-4 h-4 text-green-500 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/>
+          </svg>
+          <span class="text-sm text-gray-700 dark:text-gray-300">Sura zote za hadithi zote</span>
+        </li>
+        <li class="flex items-start gap-3">
+          <svg class="w-4 h-4 text-green-500 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/>
+          </svg>
+          <span class="text-sm text-gray-700 dark:text-gray-300">Simulizi fupi zote</span>
+        </li>
+        <li class="flex items-start gap-3">
+          <svg class="w-4 h-4 text-green-500 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/>
+          </svg>
+          <span class="text-sm text-gray-700 dark:text-gray-300">Hadithi mpya kabla ya wengine</span>
+        </li>
+        <li class="flex items-start gap-3">
+          <svg class="w-4 h-4 text-green-500 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/>
+          </svg>
+          <span class="text-sm text-gray-700 dark:text-gray-300">Support mwandishi moja kwa moja</span>
+        </li>
+        <li class="flex items-start gap-3">
+          <svg class="w-4 h-4 text-green-500 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/>
+          </svg>
+          <span class="text-sm text-gray-700 dark:text-gray-300">Ghairi wakati wowote — bila adhabu</span>
+        </li>
+      </ul>
 
-  <section class="page-section">
-    {% include "partials/section_header.html" with title="Jinsi ya Kujiunga" %}
-    <div class="step-list">
-      <div class="step">
-        <span class="step__num">1</span>
-        <div class="step__body">
-          <p>Tuma <strong>TSh 5,000</strong> kwa M-Pesa kwenda namba:</p>
-          <button type="button" class="copy-phone" data-copy="0621932919">📋 0621932919</button>
+      <div class="flex items-center gap-3 mb-5">
+        <div class="flex-1 h-px bg-gray-200 dark:bg-gray-700"></div>
+        <span class="text-xs text-gray-400 dark:text-gray-500 font-medium">Jinsi ya kulipa</span>
+        <div class="flex-1 h-px bg-gray-200 dark:bg-gray-700"></div>
+      </div>
+
+      <div class="bg-gray-50 dark:bg-gray-700/50 rounded-xl p-4 space-y-3 mb-5">
+        <div class="flex gap-3">
+          <span class="w-5 h-5 bg-rose-600 text-white rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0">1</span>
+          <p class="text-sm text-gray-700 dark:text-gray-200">Tuma <strong class="text-gray-900 dark:text-white">TSh 5,000</strong> M-Pesa:
+            <button type="button" onclick="copyPhone('phone-btn')" id="phone-btn" data-phone="0621932919" class="font-bold text-rose-600 hover:underline">0621 932 919</button>
+          </p>
+        </div>
+        <div class="flex gap-3">
+          <span class="w-5 h-5 bg-rose-600 text-white rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0">2</span>
+          <p class="text-sm text-gray-700 dark:text-gray-200">Piga picha ya uthibitisho wa M-Pesa</p>
+        </div>
+        <div class="flex gap-3">
+          <span class="w-5 h-5 bg-rose-600 text-white rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0">3</span>
+          <p class="text-sm text-gray-700 dark:text-gray-200">Tuma WhatsApp — akaunti inafunguliwa <strong class="text-gray-900 dark:text-white">dakika 5</strong></p>
         </div>
       </div>
-      <div class="step">
-        <span class="step__num">2</span>
-        <div class="step__body"><p>Piga screenshot ya uthibitisho wa malipo.</p></div>
-      </div>
-      <div class="step">
-        <span class="step__num">3</span>
-        <div class="step__body"><p>Tuma screenshot WhatsApp — akaunti yako inafunguliwa ndani ya dakika 5.</p></div>
-      </div>
-    </div>
-    <a href="https://wa.me/255621932919?text=Habari%2C%20nataka%20kujiunga%20na%20Qissa%20Premium." target="_blank" rel="noopener" class="btn-whatsapp">
-      💬 Tuma Screenshot WhatsApp
-    </a>
-  </section>
 
-  <section class="page-section">
-    {% include "partials/section_header.html" with title="Maswali Yanayoulizwa Mara kwa Mara" %}
-    <div class="faq-list">
-      <div class="faq-item">
-        <button type="button" class="faq-question">Je, naweza kusoma offline?</button>
-        <div class="faq-answer"><p>Kwa sasa Qissa inahitaji intaneti kusoma. Tunafanyia kazi hali ya kusoma offline hivi karibuni.</p></div>
-      </div>
-      <div class="faq-item">
-        <button type="button" class="faq-question">Naweza kughairi lini?</button>
-        <div class="faq-answer"><p>Wakati wowote. Huna mkataba — ukiacha kulipa mwezi unaofuata, akaunti yako inarudi kuwa ya bure.</p></div>
-      </div>
-      <div class="faq-item">
-        <button type="button" class="faq-question">Malipo yangu ni salama?</button>
-        <div class="faq-answer"><p>Ndiyo. Malipo yote yanathibitishwa binafsi na mwandishi kupitia WhatsApp ndani ya dakika 5.</p></div>
-      </div>
-      <div class="faq-item">
-        <button type="button" class="faq-question">Ni hadithi ngapi zipo?</button>
-        <div class="faq-answer"><p>Hadithi mpya zinaongezwa mara kwa mara katika kategoria mbalimbali — mapenzi, drama, kusisimua, na zaidi.</p></div>
-      </div>
-      <div class="faq-item">
-        <button type="button" class="faq-question">Hadithi mpya zinaongezwa lini?</button>
-        <div class="faq-answer"><p>Sura na hadithi mpya zinachapishwa kila wiki. Wanachama wa Premium ndio wa kwanza kuzisoma.</p></div>
+      <a href="https://wa.me/255621932919?text=Habari%2C%20nataka%20kujiunga%20na%20Qissa%20Premium." target="_blank"
+        class="flex items-center justify-center gap-2 w-full bg-green-500 hover:bg-green-600 text-white font-semibold py-3.5 rounded-xl transition-colors text-sm mb-3">
+        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+          <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347"/>
+        </svg>
+        Jiunge Sasa WhatsApp
+      </a>
+    </div>
+  </div>
+
+  <div class="mt-8 space-y-3">
+    <div class="faq-item bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl overflow-hidden">
+      <button type="button" onclick="toggleFaq(this)" class="w-full text-left px-5 py-4 flex items-center justify-between gap-3">
+        <span class="text-sm font-medium text-gray-900 dark:text-white">Je, naweza kusoma offline?</span>
+        <svg class="w-4 h-4 text-gray-400 flex-shrink-0 transition-transform duration-200" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+        </svg>
+      </button>
+      <div class="hidden px-5 pb-4">
+        <p class="text-sm text-gray-600 dark:text-gray-300 leading-relaxed">Kwa sasa Qissa inahitaji intaneti kusoma. Tunafanyia kazi hali ya kusoma offline hivi karibuni.</p>
       </div>
     </div>
-  </section>
+    <div class="faq-item bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl overflow-hidden">
+      <button type="button" onclick="toggleFaq(this)" class="w-full text-left px-5 py-4 flex items-center justify-between gap-3">
+        <span class="text-sm font-medium text-gray-900 dark:text-white">Naweza kughairi lini?</span>
+        <svg class="w-4 h-4 text-gray-400 flex-shrink-0 transition-transform duration-200" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+        </svg>
+      </button>
+      <div class="hidden px-5 pb-4">
+        <p class="text-sm text-gray-600 dark:text-gray-300 leading-relaxed">Wakati wowote. Huna mkataba — ukiacha kulipa mwezi unaofuata, akaunti yako inarudi kuwa ya bure.</p>
+      </div>
+    </div>
+    <div class="faq-item bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl overflow-hidden">
+      <button type="button" onclick="toggleFaq(this)" class="w-full text-left px-5 py-4 flex items-center justify-between gap-3">
+        <span class="text-sm font-medium text-gray-900 dark:text-white">Malipo yangu ni salama?</span>
+        <svg class="w-4 h-4 text-gray-400 flex-shrink-0 transition-transform duration-200" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+        </svg>
+      </button>
+      <div class="hidden px-5 pb-4">
+        <p class="text-sm text-gray-600 dark:text-gray-300 leading-relaxed">Ndiyo. Malipo yote yanathibitishwa binafsi na mwandishi kupitia WhatsApp ndani ya dakika 5.</p>
+      </div>
+    </div>
+    <div class="faq-item bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl overflow-hidden">
+      <button type="button" onclick="toggleFaq(this)" class="w-full text-left px-5 py-4 flex items-center justify-between gap-3">
+        <span class="text-sm font-medium text-gray-900 dark:text-white">Ni hadithi ngapi zipo?</span>
+        <svg class="w-4 h-4 text-gray-400 flex-shrink-0 transition-transform duration-200" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+        </svg>
+      </button>
+      <div class="hidden px-5 pb-4">
+        <p class="text-sm text-gray-600 dark:text-gray-300 leading-relaxed">Hadithi mpya zinaongezwa mara kwa mara katika kategoria mbalimbali — mapenzi, drama, kusisimua, na zaidi.</p>
+      </div>
+    </div>
+    <div class="faq-item bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl overflow-hidden">
+      <button type="button" onclick="toggleFaq(this)" class="w-full text-left px-5 py-4 flex items-center justify-between gap-3">
+        <span class="text-sm font-medium text-gray-900 dark:text-white">Hadithi mpya zinaongezwa lini?</span>
+        <svg class="w-4 h-4 text-gray-400 flex-shrink-0 transition-transform duration-200" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+        </svg>
+      </button>
+      <div class="hidden px-5 pb-4">
+        <p class="text-sm text-gray-600 dark:text-gray-300 leading-relaxed">Sura na hadithi mpya zinachapishwa kila wiki. Wanachama wa Premium ndio wa kwanza kuzisoma.</p>
+      </div>
+    </div>
+  </div>
 
 </div>
 {% endblock %}
