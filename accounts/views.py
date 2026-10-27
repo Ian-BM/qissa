@@ -130,8 +130,7 @@ def dashboard_view(request):
 
     renew_soon = bool(
         user.is_subscription_active()
-        and user.premium_end
-        and user.premium_end - timezone.now().date() <= timedelta(days=7)
+        and user.subscription_expires_at() - timezone.now() <= timedelta(days=7)
     )
 
     return render(

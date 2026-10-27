@@ -22,6 +22,7 @@ class PaidViewCountingTests(TestCase):
             title="Chapter Five",
             content="Paid content",
             order=5,
+            is_locked=True,
         )
 
     def test_story_detail_does_not_increment_views(self):

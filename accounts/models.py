@@ -44,6 +44,8 @@ class User(AbstractBaseUser, PermissionsMixin):
     is_premium = models.BooleanField(default=False)
     premium_start = models.DateField(null=True, blank=True)
     premium_end = models.DateField(null=True, blank=True)
+    premium_activated_at = models.DateTimeField(null=True, blank=True)
+    premium_expires_at = models.DateTimeField(null=True, blank=True)
     last_read_story = models.ForeignKey(
         "stories.Story",
         on_delete=models.SET_NULL,
@@ -75,12 +77,42 @@ class User(AbstractBaseUser, PermissionsMixin):
     def __str__(self):
         return self.phone
 
+    def subscription_expires_at(self):
+        """Keep legacy date subscriptions valid through their entire end date."""
+        from datetime import datetime, time, timedelta
+        from django.utils import timezone
+
+        if self.premium_expires_at:
+            return self.premium_expires_at
+        if self.premium_end:
+            return timezone.make_aware(
+                datetime.combine(self.premium_end + timedelta(days=1), time.min),
+                timezone.get_default_timezone(),
+            )
+        return None
+
     def is_subscription_active(self):
         from django.utils import timezone
 
-        if not self.is_premium or not self.premium_end:
-            return False
-        return self.premium_end >= timezone.now().date()
+        expiry = self.subscription_expires_at()
+        return bool(self.is_premium and expiry and timezone.now() < expiry)
+
+
+class PremiumActivation(models.Model):
+    """Audit of staff-verified payments; a payment reference may be used once."""
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT,
+                             related_name="premium_activations")
+    plan = models.CharField(max_length=10, choices=[
+        ("daily", "Kila Siku"), ("weekly", "Kila Wiki"), ("monthly", "Kila Mwezi")])
+    amount = models.PositiveIntegerField()
+    payment_reference = models.CharField(max_length=100, unique=True)
+    activated_at = models.DateTimeField()
+    expires_at = models.DateTimeField()
+    verified_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT,
+                                   related_name="verified_premium_activations")
+
+    class Meta:
+        ordering = ["-activated_at"]
 
 
 class Author(models.Model):

@@ -1,12 +1,11 @@
-from datetime import date, datetime
-
 from django.contrib import messages
 from django.db import transaction
 from django.db.models import Count, F, Max, Q, Sum
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_http_methods
 
-from accounts.models import User
+from accounts.models import PremiumActivation, User
+from accounts.subscriptions import PLANS, activate_verified_subscription
 from core.utils import admin_required
 from dashboard.analytics import (
     get_category_performance,
@@ -451,18 +450,20 @@ def premium_activate(request):
 
     if request.method == "POST":
         user_id = request.POST.get("user_id")
-        end_date_raw = request.POST.get("end_date", "").strip()
         target_user = get_object_or_404(User, id=user_id)
         try:
-            end_date = datetime.strptime(end_date_raw, "%Y-%m-%d").date()
-        except ValueError:
-            messages.error(request, "Chagua tarehe sahihi ya mwisho.")
+            if request.POST.get("payment_verified") != "yes":
+                raise ValueError("Thibitisha malipo ya M-Pesa kabla ya kuwasha Premium.")
+            activate_verified_subscription(
+                user_id=target_user.pk,
+                plan_id=request.POST.get("plan", ""),
+                payment_reference=request.POST.get("payment_reference", ""),
+                verified_by=request.user,
+            )
+        except ValueError as exc:
+            messages.error(request, str(exc))
             return redirect(f"/dashboard/premium/?phone={target_user.phone}")
 
-        target_user.is_premium = True
-        target_user.premium_start = date.today()
-        target_user.premium_end = end_date
-        target_user.save(update_fields=["is_premium", "premium_start", "premium_end"])
         messages.success(
             request, f"Premium imewashwa kwa {target_user.name or target_user.phone}."
         )
@@ -479,6 +480,8 @@ def premium_activate(request):
             "search_phone": search_phone,
             "found_user": found_user,
             "recent_activations": recent_activations,
+            "plans": PLANS,
+            "payment_activations": PremiumActivation.objects.select_related("user", "verified_by")[:20],
         },
     )
 

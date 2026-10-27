@@ -1,6 +1,8 @@
 from django.core.paginator import Paginator
 from django.db.models import Count, Q
 from django.shortcuts import render
+from django.http import HttpResponseBadRequest
+from accounts.subscriptions import PLANS, get_plan
 
 from shorts.models import ShortStory
 from stories.models import Story, StoryCategory, StoryReaction
@@ -60,7 +62,13 @@ def home(request):
 
 
 def premium(request):
-    return render(request, "payment/premium.html")
+    selected = None
+    if "plan" in request.GET:
+        try:
+            selected = get_plan(request.GET["plan"])
+        except ValueError as exc:
+            return HttpResponseBadRequest(str(exc))
+    return render(request, "payment/premium.html", {"plans": PLANS, "selected_plan": selected})
 
 
 def stories_list(request):

@@ -135,38 +135,9 @@
         </svg>
       </div>
       <h2 class="text-lg font-bold text-gray-900 dark:text-white mb-1">Sura hii ni ya Premium</h2>
-      <p class="text-sm text-gray-500 dark:text-gray-400">Jiunge kwa TSh 5,000/mwezi uendelee kusoma</p>
+      <p class="text-sm text-gray-500 dark:text-gray-400">Chagua mpango wa siku, wiki au mwezi uendelee kusoma.</p>
     </div>
-
-    <div class="text-center mb-6">
-      <div class="text-3xl font-bold text-gray-900 dark:text-white">TSh 5,000</div>
-      <div class="text-sm text-gray-400 dark:text-gray-500">kwa mwezi</div>
-    </div>
-
-    <div class="bg-gray-50 dark:bg-gray-700/50 rounded-xl p-4 space-y-3 mb-5">
-      <div class="flex gap-3 text-sm">
-        <span class="w-5 h-5 bg-rose-600 text-white rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 mt-0.5">1</span>
-        <span class="text-gray-700 dark:text-gray-200">Tuma <strong class="text-gray-900 dark:text-white">TSh 5,000</strong> kwa M-Pesa:
-          <button type="button" onclick="copyPhone('phone-paywall')" id="phone-paywall" data-phone="0621932919" class="font-bold text-rose-600 hover:underline">0621 932 919</button>
-        </span>
-      </div>
-      <div class="flex gap-3 text-sm">
-        <span class="w-5 h-5 bg-rose-600 text-white rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 mt-0.5">2</span>
-        <span class="text-gray-700 dark:text-gray-200">Piga picha ya uthibitisho</span>
-      </div>
-      <div class="flex gap-3 text-sm">
-        <span class="w-5 h-5 bg-rose-600 text-white rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 mt-0.5">3</span>
-        <span class="text-gray-700 dark:text-gray-200">Tuma WhatsApp — akaunti inafunguliwa <strong class="text-gray-900 dark:text-white">dakika 5</strong></span>
-      </div>
-    </div>
-
-    <a href="https://wa.me/255621932919?text=Habari%2C%20nimelipa%20TSh%205%2C000%20kwa%20Qissa%20Premium." target="_blank"
-      class="flex items-center justify-center gap-2 w-full bg-green-500 hover:bg-green-600 text-white font-semibold py-3 rounded-xl transition-colors text-sm mb-3">
-      <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-        <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347"/>
-      </svg>
-      Tuma Screenshot WhatsApp
-    </a>
+    <a href="{% url 'premium' %}" class="block text-center bg-rose-600 hover:bg-rose-700 text-white font-semibold py-3 rounded-xl mb-3">Chagua Mpango</a>
     <button type="button" onclick="hidePaywall()" class="w-full text-sm text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 py-2 transition-colors">
       Funga
     </button>

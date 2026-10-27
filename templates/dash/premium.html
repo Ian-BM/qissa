@@ -6,7 +6,7 @@
 <div class="dash-page-header">
   <div>
     <h1>Premium Subscriptions</h1>
-    <p>Search a reader by phone number and activate their subscription manually.</p>
+    <p>Verify payment with M-Pesa, then activate the purchased plan. Renewals extend existing access.</p>
   </div>
 </div>
 
@@ -31,7 +31,7 @@
       <p>
         Status:
         {% if found_user.is_subscription_active %}
-          <span class="dash-badge dash-badge-free">Premium hadi {{ found_user.premium_end|date:"d M Y" }}</span>
+          <span class="dash-badge dash-badge-free">Premium hadi {{ found_user.subscription_expires_at|date:"d M Y H:i T" }}</span>
         {% else %}
           <span class="dash-badge dash-badge-locked">Bure</span>
         {% endif %}
@@ -41,9 +41,16 @@
         {% csrf_token %}
         <input type="hidden" name="user_id" value="{{ found_user.id }}">
         <div>
-          <label class="dash-stat-label" style="display:block;margin-bottom:6px;">Subscription end date</label>
-          <input type="date" name="end_date" required style="padding:10px 14px;border-radius:10px;border:1px solid var(--dash-border);background:var(--dash-bg);color:var(--dash-heading);">
+          <label for="plan" class="dash-stat-label">Mpango</label>
+          <select id="plan" name="plan" required style="padding:10px;color:#111;background:#fff;">
+            {% for plan in plans %}<option value="{{ plan.id }}">{{ plan.name }} — TZS {{ plan.price }} / {{ plan.duration }}</option>{% endfor %}
+          </select>
         </div>
+        <div>
+          <label for="payment-reference" class="dash-stat-label">Kumbukumbu ya M-Pesa</label>
+          <input id="payment-reference" name="payment_reference" maxlength="100" required style="padding:10px;color:#111;background:#fff;">
+        </div>
+        <label><input type="checkbox" name="payment_verified" value="yes" required> Nimethibitisha kiasi na kumbukumbu ya malipo ya mpango huu.</label>
         <button type="submit" class="dash-btn dash-btn-primary">Activate Premium</button>
       </form>
 
@@ -71,8 +78,8 @@
           <tr>
             <td>{{ u.name|default:"—" }}</td>
             <td>{{ u.phone }}</td>
-            <td>{{ u.premium_start|date:"d M Y"|default:"—" }}</td>
-            <td>{{ u.premium_end|date:"d M Y"|default:"—" }}</td>
+            <td>{% if u.premium_activated_at %}{{ u.premium_activated_at|date:"d M Y H:i T" }}{% else %}{{ u.premium_start|date:"d M Y"|default:"—" }}{% endif %}</td>
+            <td>{{ u.subscription_expires_at|date:"d M Y H:i T"|default:"—" }}</td>
           </tr>
         {% empty %}
           <tr><td colspan="4">No activations yet.</td></tr>
@@ -80,5 +87,14 @@
       </tbody>
     </table>
   </div>
+</div>
+<div class="dash-section">
+  <h2>Verified Premium Payments</h2>
+  <div class="dash-table-wrap"><table class="dash-table">
+    <thead><tr><th>Reader</th><th>Plan</th><th>TZS</th><th>Reference</th><th>Access starts</th><th>Expires</th><th>Verified by</th></tr></thead>
+    <tbody>{% for activation in payment_activations %}
+      <tr><td>{{ activation.user.name|default:activation.user.phone }}</td><td>{{ activation.get_plan_display }}</td><td>{{ activation.amount }}</td><td>{{ activation.payment_reference }}</td><td>{{ activation.activated_at|date:"d M Y H:i T" }}</td><td>{{ activation.expires_at|date:"d M Y H:i T" }}</td><td>{{ activation.verified_by.name }}</td></tr>
+    {% empty %}<tr><td colspan="7">No verified plan payments yet. Existing subscriptions are preserved.</td></tr>{% endfor %}</tbody>
+  </table></div>
 </div>
 {% endblock %}

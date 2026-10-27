@@ -31,16 +31,18 @@ def get_platform_stats():
 def get_premium_stats():
     from accounts.models import User
 
-    today = timezone.now().date()
-    week_from_now = today + timedelta(days=7)
-
+    now = timezone.now()
+    today = now.date()
+    active = User.objects.filter(is_premium=True).filter(
+        Q(premium_expires_at__gt=now)
+        | Q(premium_expires_at__isnull=True, premium_end__gte=today)
+    )
     return {
-        "active_premium": User.objects.filter(
-            is_premium=True, premium_end__gte=today
-        ).count(),
-        "expiring_soon": User.objects.filter(
-            is_premium=True, premium_end__gte=today, premium_end__lte=week_from_now
-        ).order_by("premium_end"),
+        "active_premium": active.count(),
+        "expiring_soon": active.filter(
+            Q(premium_expires_at__lte=now + timedelta(days=7))
+            | Q(premium_expires_at__isnull=True, premium_end__lte=today + timedelta(days=7))
+        ).order_by("premium_expires_at", "premium_end"),
         "total_users": User.objects.count(),
     }
 
