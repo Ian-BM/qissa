@@ -42,13 +42,13 @@
         <input type="hidden" name="user_id" value="{{ found_user.id }}">
         <div>
           <label for="plan" class="dash-stat-label">Mpango</label>
-          <select id="plan" name="plan" required style="padding:10px;color:#111;background:#fff;">
+          <select id="plan" name="plan" required style="padding:10px;color:var(--q-text);background:var(--q-surface);">
             {% for plan in plans %}<option value="{{ plan.id }}">{{ plan.name }} — TZS {{ plan.price }} / {{ plan.duration }}</option>{% endfor %}
           </select>
         </div>
         <div>
           <label for="payment-reference" class="dash-stat-label">Kumbukumbu ya M-Pesa</label>
-          <input id="payment-reference" name="payment_reference" maxlength="100" required style="padding:10px;color:#111;background:#fff;">
+          <input id="payment-reference" name="payment_reference" maxlength="100" required style="padding:10px;color:var(--q-text);background:var(--q-surface);">
         </div>
         <label><input type="checkbox" name="payment_verified" value="yes" required> Nimethibitisha kiasi na kumbukumbu ya malipo ya mpango huu.</label>
         <button type="submit" class="dash-btn dash-btn-primary">Activate Premium</button>

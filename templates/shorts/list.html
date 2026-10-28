@@ -7,24 +7,22 @@
 <div class="max-w-7xl mx-auto px-4 sm:px-6 py-8">
 
   <div class="mb-6">
-    <h1 class="text-xl font-bold text-gray-900 dark:text-white">Simulizi Fupi</h1>
-    <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Simulizi fupi za hisia — soma ndani ya dakika 3–5 popote ulipo. Zote bure.</p>
+    <h1 class="text-xl font-bold text-ink dark:text-ink">Simulizi Fupi</h1>
+    <p class="text-sm text-muted dark:text-muted mt-1">Simulizi fupi za hisia — soma ndani ya dakika 3–5 popote ulipo. Zote bure.</p>
   </div>
 
   <form method="get" class="flex gap-0 max-w-md mb-5">
     <input type="text" name="q" value="{{ query }}" placeholder="Tafuta simulizi fupi..."
-      class="flex-1 min-w-0 px-3.5 py-2.5 border border-gray-300 dark:border-gray-600 border-r-0 rounded-l-lg text-sm bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white outline-none focus:border-rose-500">
+      class="flex-1 min-w-0 px-3.5 py-2.5 border border-line dark:border-line border-r-0 rounded-l-lg text-sm bg-soft dark:bg-surface text-ink dark:text-ink outline-none focus:border-accent-line">
     {% if selected_category %}<input type="hidden" name="category" value="{{ selected_category }}">{% endif %}
     {% if sort %}<input type="hidden" name="sort" value="{{ sort }}">{% endif %}
-    <button type="submit" class="px-4 py-2.5 bg-gray-900 dark:bg-white text-white dark:text-gray-900 rounded-r-lg text-sm font-medium">Tafuta</button>
+    <button type="submit" class="px-4 py-2.5 bg-ink rounded-r-lg text-sm font-medium text-on-ink">Tafuta</button>
   </form>
 
   <div class="flex flex-wrap gap-2 mb-3">
     {% for value, label, emoji in category_filters %}
       <a href="?{% if query %}q={{ query }}&{% endif %}{% if sort %}sort={{ sort }}&{% endif %}{% if value %}category={{ value }}{% endif %}"
-        class="px-4 py-1.5 rounded-full text-sm font-medium transition-colors
-        {% if selected_category == value %}bg-rose-600 text-white
-        {% else %}border border-gray-200 dark:border-gray-600 text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 hover:border-gray-400{% endif %}">
+        class="px-4 py-1.5 rounded-full text-sm font-medium transition-colors {% if selected_category == value %}bg-action text-on-action {% else %}border border-line dark:border-line text-ink dark:text-muted bg-surface dark:bg-surface hover:border-line{% endif %}">
         {{ label }}
       </a>
     {% endfor %}
@@ -32,40 +30,36 @@
 
   <div class="flex gap-2 mb-8">
     <a href="?{% if query %}q={{ query }}&{% endif %}{% if selected_category %}category={{ selected_category }}&{% endif %}sort=newest"
-      class="px-4 py-1.5 rounded-full text-sm font-medium transition-colors
-      {% if sort != 'trending' %}bg-gray-900 dark:bg-white text-white dark:text-gray-900
-      {% else %}border border-gray-200 dark:border-gray-600 text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800{% endif %}">
+      class="px-4 py-1.5 rounded-full text-sm font-medium transition-colors {% if sort != 'trending' %}bg-ink text-on-ink {% else %}border border-line dark:border-line text-ink dark:text-muted bg-surface dark:bg-surface{% endif %}">
       Mpya
     </a>
     <a href="?{% if query %}q={{ query }}&{% endif %}{% if selected_category %}category={{ selected_category }}&{% endif %}sort=trending"
-      class="px-4 py-1.5 rounded-full text-sm font-medium transition-colors
-      {% if sort == 'trending' %}bg-gray-900 dark:bg-white text-white dark:text-gray-900
-      {% else %}border border-gray-200 dark:border-gray-600 text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800{% endif %}">
+      class="px-4 py-1.5 rounded-full text-sm font-medium transition-colors {% if sort == 'trending' %}bg-ink text-on-ink {% else %}border border-line dark:border-line text-ink dark:text-muted bg-surface dark:bg-surface{% endif %}">
       Inayovuma
     </a>
   </div>
 
   {% if shorts %}
-    <div class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-3 md:gap-4">
+    <div class="story-grid">
       {% for short in shorts %}
         {% include "shorts/_card.html" with short=short %}
       {% endfor %}
     </div>
 
     {% if page_obj.has_other_pages %}
-      <div class="flex items-center justify-center gap-3 mt-10 pt-8 border-t border-gray-100 dark:border-gray-700">
+      <div class="flex items-center justify-center gap-3 mt-10 pt-8 border-t border-line dark:border-line">
         {% if page_obj.has_previous %}
           <a href="?page={{ page_obj.previous_page_number }}{% if query %}&q={{ query }}{% endif %}{% if selected_category %}&category={{ selected_category }}{% endif %}{% if sort %}&sort={{ sort }}{% endif %}"
-            class="px-4 py-2 border border-gray-200 dark:border-gray-600 rounded-lg text-sm text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+            class="px-4 py-2 border border-line dark:border-line rounded-lg text-sm text-ink dark:text-muted bg-surface dark:bg-surface hover:bg-soft dark:hover:bg-surface transition-colors">
             Iliyopita
           </a>
         {% endif %}
-        <span class="px-4 py-2 border border-gray-200 dark:border-gray-600 rounded-lg text-sm font-semibold bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white">
+        <span class="px-4 py-2 border border-line dark:border-line rounded-lg text-sm font-semibold bg-soft dark:bg-surface text-ink dark:text-ink">
           Ukurasa {{ page_obj.number }} wa {{ page_obj.paginator.num_pages }}
         </span>
         {% if page_obj.has_next %}
           <a href="?page={{ page_obj.next_page_number }}{% if query %}&q={{ query }}{% endif %}{% if selected_category %}&category={{ selected_category }}{% endif %}{% if sort %}&sort={{ sort }}{% endif %}"
-            class="px-4 py-2 border border-gray-200 dark:border-gray-600 rounded-lg text-sm text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+            class="px-4 py-2 border border-line dark:border-line rounded-lg text-sm text-ink dark:text-muted bg-surface dark:bg-surface hover:bg-soft dark:hover:bg-surface transition-colors">
             Inayofuata
           </a>
         {% endif %}
@@ -73,10 +67,10 @@
     {% endif %}
   {% else %}
     <div class="text-center py-20">
-      <svg class="w-12 h-12 text-gray-300 dark:text-gray-600 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <svg class="w-12 h-12 text-muted dark:text-muted mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
       </svg>
-      <p class="text-sm text-gray-500 dark:text-gray-400">Hakuna simulizi fupi zinazopatikana bado.</p>
+      <p class="text-sm text-muted dark:text-muted">Hakuna simulizi fupi zinazopatikana bado.</p>
     </div>
   {% endif %}
 

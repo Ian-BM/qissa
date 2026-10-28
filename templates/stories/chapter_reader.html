@@ -4,41 +4,35 @@
 {% block title %}{{ chapter.story.title }} — Sura {{ chapter.order }} — Qissa{% endblock %}
 
 {% block content %}
-<div class="max-w-4xl mx-auto px-4 sm:px-6 py-6">
+<div class="reading-page mx-auto px-4 sm:px-6 py-6">
 
   <a href="{% url 'home' %}"
-    class="inline-flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 px-4 py-2 rounded-lg mb-8 transition-colors">
+    class="inline-flex items-center gap-2 text-sm text-muted dark:text-muted hover:text-ink dark:hover:text-muted bg-soft dark:bg-surface border border-line dark:border-line px-4 py-2 rounded-lg mb-8 transition-colors">
     <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
     </svg>
     Rudi Nyumbani
   </a>
 
-  <h1 class="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white text-center uppercase mb-8">
+  <h1 class="chapter-heading text-2xl md:text-3xl font-bold text-ink dark:text-ink text-center uppercase mb-8">
     {{ chapter.story.title }}
   </h1>
 
   <div class="mb-8">
-    <p class="text-sm font-semibold text-gray-700 dark:text-gray-300 text-center mb-4">Sura</p>
+    <p class="text-sm font-semibold text-ink dark:text-muted text-center mb-4">Sura</p>
     <div class="flex flex-wrap justify-center gap-2">
       {% for story_chapter in chapters %}
         {% if not story_chapter.is_locked or has_story_access %}
           <a href="{% url 'chapter_reader' story_chapter.id %}"
-            class="w-10 h-10 flex items-center justify-center rounded-lg text-sm font-semibold transition-colors
-            {% if story_chapter.id == chapter.id %}
-              bg-rose-600 text-white
-            {% else %}
-              bg-gray-900 dark:bg-gray-100 text-white dark:text-gray-900 hover:bg-gray-700 dark:hover:bg-gray-300
-            {% endif %}">
+            class="w-10 h-10 flex items-center justify-center rounded-lg text-sm font-semibold transition-colors {% if story_chapter.id == chapter.id %} bg-action {% else %} bg-ink hover:bg-action-hover dark:hover:bg-action-hover {% endif %} text-on-ink">
             {{ story_chapter.order }}
           </a>
         {% else %}
           <button type="button" onclick="showPaywall()"
-            class="w-10 h-10 flex items-center justify-center rounded-lg text-sm font-medium relative
-            bg-gray-100 dark:bg-gray-700 text-gray-400 dark:text-gray-500 cursor-pointer hover:bg-amber-50 dark:hover:bg-amber-900/20 transition-colors">
+            class="w-10 h-10 flex items-center justify-center rounded-lg text-sm font-medium relative bg-soft dark:bg-surface text-muted dark:text-muted cursor-pointer hover:bg-accent-soft dark:hover:bg-action-hover transition-colors">
             {{ story_chapter.order }}
-            <span class="absolute -top-1 -right-1 w-3.5 h-3.5 bg-amber-500 rounded-full flex items-center justify-center">
-              <svg class="w-2 h-2 text-white" fill="currentColor" viewBox="0 0 20 20">
+            <span class="absolute -top-1 -right-1 w-3.5 h-3.5 bg-action rounded-full flex items-center justify-center">
+              <svg class="w-2 h-2 text-on-action" fill="currentColor" viewBox="0 0 20 20">
                 <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"/>
               </svg>
             </span>
@@ -48,25 +42,26 @@
     </div>
 
     {% if not has_story_access %}
-      <p class="text-xs text-center text-gray-400 dark:text-gray-500 mt-3">
+      <p class="text-xs text-center text-muted dark:text-muted mt-3">
         Sura zilizofungwa zinahitaji
-        <a href="{% url 'premium' %}" class="text-amber-500 hover:text-amber-600 font-medium">Premium</a>
+        <a href="{% url 'premium' %}" class="text-accent hover:text-accent font-medium">Premium</a>
       </p>
     {% endif %}
   </div>
 
-  <div class="border border-gray-200 dark:border-gray-700 rounded-xl p-6 md:p-8 bg-white dark:bg-gray-800">
-    <h2 class="text-base font-bold text-gray-900 dark:text-white mb-6">
+  {% include "partials/reader_controls.html" %}
+  <article class="reading-surface">
+    <h2 class="chapter-heading text-base font-bold text-ink dark:text-ink mb-6">
       Sura {{ chapter.order }} — {{ chapter.title }}
     </h2>
-    <div class="chapter-body text-gray-800 dark:text-gray-200">
+    <div id="reading-content" class="chapter-body">
       {{ chapter.content|linebreaks }}
     </div>
 
-    <div class="flex items-center justify-between mt-10 pt-6 border-t border-gray-100 dark:border-gray-700">
+    <div class="flex items-center justify-between mt-10 pt-6 border-t border-line dark:border-line">
       {% if prev_chapter %}
         <a href="{% url 'chapter_reader' prev_chapter.id %}"
-          class="flex items-center gap-2 text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-rose-600 dark:hover:text-rose-400 transition-colors">
+          class="flex items-center gap-2 text-sm font-medium text-muted dark:text-muted hover:text-accent dark:hover:text-accent transition-colors">
           <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
           </svg>
@@ -79,7 +74,7 @@
       {% if next_chapter %}
         {% if next_chapter_locked %}
           <button type="button" onclick="showPaywall()"
-            class="flex items-center gap-2 text-sm font-medium bg-amber-500 hover:bg-amber-400 text-white px-4 py-2 rounded-lg transition-colors">
+            class="flex items-center gap-2 text-sm font-medium bg-action hover:bg-action-hover text-on-action px-4 py-2 rounded-lg transition-colors">
             <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
               <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"/>
             </svg>
@@ -87,7 +82,7 @@
           </button>
         {% else %}
           <a href="{% url 'chapter_reader' next_chapter.id %}"
-            class="flex items-center gap-2 text-sm font-medium bg-gray-900 dark:bg-white hover:bg-gray-700 dark:hover:bg-gray-100 text-white dark:text-gray-900 px-4 py-2 rounded-lg transition-colors">
+            class="flex items-center gap-2 text-sm font-medium bg-ink hover:bg-action-hover dark:hover:bg-action-hover px-4 py-2 rounded-lg transition-colors text-on-ink">
             Inayofuata
             <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/>
@@ -95,14 +90,14 @@
           </a>
         {% endif %}
       {% else %}
-        <div class="text-sm text-gray-400 dark:text-gray-500">Mwisho wa hadithi</div>
+        <div class="text-sm text-muted dark:text-muted">Mwisho wa hadithi</div>
       {% endif %}
     </div>
-  </div>
+  </article>
 
   <div class="flex justify-center mt-6">
     <a href="https://wa.me/?text={{ share_text|urlencode }}" target="_blank"
-      class="inline-flex items-center gap-2 text-sm font-medium text-gray-500 dark:text-gray-400 hover:text-green-500 transition-colors">
+      class="inline-flex items-center gap-2 text-sm font-medium text-muted dark:text-muted hover:text-success transition-colors">
       <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
         <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347"/>
       </svg>
@@ -111,9 +106,9 @@
   </div>
 
   {% if related %}
-    <div class="mt-16 pt-8 border-t border-gray-100 dark:border-gray-800">
-      <h2 class="text-base font-bold text-gray-900 dark:text-white mb-5">Hadithi Zaidi</h2>
-      <div class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-3 md:gap-4">
+    <div class="mt-16 pt-8 border-t border-line dark:border-line">
+      <h2 class="text-base font-bold text-ink dark:text-ink mb-5">Hadithi Zaidi</h2>
+      <div class="story-grid">
         {% for story in related|slice:":6" %}
           {% include "pages/story_cards.html" with story=story %}
         {% endfor %}
@@ -124,21 +119,21 @@
 </div>
 
 <!-- Paywall Modal -->
-<div id="paywall-modal" class="fixed inset-0 z-50 hidden">
+<div id="paywall-modal" role="dialog" aria-modal="true" aria-labelledby="paywall-title" class="fixed inset-0 z-50 hidden">
   <div class="absolute inset-0 bg-black/50" onclick="hidePaywall()"></div>
-  <div class="absolute inset-x-4 bottom-0 sm:inset-auto sm:top-1/2 sm:left-1/2 sm:-translate-x-1/2 sm:-translate-y-1/2 bg-white dark:bg-gray-800 rounded-t-2xl sm:rounded-2xl p-6 sm:p-8 sm:w-full sm:max-w-md">
+  <div class="paywall-dialog absolute inset-x-4 bottom-0 sm:inset-auto sm:top-1/2 sm:left-1/2 sm:-translate-x-1/2 sm:-translate-y-1/2 bg-surface dark:bg-surface rounded-t-2xl sm:rounded-2xl p-6 sm:p-8 sm:w-full sm:max-w-md">
 
     <div class="text-center mb-6">
-      <div class="w-12 h-12 bg-amber-100 dark:bg-amber-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
-        <svg class="w-6 h-6 text-amber-600" fill="currentColor" viewBox="0 0 20 20">
+      <div class="w-12 h-12 bg-accent-soft dark:bg-accent-soft rounded-full flex items-center justify-center mx-auto mb-4">
+        <svg class="w-6 h-6 text-accent" fill="currentColor" viewBox="0 0 20 20">
           <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"/>
         </svg>
       </div>
-      <h2 class="text-lg font-bold text-gray-900 dark:text-white mb-1">Sura hii ni ya Premium</h2>
-      <p class="text-sm text-gray-500 dark:text-gray-400">Chagua mpango wa siku, wiki au mwezi uendelee kusoma.</p>
+      <h2 id="paywall-title" class="text-lg font-bold text-ink dark:text-ink mb-1">Sura hii ni ya Premium</h2>
+      <p class="text-sm text-muted dark:text-muted">Chagua mpango wa siku, wiki au mwezi uendelee kusoma.</p>
     </div>
-    <a href="{% url 'premium' %}" class="block text-center bg-rose-600 hover:bg-rose-700 text-white font-semibold py-3 rounded-xl mb-3">Chagua Mpango</a>
-    <button type="button" onclick="hidePaywall()" class="w-full text-sm text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 py-2 transition-colors">
+    <a href="{% url 'premium' %}" class="block text-center bg-action hover:bg-action-hover text-on-action font-semibold py-3 rounded-xl mb-3">Chagua Mpango</a>
+    <button type="button" onclick="hidePaywall()" class="w-full text-sm text-muted hover:text-muted dark:hover:text-muted py-2 transition-colors">
       Funga
     </button>
   </div>

@@ -7,7 +7,7 @@
 <hr>
 
 {% for chapter in chapters %}
-  <div style="border:1px solid #ddd;padding:10px;margin-bottom:8px">
+  <div style="border:1px solid var(--q-border);padding:10px;margin-bottom:8px">
     <strong>Sura {{ chapter.order }}:</strong> {{ chapter.title }}
     <div style="margin-top:6px">
       <a href="{% url 'chapter_edit' chapter.id %}">Hariri</a>

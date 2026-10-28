@@ -2,11 +2,11 @@
 {% block title %}Jiunge Premium — Qissa{% endblock %}
 {% block content %}
 <div class="max-w-lg mx-auto px-4 py-12 text-center">
-  <p class="text-sm text-rose-600 font-semibold mb-3">{{ story.title }}</p>
+  <p class="text-sm text-accent font-semibold mb-3">{{ story.title }}</p>
   <h1 class="text-2xl font-bold mb-4">Endelea kusoma na Premium</h1>
-  <p class="text-sm text-gray-500 dark:text-gray-400 mb-6">Chagua Kila Siku, Kila Wiki au Kila Mwezi. Kila mpango unafungua sura zote za Premium.</p>
-  <a href="{% url 'premium' %}" class="inline-block bg-rose-600 hover:bg-rose-700 text-white font-semibold px-6 py-3 rounded-xl">Chagua Mpango</a>
-  <p class="text-xs text-gray-500 mt-5">Premium huwashwa baada ya malipo kuthibitishwa.</p>
-  <a href="{% url 'account_dashboard' %}" class="block text-sm text-rose-600 mt-5">Nimelipa tayari — akaunti yangu</a>
+  <p class="text-sm text-muted dark:text-muted mb-6">Chagua Kila Siku, Kila Wiki au Kila Mwezi. Kila mpango unafungua sura zote za Premium.</p>
+  <a href="{% url 'premium' %}" class="inline-block bg-action hover:bg-action-hover text-on-action font-semibold px-6 py-3 rounded-xl">Chagua Mpango</a>
+  <p class="text-xs text-muted mt-5">Premium huwashwa baada ya malipo kuthibitishwa.</p>
+  <a href="{% url 'account_dashboard' %}" class="block text-sm text-accent mt-5">Nimelipa tayari — akaunti yangu</a>
 </div>
 {% endblock %}

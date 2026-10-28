@@ -4,59 +4,50 @@
 {% block title %}Qissa — Simulizi za Kiswahili{% endblock %}
 
 {% block content %}
+<header class="editorial-intro">
+  <p class="eyebrow">Maktaba ya Qissa · Simulizi za Kiswahili</p>
+  <h1>Hadithi nzuri<br>zinabaki nawe.</h1>
+  <p>Mapenzi, maisha na ulimwengu mpya — simulizi za kukaa nazo, ukurasa baada ya ukurasa.</p>
+</header>
 
 <div class="max-w-7xl mx-auto px-4 sm:px-6 pt-8 pb-4">
   <div class="flex items-center justify-center gap-3 flex-wrap">
     <a href="?filter=mpya"
-      class="px-5 py-2 rounded-full text-sm font-medium transition-colors
-      {% if current_filter == 'mpya' %}bg-gray-900 dark:bg-white text-white dark:text-gray-900
-      {% else %}border border-gray-200 dark:border-gray-600 text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 hover:border-gray-400{% endif %}">
+      class="px-5 py-2 rounded-full text-sm font-medium transition-colors {% if current_filter == 'mpya' %}bg-ink text-on-ink {% else %}border border-line dark:border-line text-ink dark:text-muted bg-surface dark:bg-surface hover:border-line{% endif %}">
       Mpya
     </a>
     <a href="?filter=maarufu"
-      class="px-5 py-2 rounded-full text-sm font-medium transition-colors
-      {% if current_filter == 'maarufu' %}bg-gray-900 dark:bg-white text-white dark:text-gray-900
-      {% else %}border border-gray-200 dark:border-gray-600 text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 hover:border-gray-400{% endif %}">
+      class="px-5 py-2 rounded-full text-sm font-medium transition-colors {% if current_filter == 'maarufu' %}bg-ink text-on-ink {% else %}border border-line dark:border-line text-ink dark:text-muted bg-surface dark:bg-surface hover:border-line{% endif %}">
       Maarufu
     </a>
     <a href="?filter=mapenzi"
-      class="px-5 py-2 rounded-full text-sm font-medium transition-colors
-      {% if current_filter == 'mapenzi' %}bg-rose-600 text-white border-rose-600
-      {% else %}border border-gray-200 dark:border-gray-600 text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 hover:border-gray-400{% endif %}">
+      class="px-5 py-2 rounded-full text-sm font-medium transition-colors {% if current_filter == 'mapenzi' %}bg-action text-on-action border-accent-line {% else %}border border-line dark:border-line text-ink dark:text-muted bg-surface dark:bg-surface hover:border-line{% endif %}">
       Mapenzi
     </a>
     <a href="?filter=drama"
-      class="px-5 py-2 rounded-full text-sm font-medium transition-colors
-      {% if current_filter == 'drama' %}bg-rose-600 text-white border-rose-600
-      {% else %}border border-gray-200 dark:border-gray-600 text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 hover:border-gray-400{% endif %}">
+      class="px-5 py-2 rounded-full text-sm font-medium transition-colors {% if current_filter == 'drama' %}bg-action text-on-action border-accent-line {% else %}border border-line dark:border-line text-ink dark:text-muted bg-surface dark:bg-surface hover:border-line{% endif %}">
       Drama
     </a>
     <a href="?filter=kusisimua"
-      class="px-5 py-2 rounded-full text-sm font-medium transition-colors
-      {% if current_filter == 'kusisimua' %}bg-rose-600 text-white border-rose-600
-      {% else %}border border-gray-200 dark:border-gray-600 text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 hover:border-gray-400{% endif %}">
+      class="px-5 py-2 rounded-full text-sm font-medium transition-colors {% if current_filter == 'kusisimua' %}bg-action text-on-action border-accent-line {% else %}border border-line dark:border-line text-ink dark:text-muted bg-surface dark:bg-surface hover:border-line{% endif %}">
       Kusisimua
     </a>
     <a href="?filter=mzimu"
-      class="px-5 py-2 rounded-full text-sm font-medium transition-colors
-      {% if current_filter == 'mzimu' %}bg-rose-600 text-white border-rose-600
-      {% else %}border border-gray-200 dark:border-gray-600 text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 hover:border-gray-400{% endif %}">
+      class="px-5 py-2 rounded-full text-sm font-medium transition-colors {% if current_filter == 'mzimu' %}bg-action text-on-action border-accent-line {% else %}border border-line dark:border-line text-ink dark:text-muted bg-surface dark:bg-surface hover:border-line{% endif %}">
       Mzimu
     </a>
     <a href="?filter=kampasi"
-      class="px-5 py-2 rounded-full text-sm font-medium transition-colors
-      {% if current_filter == 'kampasi' %}bg-rose-600 text-white border-rose-600
-      {% else %}border border-gray-200 dark:border-gray-600 text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 hover:border-gray-400{% endif %}">
+      class="px-5 py-2 rounded-full text-sm font-medium transition-colors {% if current_filter == 'kampasi' %}bg-action text-on-action border-accent-line {% else %}border border-line dark:border-line text-ink dark:text-muted bg-surface dark:bg-surface hover:border-line{% endif %}">
       Kampasi
     </a>
   </div>
 </div>
 
 {% if latest_shorts %}
-<div class="max-w-7xl mx-auto px-4 sm:px-6 py-6 border-t border-gray-100 dark:border-gray-800">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 py-6 border-t border-line dark:border-line">
   <div class="flex items-center justify-between mb-5">
-    <h2 class="text-base font-bold text-gray-900 dark:text-white">Simulizi Fupi</h2>
-    <a href="{% url 'short_list' %}" class="text-sm text-rose-600 dark:text-rose-400 font-medium hover:underline">Ona Zote</a>
+    <h2 class="text-base font-bold text-ink dark:text-ink">Simulizi Fupi</h2>
+    <a href="{% url 'short_list' %}" class="text-sm text-accent dark:text-accent font-medium hover:underline">Ona Zote</a>
   </div>
   <div class="home-story-grid">
     {% for short in latest_shorts %}
@@ -71,7 +62,7 @@
 
   <div class="flex items-center justify-between mb-5">
     <h2 class="text-base font-bold">Simulizi Ndefu</h2>
-    <a href="{% url 'stories_list' %}" class="text-sm text-rose-600 font-medium hover:underline">Ona Zote</a>
+    <a href="{% url 'stories_list' %}" class="text-sm text-accent font-medium hover:underline">Ona Zote</a>
   </div>
   {% if stories %}
     <div class="home-story-grid">
@@ -81,19 +72,19 @@
     </div>
 
     {% if stories.has_other_pages %}
-      <div class="flex items-center justify-center gap-3 mt-10 pt-8 border-t border-gray-100 dark:border-gray-700">
+      <div class="flex items-center justify-center gap-3 mt-10 pt-8 border-t border-line dark:border-line">
         {% if stories.has_previous %}
           <a href="?page={{ stories.previous_page_number }}&filter={{ current_filter }}"
-            class="px-4 py-2 border border-gray-200 dark:border-gray-600 rounded-lg text-sm text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+            class="px-4 py-2 border border-line dark:border-line rounded-lg text-sm text-ink dark:text-muted bg-surface dark:bg-surface hover:bg-soft dark:hover:bg-surface transition-colors">
             Iliyopita
           </a>
         {% endif %}
-        <span class="px-4 py-2 border border-gray-200 dark:border-gray-600 rounded-lg text-sm font-semibold bg-gray-50 dark:bg-gray-800">
+        <span class="px-4 py-2 border border-line dark:border-line rounded-lg text-sm font-semibold bg-soft dark:bg-surface">
           Ukurasa {{ stories.number }} wa {{ stories.paginator.num_pages }}
         </span>
         {% if stories.has_next %}
           <a href="?page={{ stories.next_page_number }}&filter={{ current_filter }}"
-            class="px-4 py-2 border border-gray-200 dark:border-gray-600 rounded-lg text-sm text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+            class="px-4 py-2 border border-line dark:border-line rounded-lg text-sm text-ink dark:text-muted bg-surface dark:bg-surface hover:bg-soft dark:hover:bg-surface transition-colors">
             Inayofuata
           </a>
         {% endif %}
@@ -102,10 +93,10 @@
 
   {% else %}
     <div class="text-center py-20">
-      <svg class="w-12 h-12 text-gray-300 dark:text-gray-600 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <svg class="w-12 h-12 text-muted dark:text-muted mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
       </svg>
-      <p class="text-gray-500 dark:text-gray-400 text-sm">Hadithi zinaandaliwa. Rudi hivi karibuni.</p>
+      <p class="text-muted dark:text-muted text-sm">Hadithi zinaandaliwa. Rudi hivi karibuni.</p>
     </div>
   {% endif %}
 

@@ -7,44 +7,44 @@
 <div class="max-w-4xl mx-auto px-4 sm:px-6 py-8">
 
   <div class="mb-6">
-    <h1 class="text-xl font-bold text-gray-900 dark:text-white">Habari, {{ user.name|default:user.phone }}</h1>
-    <p class="text-sm text-gray-500 dark:text-gray-400 mt-0.5">Dashibodi yako ya Qissa</p>
+    <h1 class="text-xl font-bold text-ink dark:text-ink">Habari, {{ user.name|default:user.phone }}</h1>
+    <p class="text-sm text-muted dark:text-muted mt-0.5">Dashibodi yako ya Qissa</p>
   </div>
 
-  <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-5 mb-8">
-    <p class="text-xs font-medium text-gray-400 dark:text-gray-500 uppercase tracking-wide mb-2">Hali ya Akaunti</p>
+  <div class="bg-surface dark:bg-surface border border-line dark:border-line rounded-xl p-5 mb-8">
+    <p class="text-xs font-medium text-muted dark:text-muted uppercase tracking-wide mb-2">Hali ya Akaunti</p>
     {% if user.is_subscription_active %}
       <div class="flex items-center justify-between gap-4 flex-wrap">
         <div class="flex items-center gap-2">
-          <span class="flex items-center gap-1.5 text-sm font-semibold text-green-700 dark:text-green-400 bg-green-100 dark:bg-green-900/30 px-3 py-1 rounded-full">
-            <span class="w-1.5 h-1.5 bg-green-500 rounded-full"></span>
+          <span class="flex items-center gap-1.5 text-sm font-semibold text-success dark:text-success bg-soft dark:bg-accent-soft px-3 py-1 rounded-full">
+            <span class="w-1.5 h-1.5 bg-action rounded-full"></span>
             Premium
           </span>
-          <span class="text-xs text-gray-400">hadi {{ user.subscription_expires_at|date:"d M Y H:i T" }}</span>
+          <span class="text-xs text-muted">hadi {{ user.subscription_expires_at|date:"d M Y H:i T" }}</span>
         </div>
         {% if renew_soon %}
-          <a href="{% url 'premium' %}" class="text-xs font-semibold bg-amber-500 hover:bg-amber-400 text-white px-3 py-1.5 rounded-lg transition-colors">Renew</a>
+          <a href="{% url 'premium' %}" class="text-xs font-semibold bg-action hover:bg-action-hover text-on-action px-3 py-1.5 rounded-lg transition-colors">Renew</a>
         {% endif %}
       </div>
     {% else %}
       <div class="flex items-center justify-between gap-4 flex-wrap">
-        <span class="flex items-center gap-1.5 text-sm font-semibold text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-700 px-3 py-1 rounded-full">
+        <span class="flex items-center gap-1.5 text-sm font-semibold text-muted dark:text-muted bg-soft dark:bg-surface px-3 py-1 rounded-full">
           Bure
         </span>
-        <a href="{% url 'premium' %}" class="text-xs font-semibold bg-rose-600 hover:bg-rose-700 text-white px-3 py-1.5 rounded-lg transition-colors">Pata Premium →</a>
+        <a href="{% url 'premium' %}" class="text-xs font-semibold bg-action hover:bg-action-hover text-on-action px-3 py-1.5 rounded-lg transition-colors">Pata Premium →</a>
       </div>
     {% endif %}
   </div>
 
   {% if user.last_read_story %}
   <div class="mb-8">
-    <h2 class="text-base font-bold text-gray-900 dark:text-white mb-4">Unaendelea Kusoma</h2>
-    <div class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-3 md:gap-4 mb-4">
+    <h2 class="text-base font-bold text-ink dark:text-ink mb-4">Unaendelea Kusoma</h2>
+    <div class="story-grid mb-4">
       {% include "pages/story_cards.html" with story=user.last_read_story %}
     </div>
     {% if user.last_read_chapter %}
       <a href="{% url 'chapter_reader' user.last_read_chapter.id %}"
-        class="inline-block bg-gray-900 dark:bg-white hover:bg-gray-700 dark:hover:bg-gray-100 text-white dark:text-gray-900 font-semibold px-5 py-2 rounded-lg transition-colors text-sm">
+        class="inline-block bg-ink hover:bg-action-hover dark:hover:bg-action-hover font-semibold px-5 py-2 rounded-lg transition-colors text-sm text-on-ink">
         Endelea Kusoma →
       </a>
     {% endif %}
@@ -53,8 +53,8 @@
 
   {% if liked_stories or liked_shorts %}
   <div class="mb-8">
-    <h2 class="text-base font-bold text-gray-900 dark:text-white mb-4">Hadithi Ulizopenda</h2>
-    <div class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-3 md:gap-4">
+    <h2 class="text-base font-bold text-ink dark:text-ink mb-4">Hadithi Ulizopenda</h2>
+    <div class="story-grid">
       {% for story in liked_stories %}
         {% include "pages/story_cards.html" with story=story %}
       {% endfor %}
@@ -67,8 +67,8 @@
 
   {% if recent_stories %}
   <div class="mb-8">
-    <h2 class="text-base font-bold text-gray-900 dark:text-white mb-4">Zilizoongezwa Hivi Karibuni</h2>
-    <div class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-3 md:gap-4">
+    <h2 class="text-base font-bold text-ink dark:text-ink mb-4">Zilizoongezwa Hivi Karibuni</h2>
+    <div class="story-grid">
       {% for story in recent_stories %}
         {% include "pages/story_cards.html" with story=story %}
       {% endfor %}

@@ -13,22 +13,22 @@
 
 <div class="dash-grid-4">
   <div class="dash-card dash-stat-card">
-    <span class="dash-stat-label">📚 Total Stories</span>
+    <span class="dash-stat-label">Total Stories</span>
     <span class="dash-stat-value">{{ stats.total_stories }}</span>
     <span class="dash-stat-sub">{{ stats.draft_stories }} drafts</span>
   </div>
   <div class="dash-card dash-stat-card">
-    <span class="dash-stat-label">⚡ Total Shorts</span>
+    <span class="dash-stat-label">Total Shorts</span>
     <span class="dash-stat-value">{{ stats.total_shorts }}</span>
     <span class="dash-stat-sub">Published shorts</span>
   </div>
   <div class="dash-card dash-stat-card">
-    <span class="dash-stat-label">👁 Total Views</span>
+    <span class="dash-stat-label">Total Views</span>
     <span class="dash-stat-value">{{ stats.total_views|default:0 }}</span>
     <span class="dash-stat-sub">Stories + shorts</span>
   </div>
   <div class="dash-card dash-stat-card">
-    <span class="dash-stat-label">💰 Revenue</span>
+    <span class="dash-stat-label">Revenue</span>
     <span class="dash-stat-value">TZS {{ stats.total_revenue|floatformat:0|default:"0" }}</span>
     <span class="dash-stat-sub">{{ stats.total_purchases }} purchases</span>
   </div>
@@ -36,12 +36,12 @@
 
 <div class="dash-grid-2">
   <div class="dash-card dash-stat-card">
-    <span class="dash-stat-label">💎 Premium Subscribers</span>
+    <span class="dash-stat-label">Premium Subscribers</span>
     <span class="dash-stat-value">{{ premium_stats.active_premium }}</span>
     <span class="dash-stat-sub">of {{ premium_stats.total_users }} users</span>
   </div>
   <div class="dash-card dash-stat-card">
-    <span class="dash-stat-label">⏳ Expiring This Week</span>
+    <span class="dash-stat-label">Expiring This Week</span>
     <span class="dash-stat-value">{{ premium_stats.expiring_soon.count }}</span>
     <a href="{% url 'premium_activate' %}" class="dash-stat-sub">Manage subscriptions →</a>
   </div>
@@ -49,22 +49,22 @@
 
 <div class="dash-grid-2">
   <div class="dash-card dash-stat-card">
-    <span class="dash-stat-label">🔥 Best Performing Story</span>
+    <span class="dash-stat-label">Best Performing Story</span>
     <span class="dash-stat-value" style="font-size:1.1rem;">{{ leaders.best_views_story.title|default:"—" }}</span>
     <span class="dash-stat-sub">{% if leaders.best_views_story %}{{ leaders.best_views_story.views }} views{% else %}No data yet{% endif %}</span>
   </div>
   <div class="dash-card dash-stat-card">
-    <span class="dash-stat-label">⚡ Best Performing Short</span>
+    <span class="dash-stat-label">Best Performing Short</span>
     <span class="dash-stat-value" style="font-size:1.1rem;">{{ leaders.best_short.title|default:"—" }}</span>
     <span class="dash-stat-sub">{% if leaders.best_short %}{{ leaders.best_short.views }} views{% else %}No data yet{% endif %}</span>
   </div>
   <div class="dash-card dash-stat-card">
-    <span class="dash-stat-label">📈 Fastest Growing Story</span>
+    <span class="dash-stat-label">Fastest Growing Story</span>
     <span class="dash-stat-value" style="font-size:1.1rem;">{{ leaders.fastest_growing_story.title|default:"—" }}</span>
     <span class="dash-stat-sub">Latest published story</span>
   </div>
   <div class="dash-card dash-stat-card">
-    <span class="dash-stat-label">💎 Highest Revenue Story</span>
+    <span class="dash-stat-label">Highest Revenue Story</span>
     <span class="dash-stat-value" style="font-size:1.1rem;">{{ leaders.best_revenue_story.title|default:"—" }}</span>
     <span class="dash-stat-sub">{% if leaders.best_revenue_story %}TZS {{ leaders.best_revenue_story.revenue|default:0|floatformat:0 }}{% else %}No sales yet{% endif %}</span>
   </div>
@@ -111,8 +111,8 @@
         labels,
         datasets: [{
           data,
-          backgroundColor: type === "line" ? "rgba(17,24,39,0.1)" : "rgba(245,158,11,0.75)",
-          borderColor: "#111827",
+          backgroundColor: type === "line" ? QissaPalette.soft : QissaPalette.accent,
+          borderColor: QissaPalette.accent,
           borderWidth: type === "line" ? 2 : 0,
           fill: type === "line",
           tension: 0.35,

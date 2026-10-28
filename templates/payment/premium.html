@@ -3,43 +3,43 @@
 {% block content %}
 <div class="max-w-5xl mx-auto px-4 sm:px-6 py-12 w-full">
   <div class="text-center mb-10">
-    <p class="text-xs font-semibold uppercase tracking-widest text-rose-600 mb-3">Qissa Premium</p>
+    <div class="mb-5">{% include "partials/brand.html" %}<p class="text-xs text-accent mt-2">PREMIUM</p></div>
     <h1 class="text-3xl font-bold mb-3">Hadithi zote. Mpango wako.</h1>
-    <p class="text-sm text-gray-500 dark:text-gray-400">Chagua muda unaokufaa. Kila mpango unafungua sura zote za Premium.</p>
+    <p class="text-sm text-muted dark:text-muted">Chagua muda unaokufaa. Kila mpango unafungua sura zote za Premium.</p>
   </div>
   <div class="premium-plans">
     {% for plan in plans %}
-    <article class="relative flex flex-col bg-white dark:bg-gray-800 border {% if plan.id == 'monthly' %}border-rose-500{% else %}border-gray-200 dark:border-gray-700{% endif %} rounded-2xl p-6">
-      {% if plan.id == 'monthly' %}<span class="absolute -top-3 left-5 bg-rose-600 text-white text-xs font-semibold px-3 py-1 rounded-full">Thamani Bora</span>{% endif %}
+    <article class="relative flex flex-col bg-surface dark:bg-surface border {% if plan.id == 'monthly' %}border-accent-line{% else %}border-line dark:border-line{% endif %} rounded-2xl p-6">
+      {% if plan.id == 'monthly' %}<span class="plan-badge absolute -top-3 left-5 bg-action text-white text-xs font-semibold px-3 py-1 rounded-full">Thamani Bora</span>{% endif %}
       <h2 class="text-sm font-bold uppercase tracking-wide mb-5">{{ plan.name }}</h2>
-      <p class="text-3xl font-bold mb-1"><span class="text-sm font-medium text-gray-500">TZS</span> {{ plan.price }}</p>
-      <p class="text-sm text-gray-500 dark:text-gray-400 mb-6">{{ plan.duration }}</p>
-      <ul class="text-sm text-gray-600 dark:text-gray-300 space-y-3 mb-7 flex-1">
+      <p class="plan-price mb-1"><span class="text-sm font-medium text-muted">TZS</span> {{ plan.price }}</p>
+      <p class="text-sm text-muted dark:text-muted mb-6">{{ plan.duration }}</p>
+      <ul class="text-sm text-muted dark:text-muted space-y-3 mb-7 flex-1">
         <li>Sura zote za Premium</li>
         <li>Simulizi ndefu na fupi zote</li>
         <li>Soma kwenye simu au kompyuta</li>
         <li>Malipo ya mara moja; hakuna makato ya moja kwa moja</li>
       </ul>
-      <a href="?plan={{ plan.id }}#malipo" class="block text-center bg-rose-600 hover:bg-rose-700 text-white text-sm font-semibold rounded-xl px-4 py-3">Chagua Mpango</a>
+      <a href="?plan={{ plan.id }}#malipo" class="block text-center bg-action hover:bg-action-hover text-on-action text-sm font-semibold rounded-xl px-4 py-3">Chagua Mpango</a>
     </article>
     {% endfor %}
   </div>
   {% if selected_plan %}
-  <section id="malipo" class="max-w-xl mx-auto mt-10 p-6 rounded-2xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800" style="scroll-margin-top:80px;">
+  <section id="malipo" class="max-w-xl mx-auto mt-10 p-6 rounded-2xl border border-line dark:border-line bg-soft dark:bg-surface" style="scroll-margin-top:80px;">
     <h2 class="text-lg font-bold mb-2">{{ selected_plan.name }} — TZS {{ selected_plan.price }}</h2>
-    <p class="text-sm text-gray-500 dark:text-gray-400 mb-5">{{ selected_plan.duration }} za kusoma baada ya malipo kuthibitishwa.</p>
-    <ol class="list-decimal pl-5 text-sm space-y-4 text-gray-700 dark:text-gray-200">
-      <li>Tuma <strong>TZS {{ selected_plan.price }}</strong> kwa M-Pesa: <button type="button" id="premium-phone" data-phone="0621932919" onclick="copyPhone('premium-phone')" class="text-rose-600 font-bold">0621 932 919</button>.</li>
+    <p class="text-sm text-muted dark:text-muted mb-5">{{ selected_plan.duration }} za kusoma baada ya malipo kuthibitishwa.</p>
+    <ol class="list-decimal pl-5 text-sm space-y-4 text-ink dark:text-muted">
+      <li>Tuma <strong>TZS {{ selected_plan.price }}</strong> kwa M-Pesa: <button type="button" id="premium-phone" data-phone="0621932919" onclick="copyPhone('premium-phone')" class="text-accent font-bold">0621 932 919</button>.</li>
       <li>Hifadhi kumbukumbu ya muamala na picha ya uthibitisho wa malipo.</li>
       <li>Tuma uthibitisho pamoja na namba ya akaunti yako ya Qissa kupitia WhatsApp. Premium itawashwa baada ya malipo kuthibitishwa.</li>
     </ol>
-    <a href="https://wa.me/255621932919?text={% filter urlencode %}Habari, nimechagua Qissa Premium: {{ selected_plan.name }}, TZS {{ selected_plan.price }}, {{ selected_plan.duration }}. Naomba kuthibitisha malipo yangu.{% endfilter %}" target="_blank" rel="noopener noreferrer" class="block text-center bg-green-600 hover:bg-green-700 text-white font-semibold text-sm rounded-xl px-4 py-3 mt-6">Tuma Uthibitisho WhatsApp</a>
-    {% if not user.is_authenticated %}<a href="{% url 'register' %}" class="block text-center text-sm text-rose-600 mt-4">Fungua akaunti ya Qissa</a>{% endif %}
+    <a href="https://wa.me/255621932919?text={% filter urlencode %}Habari, nimechagua Qissa Premium: {{ selected_plan.name }}, TZS {{ selected_plan.price }}, {{ selected_plan.duration }}. Naomba kuthibitisha malipo yangu.{% endfilter %}" target="_blank" rel="noopener noreferrer" class="block text-center bg-action hover:bg-action-hover text-on-action font-semibold text-sm rounded-xl px-4 py-3 mt-6">Tuma Uthibitisho WhatsApp</a>
+    {% if not user.is_authenticated %}<a href="{% url 'register' %}" class="block text-center text-sm text-accent mt-4">Fungua akaunti ya Qissa</a>{% endif %}
   </section>
   {% else %}
-  <p class="text-center text-sm text-gray-500 dark:text-gray-400 mt-8">Chagua mpango kuona maelekezo ya M-Pesa. Premium huwashwa baada ya uthibitisho wa malipo.</p>
+  <p class="text-center text-sm text-muted dark:text-muted mt-8">Chagua mpango kuona maelekezo ya M-Pesa. Premium huwashwa baada ya uthibitisho wa malipo.</p>
   {% endif %}
-  <div class="max-w-xl mx-auto mt-10 text-sm text-gray-500 dark:text-gray-400 space-y-4">
+  <div class="max-w-xl mx-auto mt-10 text-sm text-muted dark:text-muted space-y-4">
     <p>Kila mpango una ufikiaji sawa. Premium huisha muda wa mpango unapofika. Unahitaji intaneti kusoma.</p>
     <p>Una Premium tayari? Mpango mpya unaongezwa baada ya muda wako wa sasa kuisha.</p>
   </div>

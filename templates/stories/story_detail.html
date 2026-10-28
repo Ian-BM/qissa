@@ -7,7 +7,7 @@
 <div class="max-w-7xl mx-auto px-4 sm:px-6 py-6">
 
   <a href="{% url 'home' %}"
-    class="inline-flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 px-4 py-2 rounded-lg mb-8 transition-colors">
+    class="inline-flex items-center gap-2 text-sm text-muted dark:text-muted hover:text-ink dark:hover:text-muted bg-soft dark:bg-surface border border-line dark:border-line px-4 py-2 rounded-lg mb-8 transition-colors">
     <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
     </svg>
@@ -22,29 +22,29 @@
           class="w-full md:w-72 story-cover object-cover rounded-xl shadow-sm">
       {% else %}
         <div class="w-full md:w-72 story-cover rounded-xl flex items-end justify-center pb-6 px-4 shadow-sm"
-          style="background: linear-gradient(135deg, #1e3a5f 0%, #4a1942 100%);">
-          <p class="text-white text-xl font-bold text-center uppercase leading-tight">{{ story.title }}</p>
+          style="background:var(--q-soft);color:var(--q-text);">
+          <p class="text-on-action text-xl font-bold text-center uppercase leading-tight">{{ story.title }}</p>
         </div>
       {% endif %}
     </div>
 
     <div class="flex-1 pt-2">
-      <h1 class="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white mb-6">
+      <h1 class="text-2xl md:text-3xl font-bold text-ink dark:text-ink mb-6">
         {{ story.title }}
       </h1>
 
       {% if story.description %}
-        <p class="text-gray-600 dark:text-gray-300 text-sm leading-relaxed mb-6 max-w-lg">
+        <p class="text-muted dark:text-muted text-sm leading-relaxed mb-6 max-w-lg">
           {{ story.description }}
         </p>
       {% endif %}
 
-      <div class="flex items-center gap-4 text-xs text-gray-400 dark:text-gray-500 mb-6">
+      <div class="flex items-center gap-4 text-xs text-muted dark:text-muted mb-6">
         <span>{{ total_chapters }} Sura</span>
         <span>&middot;</span>
         <span>{{ story.views|default:0 }} Wasomaji</span>
         <span>&middot;</span>
-        <span class="{% if story.is_completed %}text-green-600 dark:text-green-400{% else %}text-rose-500{% endif %} font-medium">
+        <span class="{% if story.is_completed %}text-success dark:text-success{% else %}text-accent{% endif %} font-medium">
           {% if story.is_completed %}Imekamilika{% else %}Inaendelea{% endif %}
         </span>
       </div>
@@ -52,14 +52,14 @@
       {% with chapters.first as first_chapter %}
         {% if first_chapter %}
           <a href="{% url 'chapter_reader' first_chapter.id %}"
-            class="inline-block bg-gray-900 dark:bg-white hover:bg-gray-700 dark:hover:bg-gray-100 text-white dark:text-gray-900 font-semibold px-6 py-2.5 rounded-lg transition-colors text-sm">
+            class="inline-block bg-ink hover:bg-action-hover dark:hover:bg-action-hover font-semibold px-6 py-2.5 rounded-lg transition-colors text-sm text-on-ink">
             Soma Hadithi
           </a>
         {% endif %}
       {% endwith %}
 
       {% if story.has_locked_chapters %}
-        <p class="mt-4 text-xs text-amber-600 dark:text-amber-400 flex items-center gap-1.5">
+        <p class="mt-4 text-xs text-accent dark:text-accent flex items-center gap-1.5">
           <svg class="w-3.5 h-3.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
             <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"/>
           </svg>
@@ -73,8 +73,7 @@
             {% csrf_token %}
             <input type="hidden" name="reaction" value="like">
             <button type="submit"
-              class="inline-flex items-center gap-1.5 text-sm font-medium px-3 py-1.5 rounded-lg border transition-colors
-              {% if current_reaction == 1 %}border-rose-600 text-rose-600 bg-rose-50 dark:bg-rose-900/20{% else %}border-gray-200 dark:border-gray-600 text-gray-500 dark:text-gray-400 hover:border-gray-400{% endif %}">
+              class="inline-flex items-center gap-1.5 text-sm font-medium px-3 py-1.5 rounded-lg border transition-colors {% if current_reaction == 1 %}border-accent-line text-accent bg-accent-soft dark:bg-accent-soft{% else %}border-line dark:border-line text-muted dark:text-muted hover:border-line{% endif %}">
               <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905 0 .714-.211 1.412-.608 2.006L7 11v9m7-10h-2M7 20H5a2 2 0 01-2-2v-6a2 2 0 012-2h2.5"/>
               </svg>
@@ -82,7 +81,7 @@
             </button>
           </form>
         {% endif %}
-        <button type="button" class="inline-flex items-center gap-1.5 text-sm font-medium px-3 py-1.5 rounded-lg border border-gray-200 dark:border-gray-600 text-gray-500 dark:text-gray-400 hover:border-gray-400 transition-colors"
+        <button type="button" class="inline-flex items-center gap-1.5 text-sm font-medium px-3 py-1.5 rounded-lg border border-line dark:border-line text-muted dark:text-muted hover:border-line transition-colors"
           data-copy="{{ story_url }}" onclick="copyLink(this)">
           <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 010 5.656l-4 4a4 4 0 01-5.656-5.656l1.5-1.5m10.828-2.828l1.5-1.5a4 4 0 00-5.656-5.656l-4 4a4 4 0 000 5.656"/>
@@ -90,7 +89,7 @@
           Share
         </button>
         <a href="https://wa.me/?text={{ whatsapp_text|urlencode }}" target="_blank"
-          class="inline-flex items-center gap-1.5 text-sm font-medium px-3 py-1.5 rounded-lg border border-gray-200 dark:border-gray-600 text-gray-500 dark:text-gray-400 hover:border-green-400 hover:text-green-500 transition-colors">
+          class="inline-flex items-center gap-1.5 text-sm font-medium px-3 py-1.5 rounded-lg border border-line dark:border-line text-muted dark:text-muted hover:border-line hover:text-success transition-colors">
           <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
             <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347"/>
           </svg>
@@ -101,9 +100,9 @@
   </div>
 
   {% if related_stories %}
-    <div class="mt-16 pt-8 border-t border-gray-100 dark:border-gray-800">
-      <h2 class="text-base font-bold text-gray-900 dark:text-white mb-5">Hadithi Zinazohusiana</h2>
-      <div class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-3 md:gap-4">
+    <div class="mt-16 pt-8 border-t border-line dark:border-line">
+      <h2 class="text-base font-bold text-ink dark:text-ink mb-5">Hadithi Zinazohusiana</h2>
+      <div class="story-grid">
         {% for related in related_stories %}
           {% include "pages/story_cards.html" with story=related %}
         {% endfor %}

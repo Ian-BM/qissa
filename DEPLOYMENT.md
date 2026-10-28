@@ -1,9 +1,11 @@
-# Homepage and Premium plans release
+# Qissa deployment notes
+
+For the current editorial visual identity release, see [BRAND_IDENTITY.md](BRAND_IDENTITY.md).
 
 The homepage shows Simulizi Fupi before Simulizi Ndefu. Both reuse the existing
-story-card includes. Homepage-only flex layouts center every wrapped row with
-160px maximum card widths, 16px horizontal / 20px vertical gaps, 2:3 covers and
-two-line title space. Mobile cards shrink when necessary to fit two columns.
+story-card includes. Public story grids center every wrapped row with 160px maximum card widths,
+20px horizontal / 28px vertical gaps, 2:3 covers and two-line title space.
+Mobile cards shrink when necessary to fit two columns.
 Dashboard card layouts are unchanged.
 
 ## Plans and payments

@@ -1,0 +1,4 @@
+/* Rebuild: npx tailwindcss@3.4.19 -c tailwind.config.cjs -i static/css/tailwind.input.css -o static/css/utilities.css --minify */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;

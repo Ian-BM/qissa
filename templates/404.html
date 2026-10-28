@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block title %}404 — Qissa{% endblock %}
+{% block content %}
+<section class="max-w-xl mx-auto px-6 py-20 text-center">
+  <p class="text-accent text-sm mb-4">404</p>
+  <h1 class="mb-5">Ukurasa haukupatikana</h1>
+  <p class="text-muted mb-8">Huenda kiungo kimebadilika. Hadithi nyingine zinakungoja kwenye maktaba.</p>
+  <a href="{% url 'home' %}" class="inline-block bg-action text-on-action px-6 py-3 rounded">Rudi Maktabani</a>
+</section>
+{% endblock %}
