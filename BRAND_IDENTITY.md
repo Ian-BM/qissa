@@ -62,7 +62,7 @@ chapter links, reading progress, locking and payment entry points are retained.
 The locking dialog now supports Escape, focus restoration and a keyboard trap.
 
 All public story collections reuse the shared card partial with 160px maximum
-width, 2:3 cover ratio, centered wrapping and two-line title space. Two columns
+width, 2:3 cover ratio, centered wrapping and two-line title space. Ivory lock glyphs remain legible over bright artwork and expose a Premium label to assistive technology. Two columns
 fit mobile widths, including 320px. Shorts remain before long stories. Image
 containers reserve cover space, including the short-story lead image.
 

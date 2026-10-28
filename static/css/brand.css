@@ -113,3 +113,6 @@ button:disabled { opacity:.45; cursor:not-allowed; }
 
 .short-cover { aspect-ratio:16/9; max-height:288px; }
 .short-cover img { width:100%; height:100%; object-fit:cover; }
+
+/* Ivory stays legible over even the lightest artwork under the 60% dark badge. */
+.story-cover .premium-lock svg { color:#F4F0E8; }
