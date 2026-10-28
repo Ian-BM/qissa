@@ -39,10 +39,9 @@ h3,button,label,nav { font-family:var(--q-font-ui); }
 .site-header button { min-width:44px; min-height:44px; }
 .site-header #mobile-menu { border-color:var(--q-border); background:var(--q-bg); }
 .site-header #mobile-menu a { display:block; min-height:44px; }
-.qissa-wordmark { font-family:var(--q-font-display); font-style:italic; font-size:34px; font-weight:600; line-height:1.15; color:var(--q-text); letter-spacing:-.05em; }
 .brand-link { display:inline-flex; align-items:center; min-height:44px; text-decoration:none; }
 /* Approved wordmark images belong here when supplied; never distort or filter them. */
-.brand-image { width:120px; height:auto; display:block; }
+.brand-image { width:120px; height:50px; object-fit:contain; display:block; }
 .site-footer { background:var(--q-surface); border-top:1px solid var(--q-border); margin-top:80px; color:var(--q-muted); }
 .site-footer h3 { color:var(--q-text); font-size:12px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; }
 .site-footer a:hover { color:var(--q-accent-text); }
@@ -93,8 +92,7 @@ label { font-weight:500; }
 [hidden] { display:none!important; }
 @media(max-width:700px) {
   .site-header .header-inner { height:70px; }
-  .qissa-wordmark { font-size:29px; }
-  .brand-image { width:105px; }
+  .brand-image { width:105px; height:43.75px; }
   .editorial-intro { padding:34px 16px 0; }
   .story-card h3 { font-size:13px; }
   .story-card .card-metadata { font-size:11px; }
@@ -116,3 +114,13 @@ button:disabled { opacity:.45; cursor:not-allowed; }
 
 /* Ivory stays legible over even the lightest artwork under the 60% dark badge. */
 .story-cover .premium-lock svg { color:#F4F0E8; }
+
+/* Both inks are rendered from the same approved artwork; no browser image filters. */
+.brand-mark { display:inline-flex; vertical-align:middle; line-height:0; }
+.brand-logo-dark { display:none; }
+html.dark .brand-logo-light { display:none; }
+html.dark .brand-logo-dark { display:block; }
+@media(max-width:360px) {
+  .site-header .header-inner > .flex { gap:4px; }
+  .site-header .header-inner > .flex > a[href='/login/'] { display:none; }
+}

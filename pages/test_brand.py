@@ -18,7 +18,7 @@ class BrandPresentationTests(TestCase):
 
     def assert_brand_head(self, response):
         self.assertEqual(response.status_code, 200)
-        for path in ['js/theme.js', 'js/qissa.js', 'css/brand.css', 'css/utilities.css', 'favicon.svg']:
+        for path in ['js/theme.js', 'js/qissa.js', 'css/brand.css', 'css/utilities.css', 'branding/favicon.svg']:
             self.assertContains(response, '/static/' + path)
             self.assertIsNotNone(finders.find(path))
         body = response.content.decode()
@@ -26,7 +26,10 @@ class BrandPresentationTests(TestCase):
         self.assertNotIn('cdn.tailwindcss.com', body)
         for font in ['Cormorant', 'DM+Sans', 'Literata']:
             self.assertIn(font, body)
-        self.assertNotIn('branding/qissa-logo.png', body)  # No invented or broken artwork references.
+        for asset in ['qissa-logo.png', 'qissa-logo-ivory.png', 'favicon.ico', 'favicon-16x16.png', 'favicon-32x32.png', 'apple-touch-icon.png', 'site.webmanifest']:
+            self.assertIn('/static/branding/' + asset, body)
+            self.assertIsNotNone(finders.find('branding/' + asset))
+        self.assertNotIn('/static/favicon.svg', body)
 
     def test_public_auth_pricing_and_listing_pages_share_brand_assets(self):
         for name in ['home', 'login', 'register', 'premium', 'stories_list', 'short_list']:
@@ -77,3 +80,28 @@ class BrandPresentationTests(TestCase):
                 self.assertEqual(response.status_code, status)
                 self.assertContains(response, '/static/css/brand.css', status_code=status)
                 self.assertNotContains(response, 'Private diagnostic details', status_code=status)
+
+    def test_favicon_is_font_independent_q_paths_and_all_sizes_exist(self):
+        import json
+        from pathlib import Path
+        from PIL import Image
+        from django.conf import settings
+        folder = Path(settings.BASE_DIR) / 'static' / 'branding'
+        svg = (folder / 'favicon.svg').read_text()
+        self.assertIn('<path', svg)
+        self.assertNotIn('<text', svg)
+        self.assertNotIn('<image', svg)
+        self.assertNotIn('font-family', svg)
+        self.assertIn('fill-rule="evenodd"', svg)
+        for name, size in [('favicon-16x16.png', 16), ('favicon-32x32.png', 32), ('apple-touch-icon.png', 180), ('android-chrome-192x192.png', 192), ('android-chrome-512x512.png', 512)]:
+            with Image.open(folder / name) as im:
+                self.assertEqual(im.size, (size, size))
+        with Image.open(folder / 'favicon.ico') as im:
+            self.assertEqual(im.ico.sizes(), {(16, 16), (32, 32), (48, 48)})
+        with Image.open(folder / 'qissa-logo.png') as light, Image.open(folder / 'qissa-logo-ivory.png') as dark:
+            self.assertEqual(light.size, dark.size)
+            self.assertEqual(light.mode, 'RGBA')
+            self.assertEqual(light.getchannel('A').tobytes(), dark.getchannel('A').tobytes())
+            self.assertEqual(light.getpixel((0, 0))[3], 0)
+        manifest = json.loads((folder / 'site.webmanifest').read_text())
+        self.assertEqual({icon['sizes'] for icon in manifest['icons']}, {'192x192', '512x512'})

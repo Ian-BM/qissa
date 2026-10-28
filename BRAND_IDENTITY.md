@@ -1,32 +1,30 @@
 # Qissa editorial identity
 
-## Implementation and remaining artwork
+## Implementation and approved artwork
 
 Public pages and Studio share the Editorial Ivory / Midnight Obsidian themes.
 The design uses quiet surfaces, restrained gold, literary headings, compact
 story grids and comfortable reading columns. Subscription prices, payment
 verification, access control, content and database models are unchanged.
 
-**Approved logo: missing.** No approved wordmark or isolated Q artwork was found
-in the repository, attachment directory, or production static/media folders.
-The existing text branding is retained in a shared partial. It is not presented
-as an implementation of the supplied image logo.
+The approved book-flourish wordmark is now implemented across desktop/mobile
+navigation, authentication, footer, Premium and Studio. Transparent charcoal and
+ivory versions share exactly the same 480×200 geometry and alpha. They display
+at 120px desktop / 105px mobile without browser filters or layout shifts.
 
-Required source destinations:
+The standalone long-tail Q explicitly confirmed by the user is used for the
+SVG and favicon family, independently of the supplied wordmark. It is traced
+into genuine SVG paths, with no font dependency, embedded bitmap or full word.
 
-- `static/branding/qissa-logo.png`: approved transparent dark wordmark.
-- `static/branding/qissa-logo-ivory.png`: matching ivory version.
-- `static/branding/qissa-mark.svg`: approved isolated Q motif (or high-resolution PNG).
+`static/branding/` contains `qissa-logo.png`, `qissa-logo-ivory.png`,
+`qissa-mark.svg`, `favicon.svg`, `favicon.ico` (16/32/48), favicon PNGs (16/32),
+Apple touch (180), Android (192/512) and `site.webmanifest`. Both base templates
+use the shared head, including icons on authentication, reading and Studio pages.
+The former `static/favicon.svg` is now a compatibility alias for the same Q.
 
-The image sizing hooks are 120px desktop / 105px mobile, with natural aspect ratio
-and no filters. See `static/branding/README.md` for replacement instructions.
-
-**New favicon family: pending artwork.** No fabricated Q or generic replacement
-was generated. The existing `static/favicon.svg` remains temporarily, now linked
-consistently by both base templates. Once approved Q artwork is supplied, generate
-ICO (16/32/48), PNG (16/32), Apple touch (180), Android (192/512), and a manifest.
-Replace the single declaration in `partials/brand_head.html`; this updates public,
-authentication, Premium, reading, error and Studio pages together.
+Original inputs are preserved in `design/branding/`. The deterministic asset
+build is in `scripts/build_brand_assets.cjs`; production serves committed assets
+and does not need the build tools. There are no remaining missing artwork inputs.
 
 ## Color and typography
 
@@ -107,7 +105,7 @@ assets and restart Gunicorn. No database rollback is needed.
 ## Verification
 
 - Django checks and JavaScript syntax checks pass.
-- Complete Django suite passes on production Python 3.12: **33 tests**.
+- Complete Django suite passes on production Python 3.12: **34 tests**.
 - Migration consistency check reports no changes.
 - Static collection succeeds in isolated staging before production deployment.
 - Chrome verified both themes at 320, 375, 768 and 1440px without horizontal overflow.
@@ -122,7 +120,8 @@ assets and restart Gunicorn. No database rollback is needed.
 ## Files
 
 New files: `static/css/{brand,dashboard,utilities,tailwind.input}.css`,
-`static/js/theme.js`, `tailwind.config.cjs`, `static/branding/README.md`,
+`static/js/theme.js`, `tailwind.config.cjs`, `static/branding/` icon/logo assets, `design/branding/` original inputs,
+`scripts/build_brand_assets.cjs`,
 `templates/partials/{brand,brand_head,reader_controls}.html`,
 `templates/{400,403,404,500}.html`, `pages/test_brand.py`, and this report.
 

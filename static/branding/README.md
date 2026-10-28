@@ -1,24 +1,29 @@
-# Approved Qissa artwork needed
+# Approved Qissa branding
 
-The supplied brief describes an approved Q/book-page wordmark, but no artwork
-was present in the repository or task attachments. The existing text wordmark
-and legacy favicon are retained temporarily; they are not the approved identity.
+The wordmark uses the user-supplied **Elegant Qissa Logo with Bookish Flourish**.
+The standalone Q used for SVG/favicons is the separate long-tail Q reference
+explicitly confirmed by the user. The favicon does not contain the full wordmark.
 
-Add the source artwork here:
+- `qissa-logo.png`: transparent charcoal wordmark, 480×200.
+- `qissa-logo-ivory.png`: identical geometry/alpha in ivory, 480×200.
+- `qissa-mark.svg`: true vector paths for the approved standalone Q.
+- `favicon.svg`: ivory Q on an obsidian tile; no fonts or embedded bitmap.
+- `favicon.ico`: 16×16, 32×32 and 48×48 frames.
+- `favicon-16x16.png`, `favicon-32x32.png`.
+- `apple-touch-icon.png`: 180×180.
+- `android-chrome-192x192.png`, `android-chrome-512x512.png`.
+- `site.webmanifest`: app name, colors and icon URLs.
 
-- `qissa-logo.png`: approved transparent dark wordmark for ivory surfaces.
-- `qissa-logo-ivory.png`: the same approved wordmark in ivory for dark surfaces.
-- `qissa-mark.svg` or a high-resolution transparent PNG: approved isolated Q motif.
+Both inks are rendered from one deterministic vector trace of the supplied
+wordmark, preserving its spacing and book flourish. The supplied Q is traced
+independently. SVG even-odd filling preserves its counters and thin tail.
+No replacement font, browser image filter or invented brand mark is used.
 
-Do not invent the Q shape, trace a generic font, apply image inversion filters,
-or derive a generic book icon. If the Q cannot be extracted faithfully from the
-supplied wordmark, obtain the approved isolated mark.
+Original sources are retained in `design/branding/`. Build-only tooling is kept
+out of production dependencies. See `scripts/build_brand_assets.cjs` to rebuild
+with `potrace`, `jimp` and `@resvg/resvg-js` available through `NODE_PATH`.
 
-With those assets supplied, replace `templates/partials/brand.html` with the
-image variants (120px desktop / 105px mobile, intrinsic dimensions, no filters).
-Generate favicon.ico (16, 32, 48), favicon-16x16.png, favicon-32x32.png,
-apple-touch-icon.png (180), android-chrome-192x192.png and
-android-chrome-512x512.png from the approved Q, on an obsidian background.
-Then replace the single legacy favicon declaration in
-`templates/partials/brand_head.html` and add an accompanying web manifest.
-Both public and Studio templates already include this shared head.
+The shared brand/head templates apply these assets to public pages, authentication,
+Premium and Studio. Logos display at 120px desktop / 105px mobile with reserved
+aspect ratio. Icon and logo URLs are versioned to avoid stale browser/CDN caches.
+`static/favicon.svg` is a matching compatibility alias, not the old book icon.

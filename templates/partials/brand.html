@@ -1,2 +1,5 @@
-{# Approved image asset is missing. Preserve the existing text branding; do not invent a mark. #}
-<span class="qissa-wordmark">Qissa</span>
+{% load static %}
+<span class="brand-mark">
+  <img class="brand-image brand-logo-light" src="{% static 'branding/qissa-logo.png' %}?v=logo1" width="480" height="200" alt="Qissa" decoding="async">
+  <img class="brand-image brand-logo-dark" src="{% static 'branding/qissa-logo-ivory.png' %}?v=logo1" width="480" height="200" alt="Qissa" decoding="async">
+</span>

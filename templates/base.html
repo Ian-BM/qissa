@@ -79,6 +79,9 @@
       <a href="{% url 'stories_list' %}" class="block px-3 py-2 text-sm text-muted hover:text-ink hover:bg-surface rounded-lg transition-colors">Simulizi Ndefu</a>
       <a href="{% url 'short_list' %}" class="block px-3 py-2 text-sm text-muted hover:text-ink hover:bg-surface rounded-lg transition-colors">Simulizi Fupi</a>
       <a href="{% url 'premium' %}" class="block px-3 py-2 text-sm text-accent hover:bg-surface rounded-lg transition-colors">Premium</a>
+      {% if not user.is_authenticated %}
+      <a href="{% url 'login' %}" class="block px-3 py-2 text-sm text-muted hover:text-ink">Ingia</a>
+      {% endif %}
     </div>
   </div>
 </nav>
